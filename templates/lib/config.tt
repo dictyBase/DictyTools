@@ -1,0 +1,43 @@
+[% BLOCK stylesheet_link %][% FILTER collapse %]
+     [% DEFAULT rel="stylesheet" type="text/css" media="all" %]
+            <link
+                rel="[% rel %]"
+                type="[% type %]" 
+                media="[% media %]" 
+                href="[% href %]"
+            />
+[% END %][% END %]
+
+[% BLOCK icon_link %][% FILTER collapse %]
+     [% DEFAULT rel="icon" type="image/x-icon" %]
+            <link
+                rel="[% rel %]"
+                type="[% type %]" 
+                href="[% href %]"
+            />
+[% END %][% END %]
+
+
+
+[% BLOCK javascript_link %]
+      [% DEFAULT type="text/javascript" %]
+            <script
+                src="[% src %]"
+                type="[% type %]"
+            ></script>
+[% END %]
+
+[% BLOCK javascript_code %]
+      [% DEFAULT type="text/javascript" %]
+            <script type="[% type %]" >
+              [% INSERT $code %]
+            </script>
+[% END %]
+
+
+
+[% MACRO css_link INCLUDE stylesheet_link %]
+[% MACRO js_link INCLUDE javascript_link %]
+[% MACRO icon_link INCLUDE icon_link %]
+[% MACRO js_code INCLUDE javascript_code %]
+

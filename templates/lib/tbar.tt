@@ -1,0 +1,125 @@
+ 
+ <script type="text/javascript">
+    var loader = new YAHOO.util.YUILoader({
+        base: '/static/dictytools/js/yui/build/',
+        loadOptional: true,
+    });
+    
+    loader.addModule({
+        name: 'blast-css',
+        type: 'css',
+        fullpath: "/static/dictytools/css/blast.css"
+    });
+    
+    loader.addModule({
+        name: 'fonts-min-css',
+        type: 'css',
+        fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
+    });
+    
+    loader.addModule({
+        name: 'menu-css',
+        type: 'css',
+        fullpath: "/static/dictytools/js/yui/build/menu/assets/skins/sam/menu.css"
+    });
+
+    loader.addModule({
+        name: 'header-css',
+        type: 'css',
+        fullpath: "/static/dictytools/css/header.css"
+    });
+
+    loader.addModule({
+        name: 'menu-custom',
+        type: 'js',
+        fullpath: "/static/dictytools/js/menu.js",
+        requires: [
+            'yahoo','container','event', 'menu', 'animation', 
+            'blast-css', 'fonts-min-css', 'menu-css', 'header-css',
+        ]
+    });
+    loader.require('menu-custom');
+    loader.insert();
+    
+</script> 
+
+<html>
+    <body class="yui-skin-sam">
+        <div id="shadow-container">
+            <div class="shadow">
+                <div id="container-top">
+                    <div id="descriptor">
+                   <!--    <b>An Online Informatics Resource for .....</b> -->
+                    </div>
+                    <table>
+                        <tr>
+                            <td rowspan="2">
+                                <a href="/"><img src="/static/dictytools/images/logo.gif"></a>
+                            </td>
+                            <td colspan="4">
+                                <div id="container-help">
+                                    <img src="/static/dictytools/images/help-left.gif">
+                                    <div>
+                                        <a href="/db/cgi-bin/dictyBaseDP/suggestion">Contact us</a>
+                                    </div>
+                                    <img src="/static/dictytools/images/help-right.gif">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="menu">
+                            <td>
+                                <img src="/static/dictytools/images/menu-top-left.gif">
+                            </td>
+                            <td>
+                                <div id="menu-top" class="yuimenubar yuimenubarnav">
+                                    <div class="bd">
+                                        <ul class="first-of-type">
+                                            <li class="yuimenubaritem first-of-type">
+                                                <a class="yuimenubaritemlabel" href="/purpureum/gbrowse/">Genome Browser</a>
+                                                <div id="gbrowse" class="yuimenu">
+                                                    <div class="bd">
+                                                        <ul class="first-of-type">
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_1:1..30000">scaffold_1</a>
+                                                            </li>
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_2:1..30000">scaffold_2</a>
+                                                            </li>
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_3:1..30000">scaffold_4</a>
+                                                            </li>       
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_4:1..30000">scaffold_4</a>
+                                                            </li>                                  
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum/downloads/contig_information.html">more..</a>
+                                                            </li>                                                                                               
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="yuimenubaritem ">
+                                                <a class="yuimenubaritemlabel" href="/tools/blast">BLAST</a>
+                                            </li>
+                                            <li class="yuimenubaritem">
+                                                <a class="yuimenubaritemlabel" href="/purpureum/downloads">Download</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <img src="/static/dictytools/images/menu-top-right.gif">
+                            </td>
+                            <td style="width:100%;">
+                                <form action="/db/cgi-bin/search/search.pl">
+                                    <input name="query" type="text" size="30" value="use * as a wildcard character"> <nobr><input type="submit" name="submit" value="Search All"> <input type="submit" name="genes_only" value="Gene Names Only"></nobr>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

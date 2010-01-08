@@ -1,0 +1,37 @@
+#default:
+#    template_path : templates/src/
+ 
+page:
+    header : page-header.tt
+    footer : page-footer.tt
+    error  : error
+
+## BLAST relates settings
+## "template" - base BLAST template
+## "report_template" - BLAST report template           
+## "blast_link_out" - Link out used in blast report
+## "namespace" -  BLAST namespace used in proxy connection
+
+blast:
+    template : blast   
+    report_template : blast_report
+    namespace : http://dictyBaseDP.org/Blast
+    proxy : http://192.168.60.30:80/cgi-bin/blast.pl
+    blast_link_out : http://192.168.60.50/gene/
+    database_download_url : /downloads/fasta
+    site_admin_email : siddhartha-basu@northwestern.edu
+    id_search : enabled    ## ID search is a custom part, it can be disabled by taking this setting off. It excludes  
+                            ## corresponding parts from blast form template and switches to blast.js from custom/blast.js
+
+organism:
+    dicty:
+        taxon_id : 44689
+        genus : dictyostelium
+        species : discoideum
+        identifier_prefix : DDB
+        site_url : http://192.168.60.10
+    dpur:
+        taxon_id : 5786
+        genus : dictyostelium
+        species : purpureum
+        identifier_prefix : DPU

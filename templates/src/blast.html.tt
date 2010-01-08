@@ -1,0 +1,162 @@
+[% META
+title       = 'BLAST'
+%]
+
+<script type="text/javascript">
+
+var custom = ([%id_search%] == 1) ? 'custom/' : '';
+
+var loader = new YAHOO.util.YUILoader({
+    base: '/static/dictytools/js/yui/build/',
+    loadOptional: true,
+		onSuccess: function() {
+            YAHOO.util.Event.onDOMReady(init);
+		},
+		onFailure: function(msg, xhrobj) {
+        alert("Loader sucked, everything failed");
+		}
+});
+
+loader.addModule({
+    name: 'blast',
+    type: 'js',
+    fullpath: '/static/dictytools/js/' + custom + 'blast.js',
+    requires: [
+    'yahoo',   'logger', 'event', 'button','connection', 'json',
+    'blast-css', 'body-css', 'fonts-min-css',
+    ]
+});
+
+loader.addModule({
+    name: 'blast-css',
+    type: 'css',
+    fullpath: '/static/dictytools/css/blast.css'
+});
+
+loader.addModule({
+    name: 'body-css',
+    type: 'css',
+    fullpath: '/static/dictytools/css/body.css'
+});
+
+loader.addModule({
+    name: 'fonts-min-css',
+    type: 'css',
+    fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
+});
+
+loader.require('blast');
+loader.insert();
+</script>
+
+<div class="dicty-content">
+    <div class="blast-content">
+        <form id="blast-form">
+            <fieldset id="fieldset-id-selection">
+                <legend>Enter Query Sequence</legend> 
+                <div class="blast-sequence-selection column">
+		            <label for="blast-sequence"> Enter query sequence in FASTA format</label>
+		            <textarea id="blast-sequence" name="blast-sequence" cols="61" rows="10">Paste your sequence here  ......</textarea>
+		        </div>		
+		    </fieldset>        
+            [% IF id_search %]
+		        <div id="separator">OR</div> 
+		        <fieldset id="fieldset-sequence-selection">
+		            <legend>Enter gene or gene model ID</legend>
+                    <div class="blast-id-selection column">
+                        <div class="blast-input-row">
+                            <label class="separated-label" for="query-primary-id">Enter gene or gene model ID</label>
+                            <div class="blast-input">
+                                <input id="query-primary-id" value="[% primary_id %]"/>
+                                <input id="submit-primary-id" type="button" value="Search"/>
+                            </div>    
+                        </div>
+                        <div class="blast-input-row hidden">
+                            <label class="separated-label" for="blast-feature-option">Select Sequence</label>
+                            <select id="blast-feature-option" class="blast-selection"><option></option></select>
+		                </div>
+		                <div class="blast-input-row hidden">
+                            <label class="separated-label" for="blast-sequence-option">Select Sequence Type</label>
+                            <select id="blast-sequence-option" class="blast-selection"><option>[%sequence%]</option></select>	
+		                </div>  
+		                <div id="blast-id-selection-warn" class="warning hidden"></div>
+                    </div>	             	        
+	            </fieldset>
+            [% END %]
+		    <fieldset style="clear:both;">
+                <legend>Select BLAST Program</legend> 
+                <div class="blast-input-row">
+                    <div class="column">
+                        <label for="blast-program-option">Program</label>
+                        <select id="blast-program-option">
+                            <option></option>
+		                </select>
+		            </div>
+		            <div id="blast-program-option-info" class="warning hidden"></div>
+		        </div>
+            </fieldset>
+	        <fieldset>
+	            <legend>Select BLAST Database</legend> 
+	            <div class="blast-input-row">
+	                <div class="column">
+	                <label for="blast-database-option">Database</label> 
+                        <select id="blast-database-option">
+                            <option></option>
+	    	            </select>
+                    </div>
+		            <div id="blast-database-option-info" class="warning hidden">Please select a database</div>
+		            <div id="blast-database-option-i" class="infobox">
+		                [% IF database_download_url %]
+		                    You can also download any of the databases <a href="[%database_download_url%]" target="_blank">Here</a>
+		                [% END %]
+		            </div>
+		        </div>
+	        </fieldset>
+		    <fieldset style="clear:both;">
+		        <div class="column">
+                    <span id="run-blast-button"></span> 
+                    <span id="reset-blast-button"></span>
+                    <span id="ncbi-blast-button"></span> 
+                </div>
+                <div id = "run-blast-warning" class="warning hidden"></div>
+            </fieldset>
+            <a id="show-parameters" class="arrowdown" href="#i">Algorithm Parameters</a>        
+            <fieldset id="blast-parameters" class="hidden">
+                <legend>Options</legend>
+                <div class="blast-input-row">
+                    <label class="separated-label" for="e-value">E-value</label>
+                    <div class="blast-input">
+                        <select id="e-value"><option></option></select>
+                    </div>
+                </div>
+                <div class="blast-input-row">
+                    <label class="separated-label" for="num-align">Number of alignments to show</label>
+                    <div class="blast-input"><select id="num-align"><option></option></select></div>
+                </div>
+                <div class="blast-input-row">
+                    <label class="separated-label" for="word-size-option">Word size</label>
+                    <div class="blast-input">
+                        <select id="word-size-option"><option></option></select>
+	                </div>
+	            </div>
+	            <div class="blast-input-row">
+                    <label class="separated-label" for="matrix-option">Matrix</label> 
+                    <select id="matrix-option"><option></option></select>
+	            </div>
+	            <div class="blast-input-row">
+                    <label class="separated-label" for="gapped-alignment">Gapped alignment</label>
+                    <input id="gapped-alignment" type="checkbox" checked="checked" value="T" name="gapped"/>
+                </div>
+                <div class="blast-input-row">
+                    <div class="column">
+                        <label class="separated-label" for="filter-alignment">Filter</label>
+                        <input id="filter-alignment" type="checkbox" checked="checked" value="T" name="filter"/>
+                    </div>
+                    <div id="blast-program-option-info" class="infobox">DUST filter for BLASTN, SEG filter for all others.<br>
+                        Because of resource limits, when BLASTing against the Chromosomal database with filtering off, the filtering is actually set to 'm D' which turns off filtering for extending hits, but leaves filtering on when building the initial words.
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

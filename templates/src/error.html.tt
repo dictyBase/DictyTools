@@ -1,0 +1,18 @@
+[% META 
+error_page = 'true'
+%]
+
+[% css_link ( href = "/static/dictytools/css/body.css"); %]
+
+[% IF replaced %]
+		<div class="error-warning">
+		[% message %]
+		[% FOREACH value IN id %]
+			[% USE path = url("$url/$value") %]
+			<a href="[% path %]"> [% value %]</a>
+[% END %]
+[% ELSE %]
+		<div class="error-warning">
+			[% message %]
+[% END %]
+</div>
