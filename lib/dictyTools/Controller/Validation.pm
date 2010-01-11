@@ -5,8 +5,6 @@ use strict;
 
 # Other modules:
 use base qw/Mojolicious::Controller/;
-use Chado::AutoDBI;
-use dicty::Feature;
 
 # Module implementation
 #

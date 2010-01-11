@@ -56,6 +56,7 @@ sub run {
     my $gapped   = $self->req->param('gapped');
     my $limit    = $self->req->param('limit');
     my $sequence = $self->req->param('sequence');
+    $app->log->debug("sequence: $sequence");
 
     $app->log->debug(
         $program . '..' . $database . '..' . $sequence . '..' . $matrix );
