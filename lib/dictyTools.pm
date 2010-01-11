@@ -2,7 +2,6 @@ package dictyTools;
 
 use strict;
 use warnings;
-
 use File::Spec::Functions;
 use dictyTools::Renderer::JSON;
 use dictyTools::Renderer::TT;
@@ -51,6 +50,7 @@ sub startup {
         action     => 'connection'
     );
 
+    ## -- BLAST 
     $bridge->route('/')
         ->to( controller => 'blast', action => 'index', format => 'html' );
 
@@ -69,9 +69,13 @@ sub startup {
     $bridge->route('/report')
         ->to( controller => 'blast', action => 'report', format => 'html' );
 
+    ## -- Organism
     $router->route('/organisms/')
         ->to( controller => 'organism', action => 'index', format => 'json' );
-
+    
+    ## -- Converter
+    $router->route('/convert')
+        ->to( controller => 'Converter', action => 'index', format => 'json' );
 }
 
 sub set_config {
