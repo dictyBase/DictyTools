@@ -457,7 +457,7 @@
                 }
             }
         
-            var postData =
+            var postData = encodeURI(
             'program=' + program + 
             '&database=' + database +
             '&evalue=' + eValue +
@@ -466,7 +466,9 @@
             '&matrix=' + matrix +
             '&gapped=' + gapped +
             '&filter=' + filter +
-            '&sequence=' + fasta;
+            '&sequence=' + fasta);
+
+            YAHOO.log(YAHOO.lang.dump(postData),  'warn');
 
             resultWindow = window.open();
             resultWindow.document.write('Please wait for results to be loaded');
