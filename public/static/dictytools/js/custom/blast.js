@@ -4,7 +4,7 @@
     var Event = YAHOO.util.Event;
 
     YAHOO.Dicty.BLAST = function() {
-        var logger = new YAHOO.widget.LogReader();
+       // var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -559,8 +559,11 @@
 
         for (i in this.organisms) {
             if (queryID.match(this.organisms[i].IDENTIFIER_PREFIX + '_G')) {
-                postData = 'from=' + 'geneID' + '&to=' + 'feature' + '&ids=' + queryID;
-                request = YAHOO.util.Connect.asyncRequest('POST', 'http://192.168.60.10/translate',
+                postData = 'from=' + 'gene' + '&to=' + 'features' + '&ids=' + queryID + '&organism=' + this.organisms[i].SPECIES;
+                
+                YAHOO.log(postData, 'error');
+                
+                request = YAHOO.util.Connect.asyncRequest('POST', '/converter',
                 {
                     success: function(obj) {
                         try {
@@ -580,15 +583,15 @@
                 break;
             }
             else if (queryID.match(this.organisms[i].IDENTIFIER_PREFIX)) {
-                postData = 'from=' + 'feature' + '&to=' + 'sequence_types' + '&ids=' + queryID;
-                request = YAHOO.util.Connect.asyncRequest('POST', '/translate',
+                postData = 'from=' + 'feature' + '&to=' + 'seqtypes' + '&ids=' + queryID + '&organism=' + this.organisms[i].SPECIES;
+                request = YAHOO.util.Connect.asyncRequest('POST', '/converter',
                 {
                     success: function(obj) {
                         try {
                             var results = YAHOO.lang.JSON.parse(obj.responseText);
                         }
                         catch(e) {
-                            this.blastIDInputInfo.innerHTML = 'Please provide valid DDB or DDB_G ID';
+                            this.blastIDInputInfo.innerHTML = 'Please provide valid ID';
                             Dom.removeClass(this.blastIDInputInfo.id, 'hidden');
                             return;
                         }
@@ -609,8 +612,8 @@
 
     YAHOO.Dicty.BLAST.prototype.requestSequence = function(id, type) {
         //--- contains hardcoded site name ---
-        var postData = 'primary_id=' + id + '&sequence=' + type;
-        var request = YAHOO.util.Connect.asyncRequest('POST', '/db/cgi-bin/dictyBaseDP/yui/get_fasta.pl?primary_id=', 
+        var postData = 'id=' + id + '&type=' + type;
+        var request = YAHOO.util.Connect.asyncRequest('POST', '/fasta', 
         {
             success: function(obj) {
                 this.sequenceInput.value = obj.responseText;

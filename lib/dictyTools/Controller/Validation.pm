@@ -14,7 +14,7 @@ sub connection {
     if ( !$self->app->is_connected ) {
     	$c->res->code(404);
         $self->render(
-            template => $self->app->config->param('page.error'),
+            template => $self->app->config->{page}->{error},
             message  => "Could not establish connection to BLAST server",
             error    => 1,
             header   => 'Error page',

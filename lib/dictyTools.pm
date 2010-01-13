@@ -74,8 +74,12 @@ sub startup {
         ->to( controller => 'organism', action => 'index', format => 'json' );
     
     ## -- Converter
-    $router->route('/convert')
-        ->to( controller => 'Converter', action => 'index', format => 'json' );
+    $router->route('/converter/')
+        ->to( controller => 'converter', action => 'convert', format => 'json' );
+    
+    $router->route('/fasta/')
+        ->to( controller => 'fasta', action => 'get_sequence', format => 'text' );
+    
 }
 
 sub set_config {
@@ -143,7 +147,6 @@ sub set_renderer {
             PRE_PROCESS  => $self->config->{page}->{header} || '',
             POST_PROCESS => $self->config->{page}->{footer} || '',
         },
-
     );
     
     $self->renderer->add_handler(
