@@ -52,6 +52,10 @@ sub gene2features {
     my @primary = $self->primary_features($gene);
     my @genbank = $self->genbank_features($gene);
 
+    $self->app->log->info( Dumper @primary );
+
+    $self->app->log->info( id => $_->uniquename ) foreach @genbank;
+
     ## make an array of hashes containing id of the feature and its descriptor
     my @array;
     push @array, map {
@@ -78,10 +82,7 @@ sub primary_features {
     my ( $self, $gene ) = @_;
 
     ## -- get all gene features
-    my @features =
-        map { Chado::Feature->get_single_row( feature_id => $_->id ) }
-        map { $_->subject_id }
-        Chado::Feature_Relationship->search( object_id => $gene->id );
+    my @features = @{ $self->app->helper->subfeatures($gene) };
 
     ## -- filter out cds, trna, ncrna and pseudogenes
     my @cdss = grep {
@@ -123,15 +124,14 @@ sub primary_features {
     return @pseudogene if @pseudogene;
     return @ncrna      if @ncrna;
     return @trna       if @trna;
+    return;
 }
 
 sub genbank_features {
     my ( $self, $gene ) = @_;
-    my @features =
-        map { Chado::Feature->get_single_row( feature_id => $_->id ) }
-        map { $_->subject_id }
-        Chado::Feature_Relationship->search( object_id => $gene->id );
+    my $source_db = Chado::Db->get_single_row( name => 'GFF_source' );
 
+    my @features = @{ $self->app->helper->subfeatures($gene) };
     my @genbank;
     foreach my $feature (@features) {
         push @genbank, $feature
@@ -146,6 +146,7 @@ sub genbank_features {
         Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name =~
             m{databank}i
     } @genbank;
+
     my @genbank_mrna = grep {
         Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name =~
             m{cdna}i
@@ -173,54 +174,16 @@ sub feature2seqtypes {
         : $type =~ m{EST}i    ? ['EST Sequence']
         :                       undef;
 
-    if ( $type =~ m{cDNA_clone} ) {
-        my @seqtypes = ( 'mRNA Sequence', 'DNA coding sequence', 'Protein' );
+    if ( $type =~ m{cDNA_clone|databank_entry} ) {
+        my @seqtypes = ( 'Protein', 'mRNA Sequence', 'DNA coding sequence' );
         foreach my $seqtype (@seqtypes) {
-            my $seq = $self->get_featureprop( $feature, $seqtype );
-            #$sequences->{$seqtype} = $seq if $seq;
+            my $seq =
+                   $self->app->helper->get_featureprop( $feature, $seqtype )
+                || $self->app->helper->get_sequence( $feature, $seqtype );
             push @$sequences, $seqtype if $seq;
         }
-    }
-    if ( $type =~ m{databank_entry} ) {
-        my @seqtypes = ( 'mRNA Sequence', 'DNA coding sequence', 'Protein' );
-        foreach my $seqtype (@seqtypes) {
-            my $seq = $self->get_featureprop( $feature, $seqtype );
-            push @$sequences, $seqtype if $seq;
-        }
-       # $sequences->{'Genomic DNA'} = get_featureprop( $feature, 'Genomic DNA' ) || calculate_genomic_seq( $feature );
-       # $sequences->{'DNA coding sequence'} = get_featureprop( $feature, 'DNA coding sequence' ) || calculate_cds_seq( $feature );
-       # $sequences->{'Protein'} = get_featureprop( $feature, 'Protein' ) || calculate_protein_seq( $feature);
-
     }
     $self->render( handler => 'json', data => $sequences );
-}
-
-sub get_featureprop {
-    my ( $self, $feature, $prop ) = @_;
-    my $type =
-        Chado::Cvterm->get_single_row( cvterm_id => $feature->type )->name;
-
-    my ($prop_term) = Chado::Cvterm->get_single_row(
-        cv_id => Chado::Cv->get_single_row( name => 'autocreated' ),
-        name  => $prop
-    );
-
-    ## -- give it another shot
-    if ( !$prop_term ) {
-        $prop_term = Chado::Cvterm->get_single_row(
-            cv_id => Chado::Cv->get_single_row( name => 'sequence' ),
-            name  => $prop,
-        );
-    }
-
-    return undef if !$prop_term;
-
-    my $prop_row = Chado::Featureprop->get_single_row(
-        type_id    => $prop_term->cvterm_id,
-        feature_id => $feature->feature_id
-    );
-
-    return $prop_row ? $prop_row->value() : undef;
 }
 
 1;

@@ -5,7 +5,9 @@ use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
 use Bio::Graphics::Panel;
 use Bio::SeqFeature::Generic;
-
+use Bio::Seq::Oracleseq;
+use Bio::SeqFeature::Gene::Exon;
+use Bio::SeqFeature::Gene::Transcript;
 use Module::Load;
 use base qw/Mojo::Base/;
 use version; our $VERSION = qv('1.0.0');
@@ -13,7 +15,7 @@ use version; our $VERSION = qv('1.0.0');
 __PACKAGE__->attr('app');
 
 sub blast_report {
-    my ($self, $report) = @_;
+    my ( $self, $report ) = @_;
 
     my $str;
     my $output = IO::String->new( \$str );
@@ -83,7 +85,7 @@ sub blast_graph {
     my $full_length = Bio::SeqFeature::Generic->new(
         -start        => 1,
         -end          => $result->query_length,
-        -display_name => ((split(/\|/, $result->query_name))[0]),
+        -display_name => ( ( split( /\|/, $result->query_name ) )[0] ),
     );
     $panel->add_track(
         $full_length,
@@ -104,7 +106,7 @@ sub blast_graph {
     while ( my $hit = $result->next_hit ) {
         my $feature = Bio::SeqFeature::Generic->new(
             -score        => $hit->raw_score,
-            -display_name => ((split(/\|/,$hit->name))[0]),
+            -display_name => ( ( split( /\|/, $hit->name ) )[0] ),
         );
         while ( my $hsp = $hit->next_hsp ) {
             $feature->add_sub_SeqFeature( $hsp, 'EXPAND' );
@@ -126,6 +128,131 @@ sub blast_graph {
         . $map;
 }
 
+## -- dicty::Feature stuff
+
+sub get_featureprop {
+    my ( $self, $feature, $prop ) = @_;
+    my $type =
+        Chado::Cvterm->get_single_row( cvterm_id => $feature->type )->name;
+
+    my ($prop_term) = Chado::Cvterm->get_single_row(
+        cv_id => Chado::Cv->get_single_row( name => 'autocreated' ),
+        name  => $prop
+    );
+
+    ## -- give it another shot
+    if ( !$prop_term ) {
+        $prop_term = Chado::Cvterm->get_single_row(
+            cv_id => Chado::Cv->get_single_row( name => 'sequence' ),
+            name  => $prop,
+        );
+    }
+
+    return undef if !$prop_term;
+
+    my $prop_row = Chado::Featureprop->get_single_row(
+        type_id    => $prop_term->cvterm_id,
+        feature_id => $feature->feature_id
+    );
+
+    return $prop_row ? $prop_row->value() : undef;
+}
+
+sub get_sequence {
+    my ( $self, $feature, $type ) = @_;
+    my $methodname = "calculate_" . lc($type) . "_seq";
+    return $self->$methodname($feature);
+}
+
+sub calculate_protein_seq {
+    my ( $self, $feature ) = @_;
+
+    my $location =
+        Chado::Featureloc->get_single_row(
+        feature_id => $feature->feature_id );
+    my $strand = $location->strand;
+
+    ## -- Reference feature(chromosome/supergontig) bioperl object with sequence
+    my $ref_feat =
+        Chado::Feature->get_single_row(
+        feature_id => $location->srcfeature->feature_id );
+    my $ref_seq =
+        Bio::Seq::Oracleseq->new( -primary_id => $ref_feat->feature_id );
+    my $ref_bioperl = Bio::Seq->new( -primary_id => Chado::Dbxref->get_single_row( dbxref_id => $ref_feat->dbxref_id )->accession);
+    $ref_bioperl->primary_seq($primary_seq);
+
+    ## -- exons retrivial
+    my @subfeatures = @{ $self->subfeatures($feature) };
+    my @exon_feats = grep { $_->type_id->name eq 'CDS' } @subfeatures;
+
+    my @exons;
+    foreach my $exon_feat (@exon_feats) {
+        my $locs     = $exon_feat->featureloc_feature_id();
+        my $location = $locs->next();
+
+        # chado is interbase coordinates, so add 1 to start of exons
+        my $exon = Bio::SeqFeature::Gene::Exon->new(
+            -start  => $location->fmin + 1,
+            -end    => $location->fmax,
+            -strand => $location->strand()
+        );
+
+        $exon->is_coding(1);
+        push @exons, $exon;
+    }
+
+    # sort the exons by start ( order is reversed based on strand )
+    @bexons = map { $_->[1] }
+        sort { $strand * $a->[0] <=> $strand * $b->[0] }
+        map { [ $_->start(), $_ ] } @exons;
+
+    my $bioperl = Bio::SeqFeature::Gene::Transcript->new();
+
+    # and add them to bioperl object
+    map { $bioperl->add_exon($_) } @exons;
+
+    ## -- attach reference feature bioperl
+    $bioperl->attach_seq($ref_bioperl);
+
+    my $translation_start =
+        $self->app->helper->get_featureprop( $feature, 'translation_start' )
+        || 1;
+
+    my $protein_seq =
+        $bioperl->cds->translate( undef, undef, $translation_start - 1 )
+        ->seq();
+
+    # check if protein has internal stop codon
+    # and selenocysteine codons, if so, replace
+    # internal *'s with U's
+
+    my @seleno_feat = grep {
+        Chado::Featureloc->get_single_row( feature_id => $_->feature_id )
+            ->fmin >= $location->fmin
+            && Chado::Featureloc->get_single_row(
+            feature_id => $_->feature_id )->fmax < $location->fmax
+        } Chado::Feature->search(
+        type_id => Chado::Cvterm->get_single_row(
+            name => 'stop_codon_redefined_as_selenocysteine'
+        )
+        );
+
+    if ( $protein_seq =~ /.*\*.*\*$/ && @seleno_feat ) {
+        $protein_seq =~ s/\*(?!$)/U/g;
+    }
+    return $protein_seq;
+}
+
+sub subfeatures {
+    my ( $self, $feature ) = @_;
+
+    my @features =
+        grep { $_->is_deleted != 1 }
+        map { Chado::Feature->get_single_row( feature_id => $_->id ) }
+        map { $_->subject_id }
+        Chado::Feature_Relationship->search( object_id => $feature->id );
+    return \@features;
+}
 
 1;    # Magic true value required at end of module
 
