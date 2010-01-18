@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Chado::AutoDBI;
 use dicty::DBH;
-use Data::Dumper;
 use IO::String;
 use base qw/Mojolicious::Controller/;
 
@@ -51,10 +50,6 @@ sub gene2features {
     ## -- get primary and genbank features
     my @primary = $self->primary_features($gene);
     my @genbank = $self->genbank_features($gene);
-
-    $self->app->log->info( Dumper @primary );
-
-    $self->app->log->info( id => $_->uniquename ) foreach @genbank;
 
     ## make an array of hashes containing id of the feature and its descriptor
     my @array;
@@ -119,11 +114,11 @@ sub primary_features {
         push @predicted, $feature if !@curated_source;
     }
 
-    return @curated    if @curated;
-    return @predicted  if @predicted;
     return @pseudogene if @pseudogene;
     return @ncrna      if @ncrna;
     return @trna       if @trna;
+    return @curated    if @curated;
+    return @predicted  if @predicted;
     return;
 }
 
@@ -171,11 +166,17 @@ sub feature2seqtypes {
         ? [ 'Protein', 'DNA coding sequence', 'Genomic DNA' ]
         : $type =~ m{Pseudo}i ? [ 'Pseudogene',         'Genomic' ]
         : $type =~ m{RNA}i    ? [ 'Spliced transcript', 'Genomic' ]
-        : $type =~ m{EST}i    ? ['EST Sequence']
+        : $type =~ m{EST}i    ? [ 'EST Sequence' ]
         :                       undef;
-
-    if ( $type =~ m{cDNA_clone|databank_entry} ) {
+    if ( $type =~ m{cDNA_clone} ) {
         my @seqtypes = ( 'Protein', 'mRNA Sequence', 'DNA coding sequence' );
+        foreach my $seqtype (@seqtypes) {
+            my $seq = $self->app->helper->get_featureprop( $feature, $seqtype );
+            push @$sequences, $seqtype if $seq;
+        }
+    }
+    elsif ( $type =~ m{databank_entry} ) {
+        my @seqtypes = ( 'Protein', 'DNA coding sequence', 'Genomic DNA' );
         foreach my $seqtype (@seqtypes) {
             my $seq =
                    $self->app->helper->get_featureprop( $feature, $seqtype )

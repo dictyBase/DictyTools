@@ -24,14 +24,22 @@ blast:
                             ## corresponding parts from blast form template and switches to blast.js from custom/blast.js
 
 organism:
-    dicty:
+    discoideum:
         taxon_id : 44689
         genus : dictyostelium
         species : discoideum
         identifier_prefix : DDB
         site_url : http://192.168.60.10
-    dpur:
+        sid : dictybase
+        host : 192.168.60.10
+        user : CGM_CHADO
+        password : CGM_CHADO
+    purpureum:
         taxon_id : 5786
         genus : dictyostelium
         species : purpureum
         identifier_prefix : DPU
+        sid : dictybase
+        host : 192.168.60.10
+        user : DPUR_CHADO
+        password : DPUR_CHADO
