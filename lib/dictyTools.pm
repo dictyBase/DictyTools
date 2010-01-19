@@ -70,7 +70,7 @@ sub startup {
         ->to( controller => 'blast', action => 'report', format => 'html' );
 
     ## -- Organism
-    $router->route('/organisms/')
+    $router->route('/organism/')
         ->to( controller => 'organism', action => 'index', format => 'json' );
     
     ## -- Converter

@@ -77,7 +77,7 @@
 
         /* --- CUSTOM PART--- */  
         /* --- Get list of identifier prefixes from server --- */
-        YAHOO.util.Connect.asyncRequest('GET', '/organisms', {
+        YAHOO.util.Connect.asyncRequest('GET', '/organism', {
             success: function(obj) {
                 try {
                     result = YAHOO.lang.JSON.parse(obj.responseText);
@@ -532,7 +532,11 @@
     }
 
     YAHOO.Dicty.BLAST.prototype.validateParameters = function(blastType) {
-        if (this.sequenceInput.value.match('Paste') || this.sequenceInput.value === '') {
+        if (this.blastDatabaseDropDown.options.length > 1 && this.blastDatabaseDropDown.selectedIndex === 0) {
+            Dom.removeClass(this.blastDatabaseInfo.id, 'hidden');
+            return false;
+        }
+        if (this.sequenceInput.value.match('Paste') || this.sequenceInput.value.match('wait') || this.sequenceInput.value === '') {
             this.sequenceInput.value = 'Please type or paste a query sequence here';
             Dom.addClass(this.sequenceInput.id, 'warning');
             return false;
@@ -544,10 +548,6 @@
         }
         if (blastType == 'ncbi-blast') {
             return true;
-        }
-        if (this.blastDatabaseDropDown.options.length > 1 && this.blastDatabaseDropDown.selectedIndex === 0) {
-            Dom.removeClass(this.blastDatabaseInfo.id, 'hidden');
-            return false;
         }
         return true;
     }
@@ -611,6 +611,7 @@
     }
 
     YAHOO.Dicty.BLAST.prototype.requestSequence = function(id, type) {
+        this.sequenceInput.value = 'Please wait for the sequence to be populated...';
         //--- contains hardcoded site name ---
         var postData = 'id=' + id + '&type=' + type;
         var request = YAHOO.util.Connect.asyncRequest('POST', '/fasta', 
