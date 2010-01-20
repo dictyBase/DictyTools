@@ -18,23 +18,25 @@ sub convert {
     my $ids      = $self->req->param('ids');
     my $organism = $self->req->param('organism');
 
-    my $dbh_class = 'dicty::DBH';
-    $dbh_class->sid('dictybase');
-    $dbh_class->host('192.168.60.10');
+    my $method = $from . '2' . $to;
 
     if ( $organism && $organism eq 'discoideum' ) {
-        $dbh_class->user('CGM_CHADO');
-        $dbh_class->password('CGM_CHADO');
-    }
-    elsif ($organism) {
-        $dbh_class->user('DPUR_CHADO');
-        $dbh_class->password('DPUR_CHADO');
-    }
+        my $dbh_class     = 'dicty::DBH';
+        my $organism_conf = $app->config->{organism}->{discoideum};
 
-    $dbh_class->reconnect();
+        $dbh_class->sid( $organism_conf->{sid} );
+        $dbh_class->host( $organism_conf->{host} );
+        $dbh_class->user( $organism_conf->{user} );
+        $dbh_class->password( $organism_conf->{password} );
 
-    my $method = $from . '2' . $to;
-    $self->$method($ids);
+        $self->$method($ids);
+
+        $dbh_class->reconnect(0);
+        $dbh_class->reset_params();
+    }
+    else {
+        $self->$method($ids);
+    }
 }
 
 sub gene2features {
@@ -166,12 +168,13 @@ sub feature2seqtypes {
         ? [ 'Protein', 'DNA coding sequence', 'Genomic DNA' ]
         : $type =~ m{Pseudo}i ? [ 'Pseudogene',         'Genomic' ]
         : $type =~ m{RNA}i    ? [ 'Spliced transcript', 'Genomic' ]
-        : $type =~ m{EST}i    ? [ 'EST Sequence' ]
+        : $type =~ m{EST}i    ? ['EST Sequence']
         :                       undef;
     if ( $type =~ m{cDNA_clone} ) {
         my @seqtypes = ( 'Protein', 'mRNA Sequence', 'DNA coding sequence' );
         foreach my $seqtype (@seqtypes) {
-            my $seq = $self->app->helper->get_featureprop( $feature, $seqtype );
+            my $seq =
+                $self->app->helper->get_featureprop( $feature, $seqtype );
             push @$sequences, $seqtype if $seq;
         }
     }

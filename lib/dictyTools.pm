@@ -78,7 +78,7 @@ sub startup {
         ->to( controller => 'converter', action => 'convert', format => 'json' );
     
     $router->route('/fasta/')
-        ->to( controller => 'fasta', action => 'get_sequence', format => 'text' );
+        ->to( controller => 'fasta', action => 'write_sequence', format => 'text' );
     
 }
 

@@ -613,17 +613,21 @@
     YAHOO.Dicty.BLAST.prototype.requestSequence = function(id, type) {
         this.sequenceInput.value = 'Please wait for the sequence to be populated...';
         //--- contains hardcoded site name ---
-        var postData = 'id=' + id + '&type=' + type;
-        var request = YAHOO.util.Connect.asyncRequest('POST', '/fasta', 
-        {
-            success: function(obj) {
-                this.sequenceInput.value = obj.responseText;
-                Dom.removeClass(this.sequenceInput, 'warning');    
-            },
-            failure: this.onFailure,
-            scope: this            
-        }, 
-        postData);
+        for (i in this.organisms) {
+            if (id.match(this.organisms[i].IDENTIFIER_PREFIX)) {
+                var postData = 'id=' + id + '&type=' + type  + '&organism=' + this.organisms[i].SPECIES;
+                var request = YAHOO.util.Connect.asyncRequest('POST', '/fasta', 
+                {
+                    success: function(obj) {
+                        this.sequenceInput.value = obj.responseText;
+                        Dom.removeClass(this.sequenceInput, 'warning');    
+                    },
+                    failure: this.onFailure,
+                    scope: this            
+                }, 
+                postData);
+            }
+        }
     }
     /* --- END OF CUSTOM PART--- */  
     

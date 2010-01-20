@@ -39,7 +39,4 @@ organism:
         genus : dictyostelium
         species : purpureum
         identifier_prefix : DPU
-        sid : dictybase
-        host : 192.168.60.10
-        user : DPUR_CHADO
-        password : DPUR_CHADO
+        
