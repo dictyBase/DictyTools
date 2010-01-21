@@ -120,8 +120,8 @@ loader.insert();
                 </div>
                 <div id = "run-blast-warning" class="warning hidden"></div>
             </fieldset>
-            <a id="show-parameters" class="arrowdown" href="#i">Algorithm Parameters</a>        
-            <fieldset id="blast-parameters" class="hidden">
+            <a id="show-parameters" class="hidden" href="#i">Algorithm Parameters</a>        
+            <fieldset id="blast-parameters">
                 <legend>Options</legend>
                 <div class="blast-input-row">
                     <label class="separated-label" for="e-value">E-value</label>

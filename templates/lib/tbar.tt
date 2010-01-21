@@ -75,6 +75,21 @@
                                     <div class="bd">
                                         <ul class="first-of-type">
                                             <li class="yuimenubaritem first-of-type">
+                                                <a class="yuimenubaritemlabel" href="/">Genomes</a>
+                                                <div id="gbrowse" class="yuimenu">
+                                                    <div class="bd">
+                                                        <ul class="first-of-type">
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/discoideum">Dictyostelium discoideum</a>
+                                                            </li>                                                            
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum">Dictyostelium purpureum</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="yuimenubaritem">
                                                 <a class="yuimenubaritemlabel" href="/purpureum/gbrowse/">Genome Browser</a>
                                                 <div id="gbrowse" class="yuimenu">
                                                     <div class="bd">
@@ -98,7 +113,7 @@
                                                     </div>
                                                 </div>
                                             </li>
-                                            <li class="yuimenubaritem ">
+                                            <li class="yuimenubaritem">
                                                 <a class="yuimenubaritemlabel" href="/tools/blast">BLAST</a>
                                             </li>
                                             <li class="yuimenubaritem">

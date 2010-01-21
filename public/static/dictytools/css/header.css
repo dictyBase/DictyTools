@@ -56,14 +56,15 @@ body {
     border-right    :0 none;
 }
 .yui-skin-sam #container-top form {
-    padding         :10px 10px;
+    padding-left         :10px;
 }
 .yui-skin-sam #container-top form input{
     font-size       :80%;
 }
 .yui-skin-sam #container-top #container-help{
-    right           :15px;
+    right           :45px;
     position        :absolute;
+    min-width       :150px;
 }
 .yui-skin-sam #container-top #container-help a{
     color           :#4b5f81;
@@ -78,7 +79,7 @@ body {
 }
 .yui-skin-sam #container-top #container-help div {
     background      :#DFE8F6;
-    line-height     :2.4;
+    line-height     :30px;
 }
 #shadow-container .shadow {
 	background      :#cccccc;
