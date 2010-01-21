@@ -18,7 +18,7 @@ use version; our $VERSION = qv('1.0.0');
 __PACKAGE__->attr('app');
 
 sub blast_report {
-    my ( $self, $report ) = @_;
+    my ( $self, $report ,  $c) = @_;
 
     my $str;
     my $output = IO::String->new( \$str );
@@ -28,11 +28,13 @@ sub blast_report {
         -fh     => $stringio,
         -format => 'blast'
     );
+    my $base_url = $c->req->url->host;
+    $base_url = $base_url ? 'http://' . $base_url . '/' : '/';
 
     my $feature_url = $self->app->config->{blast}->{blast_link_out};
     my $writer      = Bio::SearchIO::Writer::HTMLResultWriter->new(
-        -nucleotide_url => /id/. '%s',
-        -protein_url    => /id/ . '%s'
+        -nucleotide_url => $base_url.'id/'. '%s',
+        -protein_url    => $base_url.'id/' . '%s'
     );
 
     $writer->title( sub { } );

@@ -107,7 +107,7 @@ sub report {
     my $app = $self->app;
 
     my $report    = $self->req->param('report');
-    my $html_hash = $app->helper->blast_report($report);
+    my $html_hash = $app->helper->blast_report($report,  $c);
     my $graph     = $app->helper->blast_graph($report);
 
     $self->render(
