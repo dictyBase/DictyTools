@@ -31,8 +31,8 @@ sub blast_report {
 
     my $feature_url = $self->app->config->{blast}->{blast_link_out};
     my $writer      = Bio::SearchIO::Writer::HTMLResultWriter->new(
-        -nucleotide_url => $feature_url . '%s',
-        -protein_url    => $feature_url . '%s'
+        -nucleotide_url => /id/. '%s',
+        -protein_url    => /id/ . '%s'
     );
 
     $writer->title( sub { } );
