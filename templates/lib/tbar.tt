@@ -49,7 +49,7 @@
             <div class="shadow">
                 <div id="container-top">
                     <div id="descriptor">
-                   <!--    <b>An Online Informatics Resource for .....</b> -->
+                        New universal dictyostelid BLAST server
                     </div>
                     <table>
                         <tr>
@@ -76,7 +76,7 @@
                                         <ul class="first-of-type">
                                             <li class="yuimenubaritem first-of-type">
                                                 <a class="yuimenubaritemlabel" href="/">Genomes</a>
-                                                <div id="gbrowse" class="yuimenu">
+                                                <div id="genomes" class="yuimenu">
                                                     <div class="bd">
                                                         <ul class="first-of-type">
                                                             <li class="yuimenuitem">
@@ -90,25 +90,13 @@
                                                 </div>
                                             </li>
                                             <li class="yuimenubaritem">
-                                                <a class="yuimenubaritemlabel" href="/purpureum/gbrowse/">Genome Browser</a>
+                                                <a class="yuimenubaritemlabel" href="/db/cgi-bin/ggb/gbrowse/">GBrowse</a>
                                                 <div id="gbrowse" class="yuimenu">
                                                     <div class="bd">
                                                         <ul class="first-of-type">
                                                             <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_1:1..30000">scaffold_1</a>
+                                                                <a class="yuimenuitemlabel" href="purpureum/gbrowse/">Dictyostelium Purpureum</a>
                                                             </li>
-                                                            <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_2:1..30000">scaffold_2</a>
-                                                            </li>
-                                                            <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_3:1..30000">scaffold_4</a>
-                                                            </li>       
-                                                            <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_4:1..30000">scaffold_4</a>
-                                                            </li>                                  
-                                                            <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="/purpureum/downloads/contig_information.html">more..</a>
-                                                            </li>                                                                                               
                                                         </ul>
                                                     </div>
                                                 </div>

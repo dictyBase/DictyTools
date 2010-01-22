@@ -1,5 +1,6 @@
 [% META
 loader 		= 'true'
+title       = 'dictyBase BLAST Server: Report' 
 %]
 <script type="text/javascript">
 

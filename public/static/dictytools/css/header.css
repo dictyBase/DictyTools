@@ -94,10 +94,10 @@ body {
 }
 #descriptor {
     font-style      :italic; 
-    font-size       :12px; 
+    font-size       :20px; 
     position        :absolute; 
     color           :#A7221E;
-    left            :170px; 
+    left            :100px; 
     top             :25px; 
     z-index         :1; 
 }

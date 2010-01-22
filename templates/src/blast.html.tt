@@ -1,5 +1,5 @@
 [% META
-title       = 'BLAST'
+title       = 'dictyBase BLAST Server'
 %]
 
 <script type="text/javascript">
@@ -23,7 +23,7 @@ loader.addModule({
     fullpath: '/static/dictytools/js/' + custom + 'blast.js',
     requires: [
     'yahoo',   'logger', 'event', 'button','connection', 'json',
-    'blast-css', 'body-css', 'fonts-min-css',
+    'blast-css', 'body-css', 'fonts-min-css', 
     ]
 });
 
@@ -45,15 +45,17 @@ loader.addModule({
     fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
 });
 
+
 loader.require('blast');
 loader.insert();
 </script>
+
 
 <div class="dicty-content">
     <div class="blast-content">
         <form id="blast-form">
             <fieldset id="fieldset-id-selection">
-                <legend>Enter Query Sequence</legend> 
+                <legend>Query Sequence</legend> 
                 <div class="blast-sequence-selection column">
 		            <label for="blast-sequence"> Enter query sequence in FASTA format</label>
 		            <textarea id="blast-sequence" name="blast-sequence" cols="61" rows="10">Paste your sequence here  ......</textarea>
@@ -62,10 +64,11 @@ loader.insert();
             [% IF id_search %]
 		        <div id="separator">OR</div> 
 		        <fieldset id="fieldset-sequence-selection">
-		            <legend>Enter gene or gene model ID</legend>
+		            <legend>Gene or Gene Model ID</legend>
                     <div class="blast-id-selection column">
                         <div class="blast-input-row">
                             <label class="separated-label" for="query-primary-id">Enter gene or gene model ID</label>
+                            (e.g.: DDB_G0275689, DDB0214814)
                             <div class="blast-input">
                                 <input id="query-primary-id" value="[% primary_id %]"/>
                                 <input id="submit-primary-id" type="button" value="Search"/>
@@ -84,10 +87,10 @@ loader.insert();
 	            </fieldset>
             [% END %]
 		    <fieldset style="clear:both;">
-                <legend>Select BLAST Program</legend> 
+                <legend>BLAST Program</legend> 
                 <div class="blast-input-row">
                     <div class="column">
-                        <label for="blast-program-option">Program</label>
+                        <label for="blast-program-option">Select Program</label>
                         <select id="blast-program-option">
                             <option></option>
 		                </select>
@@ -96,10 +99,11 @@ loader.insert();
 		        </div>
             </fieldset>
 	        <fieldset>
-	            <legend>Select BLAST Database</legend> 
+	            <legend>BLAST Database </legend> 
+	            <div class="info">New: you can now search either <i>D. discoideum</i> and <i>D. purpureum</i></div>
 	            <div class="blast-input-row">
 	                <div class="column">
-	                <label for="blast-database-option">Database</label> 
+	                <label for="blast-database-option">Select Database</label> 
                         <select id="blast-database-option">
                             <option></option>
 	    	            </select>
@@ -107,7 +111,7 @@ loader.insert();
 		            <div id="blast-database-option-info" class="warning hidden">Please select a database</div>
 		            <div id="blast-database-option-i" class="infobox">
 		                [% IF database_download_url %]
-		                    You can also download any of the databases <a href="[%database_download_url%]" target="_blank">Here</a>
+		                    You can <a href="[%database_download_url%]" target="_blank">download</a> all the sequences 
 		                [% END %]
 		            </div>
 		        </div>

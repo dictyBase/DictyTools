@@ -56,10 +56,7 @@ sub run {
     my $gapped   = $self->req->param('gapped');
     my $limit    = $self->req->param('limit');
     my $sequence = $self->req->param('sequence');
-    $app->log->debug("sequence: $sequence");
 
-    $app->log->debug(
-        $program . '..' . $database . '..' . $sequence . '..' . $matrix );
     if ( !( $program && $database && $sequence && $matrix ) ) {
         $c->res->code(404);
         $self->render(
@@ -96,10 +93,8 @@ sub run {
         return;
     }
     my ($report_text) = $report->result();
-    $self->render(
-        template => $app->config->{page}->{error},
-        message  => $report_text,
-    );
+    $self->res->headers->content_type('text/html');
+    $self->res->body( $report->result );
 }
 
 sub report {
