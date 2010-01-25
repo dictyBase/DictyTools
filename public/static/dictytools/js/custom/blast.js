@@ -480,7 +480,7 @@
                     var results = obj.responseText;
                     if (results.match('BLAST') && !(results.match('Sorry'))) {
                         var form =
-                        '<form method="post" name="blast_report" action="/tools/blast/report">' +
+                        '<form method="post" name="blast_report" action="/tools/blast/report" enctype="multipart/form-data">' +
                         '<textarea name="report" style="display:none;" >' + results + '</textarea></form>';
 
                         resultWindow.document.write(form);
