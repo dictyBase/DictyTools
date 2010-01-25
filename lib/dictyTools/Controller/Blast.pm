@@ -93,7 +93,7 @@ sub run {
         return;
     }
     my ($report_text) = $report->result();
-    $self->res->headers->content_type('text/plain');
+    $self->res->headers->content_type('application/json');
     $self->res->body( $report->result );
 }
 
