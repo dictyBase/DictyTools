@@ -12,31 +12,37 @@ use Bio::SeqFeature::Gene::Transcript;
 use Bio::SeqFeature::Generic;
 use Module::Load;
 use dicty::Feature;
+use IO::File;
 use base qw/Mojo::Base/;
 use version; our $VERSION = qv('1.0.0');
 
 __PACKAGE__->attr('app');
 
 sub blast_report {
-    my ( $self, $report, $c ) = @_;
+    my ( $self, $filename, $c ) = @_;
+    
+    my $report_file = IO::File->new( $filename, 'r');
+    my $report = join( "\n", <$report_file> );
+    
+    undef $report_file;
+    
     my $str;
     my $output = IO::String->new( \$str );
-
-    $self->app->log->debug($report);
+    
     my $stringio = IO::String->new($report);
     my $parser = Bio::SearchIO->new(
         -fh     => $stringio,
         -format => 'blast'
     );
     my $result = $parser->next_result;
-    $self->app->log->debug($result->algorithm);
-    my $base_url = $c->req->url->host;
-    $base_url = $base_url ? 'http://' . $base_url . '/' : '/';
 
-    my $feature_url = $self->app->config->{blast}->{blast_link_out};
+    my $base_url = $c->req->url->host;
+    my $link = $self->app->config->{blast}->{blast_link_out};
+    $base_url = $base_url ? 'http://' . $base_url . $link : $link;
+
     my $writer      = Bio::SearchIO::Writer::HTMLResultWriter->new(
-        -nucleotide_url => $feature_url . '%s',
-        -protein_url    => $feature_url . '%s'
+        -nucleotide_url => $base_url . '%s',
+        -protein_url    => $base_url . '%s'
     );
 
     $writer->title( sub { } );
@@ -48,7 +54,6 @@ sub blast_report {
     my $results;
     my $parameters;
     my $statistics;
-    $self->app->log->debug("str $str");
 
     if ( $str
         =~ m{(.+?)(<table.+?table>)(.+?)<hr>.+?Parameters.+?(<table.+?table>).+?Statistics(.+?)<hr}s
@@ -74,8 +79,13 @@ sub blast_report {
 }
 
 sub blast_graph {
-    my ( $self, $report ) = @_;
-
+    my ( $self, $filename ) = @_;
+    
+    my $report_file = IO::File->new( $filename, 'r');
+    my $report = join( "\n", <$report_file> );
+    
+    undef $report_file;
+    
     my $stringio = IO::String->new($report);
     my $parser   = Bio::SearchIO->new(
         -fh     => $stringio,
@@ -121,9 +131,10 @@ sub blast_graph {
         }
         $track->add_feature($feature);
     }
+    
     my ( $url, $map, $mapname ) = $panel->image_and_map(
         -root  => $self->app->home->rel_dir('public'),
-        -url   => '/tmp/',
+        -url   => '/tmp/dictytools',
         -title => '',
         -link  => '#$name'
     );

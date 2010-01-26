@@ -3,6 +3,7 @@ package dictyTools::Controller::Blast;
 use strict;
 use warnings;
 use IO::String;
+use File::Temp;
 use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
 use Bio::Graphics;
@@ -93,18 +94,24 @@ sub run {
         return;
     }
     my ($report_text) = $report->result();
-    $self->res->headers->content_type('application/json');
-    $self->res->body( $report->result );
+
+    my $tmp = File::Temp->new( DIR => $self->app->home->rel_dir('public').'/tmp/dictytools/', UNLINK => 0);
+    my $filename = $tmp->filename;
+
+    $tmp->print($report_text);
+    $tmp->close;
+    
+    $self->res->headers->content_type('text/plain');
+    $self->res->body( $filename );
 }
 
 sub report {
     my ( $self, $c ) = @_;
     my $app = $self->app;
-
-    my $report    = $self->req->param('report');
-    my $html_hash = $app->helper->blast_report($report,  $c);
-    my $graph     = $app->helper->blast_graph($report);
-
+    
+    my $html_hash = $app->helper->blast_report($self->req->param('report_file'),  $c);
+    my $graph     = $app->helper->blast_graph($self->req->param('report_file'));
+    
     $self->render(
         template   => $self->app->config->{blast}->{report_template},
         graph      => $graph,
@@ -115,6 +122,7 @@ sub report {
         statistics => $html_hash->{statistics},
         header     => 'BLAST Result',
     );
+    unlink $self->req->param('report_file');
 }
 
 1;

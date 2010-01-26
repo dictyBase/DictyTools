@@ -17,7 +17,7 @@ blast:
     report_template : blast_report
     namespace : http://dictyBaseDP.org/Blast
     proxy : http://192.168.60.30:80/cgi-bin/blast.pl
-    blast_link_out : http://192.168.60.50/gene/
+    blast_link_out : /id/
     database_download_url : /downloads/fasta
     site_admin_email : siddhartha-basu@northwestern.edu
     id_search : enabled    ## ID search is a custom part, it can be disabled by taking this setting off. It excludes  

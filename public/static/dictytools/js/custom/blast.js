@@ -477,22 +477,24 @@
             YAHOO.util.Connect.asyncRequest('POST', '/tools/blast/run',
             {
                 success: function(obj) {
-                    var results = obj.responseText;
-                    if (results.match('BLAST') && !(results.match('Sorry'))) {
+                    var results_file = obj.responseText;
+//                    if (results.match('BLAST') && !(results.match('Sorry'))) {
                         var form =
-                        '<form method="post" name="blast_report" action="/tools/blast/report" enctype="multipart/form-data">' +
-                        '<textarea name="report" style="display:none;" >' + results + '</textarea></form>';
+                        '<form method="post" name="blast_report" action="/tools/blast/report">' +
+//                          '<textarea name="report" style="display:none;" >' + results + '</textarea></form>';
+                            '<input name="report_file" style="display:none;" value="' + results_file + '"></input>'+
+                        '</form>';
 
                         resultWindow.document.write(form);
                         resultWindow.document.close();
                         resultWindow.document.forms.blast_report.submit();
-                    }
-                    else {
-                        this.warning.innerHTML = results;
-                        Dom.removeClass(this.warning.id, 'hidden');
-                        resultWindow.document.write(results);
-                        resultWindow.document.close();
-                    }
+//                    }
+//                    else {
+//                        this.warning.innerHTML = results;
+//                        Dom.removeClass(this.warning.id, 'hidden');
+//                        resultWindow.document.write(results);
+//                        resultWindow.document.close();
+//                    }
                 },
                 failure: this.onFailure,
                 scope: this
