@@ -195,6 +195,10 @@
             var parent = Dom.getAncestorByTagName(el, 'div');
 
             if (prefilledSequence !== '') {
+                var filter = prefilledSequence.match('Protein') ? 'protein': 'DNA';
+                this.renderPrograms(filter);
+                this.renderDatabases(filter);
+                
                 var defaultProgram = prefilledSequence.match('Protein') ? 'blastp': 'blastn';
                 this.selectDropdownValue(this.blastProgramDropDown, defaultProgram);
                 
