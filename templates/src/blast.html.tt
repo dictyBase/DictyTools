@@ -52,7 +52,7 @@ loader.insert();
 
 
 <div class="dicty-content">
-    <div class="blast-content">
+    <div class="blast-content yui-skin-sam">
         <form id="blast-form">
             <fieldset id="fieldset-id-selection">
                 <legend>Query Sequence</legend> 
