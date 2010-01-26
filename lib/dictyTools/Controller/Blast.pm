@@ -120,7 +120,6 @@ sub report {
         results    => $html_hash->{results},
         parameters => $html_hash->{parameters},
         statistics => $html_hash->{statistics},
-        header     => 'BLAST Result',
     );
     unlink $self->req->param('report_file');
 }
