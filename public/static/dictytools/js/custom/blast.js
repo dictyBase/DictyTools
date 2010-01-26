@@ -4,7 +4,7 @@
     var Event = YAHOO.util.Event;
 
     YAHOO.Dicty.BLAST = function() {
-       // var logger = new YAHOO.widget.LogReader();
+        // var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -179,11 +179,13 @@
         }
         else {
             el.options[el.options.length] = new Option('-- Please Select a Sequence Type--', 'unselected');
+                    
             var selectedIndex = 0;
+            var i;
             for (i in data) {
                 if ((prefilledSequence !== '') && (data[i].match(prefilledSequence))) {
                     selectedIndex = i;
-                    selectedIndex++;
+                    selectedIndex++;                   
                     this.requestSequence(id, data[i]);
                 }
                 el.options[el.options.length] = new Option(data[i], data[i]);
@@ -194,10 +196,11 @@
 
             if (prefilledSequence !== '') {
                 var defaultProgram = prefilledSequence.match('Protein') ? 'blastp': 'blastn';
-                var defaultDatabase =
-                prefilledSequence.match('Genomic') ? 'dictyBase Genomic Sequences - DNA':
-                prefilledSequence.match('coding') || prefilledSequence.match('transcript') ? 'dictyBase Coding Sequences - DNA': 'unselected';
-                //selectDropDown(this.blastProgramDropDown, defaultProgram);
+                this.selectDropdownValue(this.blastProgramDropDown, defaultProgram);
+                
+                //var defaultDatabase =
+                //prefilledSequence.match('Genomic') ? 'dictyBase Genomic Sequences - DNA':
+                //prefilledSequence.match('coding') || prefilledSequence.match('transcript') ? 'dictyBase Coding Sequences - DNA': 'unselected';
                 //adjustDatabaseDropdown(defaultProgram);
                 //selectDropDown(blastDatabaseDropDown, defaultDatabase);
                 //defaultValue = defaultProgram == 'blastn' ? '11': '3';
