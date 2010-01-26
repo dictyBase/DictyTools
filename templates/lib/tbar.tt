@@ -49,12 +49,12 @@
             <div class="shadow">
                 <div id="container-top">
                     <div id="descriptor">
-                        New universal dictyostelid BLAST server
+                        New Universal Dictyostelid BLAST Server
                     </div>
                     <table>
                         <tr>
                             <td rowspan="2">
-                                <a href="/"><img src="/static/dictytools/images/logo.gif"></a>
+                                <a href="http://dictybase.org"><img src="/static/dictytools/images/logo.gif"></a>
                             </td>
                             <td colspan="4">
                                 <div id="container-help">
@@ -90,12 +90,15 @@
                                                 </div>
                                             </li>
                                             <li class="yuimenubaritem">
-                                                <a class="yuimenubaritemlabel" href="/db/cgi-bin/ggb/gbrowse/">GBrowse</a>
+                                                <a class="yuimenubaritemlabel" href="/db/cgi-bin/ggb/gbrowse/">Genome Browser</a>
                                                 <div id="gbrowse" class="yuimenu">
                                                     <div class="bd">
                                                         <ul class="first-of-type">
                                                             <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="purpureum/gbrowse/">Dictyostelium Purpureum</a>
+                                                                <a class="yuimenuitemlabel" href="http://dictybase.org/db/cgi-bin/ggb/gbrowse">Dictyostelium discoideum</a>
+                                                            </li>                                                            
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="purpureum/gbrowse/">Dictyostelium purpureum</a>
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -115,9 +118,11 @@
                                 <img src="/static/dictytools/images/menu-top-right.gif">
                             </td>
                             <td style="width:100%;">
+<!--
                                 <form action="/db/cgi-bin/search/search.pl">
                                     <input name="query" type="text" size="30" value="use * as a wildcard character"> <nobr><input type="submit" name="submit" value="Search All"> <input type="submit" name="genes_only" value="Gene Names Only"></nobr>
                                 </form>
+-->
                             </td>
                         </tr>
                     </table>
