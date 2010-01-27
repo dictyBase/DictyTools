@@ -541,10 +541,6 @@
     }
 
     YAHOO.Dicty.BLAST.prototype.validateParameters = function(blastType) {
-        if (this.blastDatabaseDropDown.options.length > 1 && this.blastDatabaseDropDown.selectedIndex === 0) {
-            Dom.removeClass(this.blastDatabaseInfo.id, 'hidden');
-            return false;
-        }
         if (this.sequenceInput.value.match('Paste') || this.sequenceInput.value.match('wait') || this.sequenceInput.value === '') {
             this.sequenceInput.value = 'Please type or paste a query sequence here';
             Dom.addClass(this.sequenceInput.id, 'warning');
@@ -557,6 +553,10 @@
         }
         if (blastType == 'ncbi-blast') {
             return true;
+        }
+        if (this.blastDatabaseDropDown.options.length > 1 && this.blastDatabaseDropDown.selectedIndex === 0) {
+            Dom.removeClass(this.blastDatabaseInfo.id, 'hidden');
+            return false;
         }
         return true;
     }
