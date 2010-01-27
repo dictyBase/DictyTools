@@ -60,7 +60,7 @@
                                 <div id="container-help">
                                     <img src="/static/dictytools/images/help-left.gif">
                                     <div>
-                                        <a href="/db/cgi-bin/dictyBaseDP/suggestion">Contact us</a>
+                                        <a href="/discoideum/db/cgi-bin/dictyBase/suggestion">Contact us</a>
                                     </div>
                                     <img src="/static/dictytools/images/help-right.gif">
                                 </div>

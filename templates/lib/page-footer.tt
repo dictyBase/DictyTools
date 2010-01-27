@@ -31,7 +31,7 @@
         <div id="container-bottom">
             <a href="/">Home</a>
             Supported by NIH (NIGMS and NHGRI)
-            <a href="/db/cgi-bin/dictyBaseDP/suggestion">Contact dictyBase</a>
+            <a href="/discoideum/db/cgi-bin/dictyBase/suggestion">Contact dictyBase</a>
         </div>
     </body>
 </html>
