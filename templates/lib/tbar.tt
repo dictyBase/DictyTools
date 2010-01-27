@@ -98,7 +98,7 @@
                                                                 <a class="yuimenuitemlabel" href="http://dictybase.org/db/cgi-bin/ggb/gbrowse">Dictyostelium discoideum</a>
                                                             </li>                                                            
                                                             <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="purpureum/gbrowse/">Dictyostelium purpureum</a>
+                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_1:1..30000">Dictyostelium purpureum</a>
                                                             </li>
                                                         </ul>
                                                     </div>
