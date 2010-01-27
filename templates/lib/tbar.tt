@@ -113,10 +113,10 @@
                                                     <div class="bd">
                                                         <ul class="first-of-type">
                                                             <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="discoideum/Downloads/">Dictyostelium discoideum</a>
+                                                                <a class="yuimenuitemlabel" href="/discoideum/Downloads/">Dictyostelium discoideum</a>
                                                             </li>                                                             
                                                             <li class="yuimenuitem">
-                                                                <a class="yuimenuitemlabel" href="purpureum/downloads/">Dictyostelium purpureum</a>
+                                                                <a class="yuimenuitemlabel" href="/purpureum/downloads/">Dictyostelium purpureum</a>
                                                             </li>                                                                                                                       
                                                         </ul>
                                                     </div>
