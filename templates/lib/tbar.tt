@@ -108,7 +108,19 @@
                                                 <a class="yuimenubaritemlabel" href="/tools/blast">BLAST</a>
                                             </li>
                                             <li class="yuimenubaritem">
-                                                <a class="yuimenubaritemlabel" href="/purpureum/downloads">Download</a>
+                                                <a class="yuimenubaritemlabel" href="/downloads">Download</a>
+                                                <div id="download" class="yuimenu">
+                                                    <div class="bd">
+                                                        <ul class="first-of-type">
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="discoideum/Downloads/">Dictyostelium discoideum</a>
+                                                            </li>                                                             
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="purpureum/downloads/">Dictyostelium purpureum</a>
+                                                            </li>                                                                                                                       
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </li>
                                         </ul>
                                     </div>
