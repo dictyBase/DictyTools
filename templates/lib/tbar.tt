@@ -54,7 +54,7 @@
                     <table>
                         <tr>
                             <td rowspan="2">
-                                <a href="http://dictybase.org"><img src="/static/dictytools/images/logo.gif"></a>
+                                <a href="/discoideum"><img src="/static/dictytools/images/logo.gif"></a>
                             </td>
                             <td colspan="4">
                                 <div id="container-help">
