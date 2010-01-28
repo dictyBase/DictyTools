@@ -27,6 +27,7 @@ sub index {
         primary_id => $self->req->param('primary_id') || undef,
         sequence   => $self->req->param('sequence') || undef,
         no_header  => $self->req->param('noheader') || undef,
+        logo_link  => $app->config->{page}->{logo_link} || "/",
         id_search  => $id_search,
         database_download_url =>
             $app->config->{blast}->{database_download_url} || undef
@@ -82,23 +83,23 @@ sub run {
     $options{v} = $limit  if $limit;
 
     my $report = $app->server->blastall(%options);
-    if ( $report->fault ) {
-        my $email = $app->config->{site_admin_email};
-        $self->render(
-            template => $app->config->{page}->{error},
-            message =>
-                "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.",
-            error  => 1,
-            header => 'Error page',
+    if ( $report->fault || $report->result =~ m{sorry}i || $report->result !~ m{BLAST}) {
+        my $email =
+        '<a href="mailto:'
+        . $app->config->{blast}->{site_admin_email} . '">'
+        . $app->config->{blast}->{site_admin_email} . '</a>';
+        
+        $self->res->headers->content_type('text/plain');
+        $self->res->body(
+            "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters."
         );
         return;
     }
-    my ($report_text) = $report->result();
 
     my $tmp = File::Temp->new( DIR => $self->app->home->rel_dir('public').'/tmp/dictytools/', UNLINK => 0);
     my $filename = $tmp->filename;
 
-    $tmp->print($report_text);
+    $tmp->print($report->result);
     $tmp->close;
     
     $self->res->headers->content_type('text/plain');
@@ -120,6 +121,7 @@ sub report {
         results    => $html_hash->{results},
         parameters => $html_hash->{parameters},
         statistics => $html_hash->{statistics},
+        logo_link  => $app->config->{page}->{logo_link} || "/",
     );
     unlink $self->req->param('report_file');
 }

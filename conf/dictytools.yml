@@ -5,6 +5,7 @@ page:
     header : page-header.tt
     footer : page-footer.tt
     error  : error
+    logo_link : http://192.168.60.10
 
 ## BLAST relates settings
 ## "template" - base BLAST template

@@ -605,3 +605,7 @@ div.padder {
 	height: 100%;
 }
 
+.run-blast-warning img#loader{
+    padding-left : 10px;
+    text-align : bottom;
+}

@@ -475,38 +475,40 @@
             '&filter=' + filter +
             '&sequence=' + fasta);
 
-            YAHOO.log(YAHOO.lang.dump(postData),  'warn');
-
-            resultWindow = window.open();
-            resultWindow.document.write('Please wait for results to be loaded');
-            resultWindow.document.close();
-
+            //YAHOO.log(YAHOO.lang.dump(postData),  'warn');
+            this.warning.innerHTML = '<img id="loader" src="/static/dictytools/images/ajax-loader.gif"/>';
+            Dom.removeClass(this.warning.id, 'hidden');
+            Dom.removeClass(this.warning.id, 'warning');
+                        
             YAHOO.util.Connect.asyncRequest('POST', '/tools/blast/run',
             {
                 success: function(obj) {
                     var results_file = obj.responseText;
-//                    if (results.match('BLAST') && !(results.match('Sorry'))) {
-                        var form =
-                        '<form method="post" name="blast_report" action="/tools/blast/report">' +
-//                          '<textarea name="report" style="display:none;" >' + results + '</textarea></form>';
-                            '<input name="report_file" style="display:none;" value="' + results_file + '"></input>'+
-                        '</form>';
+                    if (results_file.match('Sorry')){
+                        this.warning.innerHTML = results_file;
+                        Dom.addClass(this.warning.id, 'warning');
+                        Dom.removeClass(this.warning.id, 'hidden');
+                    }
+                    else {
+                        Dom.addClass(this.warning.id, 'warning');
+                        Dom.addClass(this.warning.id, 'hidden');
 
+                        var form = '<form method="post" name="blast_report" action="/tools/blast/report">' +
+                            '<input name="report_file" style="display:none;" value="' + results_file + '"></input>'+
+                            '</form>';
+                        resultWindow = window.open();
+                        resultWindow.document.write('Please wait for results to be loaded');            
                         resultWindow.document.write(form);
                         resultWindow.document.close();
-                        resultWindow.document.forms.blast_report.submit();
-//                    }
-//                    else {
-//                        this.warning.innerHTML = results;
-//                        Dom.removeClass(this.warning.id, 'hidden');
-//                        resultWindow.document.write(results);
-//                        resultWindow.document.close();
-//                    }
+                        resultWindow.document.forms.blast_report.submit();                    
+                    }
                 },
                 failure: this.onFailure,
                 scope: this
             },
             postData);
+            
+            
         }
     }
 

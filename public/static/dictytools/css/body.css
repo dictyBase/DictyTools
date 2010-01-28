@@ -102,10 +102,10 @@
     background-color:#ffccbb;
     font-weight     :bold;
     padding         :2px 7px;
-    text-align			:center;
-    margin					:10px auto;
-    padding					:15px;
-    width						:50%;
+    text-align      :center;
+    margin          :10px auto;
+    padding	        :15px;
+    width           :50%;
 }
 .wide{
     padding         :10px 15px;
@@ -140,4 +140,8 @@
 }
 .wrapper a:visited {
 	text-decoration : none;
+}
+#run-blast-warning img#loader{
+    padding-left : 10px;
+    padding-top:7px;
 }
