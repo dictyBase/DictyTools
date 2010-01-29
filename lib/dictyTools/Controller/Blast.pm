@@ -89,7 +89,8 @@ sub run {
         . $app->config->{blast}->{site_admin_email} . '">'
         . $app->config->{blast}->{site_admin_email} . '</a>';
         
-        $app->log->info('report fault code: '.$report->faultcode) if $report->fault;
+        use Data::Dumper;
+        $app->log->info(Dumper($report)) if $report->fault;
         
         my $message = "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
         
