@@ -113,7 +113,8 @@
     width           :95%;
 }
 .hidden {
-    visibility:hidden;
+    /*visibility:hidden;*/
+    display: none;
 }
 #column-center-content h2 {
     color           :#394a6f;

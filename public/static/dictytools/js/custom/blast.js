@@ -475,11 +475,15 @@
             '&filter=' + filter +
             '&sequence=' + fasta);
 
-            //YAHOO.log(YAHOO.lang.dump(postData),  'warn');
-            this.warning.innerHTML = '<img id="loader" src="/static/dictytools/images/ajax-loader.gif"/>';
-            Dom.removeClass(this.warning.id, 'hidden');
-            Dom.removeClass(this.warning.id, 'warning');
-                        
+            //this.warning.innerHTML = '<img id="loader" src="/static/dictytools/images/ajax-loader.gif"/>';
+            //Dom.removeClass(this.warning.id, 'hidden');
+            //Dom.removeClass(this.warning.id, 'warning');
+            
+            
+            resultWindow = window.open();
+            resultWindow.document.write('Please wait for results to be loaded');
+            resultWindow.document.close();
+            
             YAHOO.util.Connect.asyncRequest('POST', '/tools/blast/run',
             {
                 success: function(obj) {
@@ -488,30 +492,35 @@
                         this.warning.innerHTML = results_file;
                         Dom.addClass(this.warning.id, 'warning');
                         Dom.removeClass(this.warning.id, 'hidden');
+                        
+                        resultWindow.document.write(results_file);
+                        resultWindow.document.close();
                     }
                     else {
-                        Dom.addClass(this.warning.id, 'warning');
-                        Dom.addClass(this.warning.id, 'hidden');
-
-                        var form = '<form method="post" name="blast_report" action="/tools/blast/report">' +
-                            '<input name="report_file" style="display:none;" value="' + results_file + '"></input>'+
-                            '</form>';
-                        resultWindow = window.open();
-                        resultWindow.document.write('Please wait for results to be loaded');            
-                        resultWindow.document.write(form);
-                        resultWindow.document.close();
-                        resultWindow.document.forms.blast_report.submit();                    
+                        this.results_file = results_file;
+                        this.renderResultsWindow(resultWindow);
                     }
                 },
                 failure: this.onFailure,
                 scope: this
             },
             postData);
-            
-            
         }
     }
+    
+    YAHOO.Dicty.BLAST.prototype.renderResultsWindow = function(resultWindow) {
+        Dom.addClass(this.warning.id, 'warning');
+        Dom.addClass(this.warning.id, 'hidden');
 
+        var form = '<form method="post" name="blast_report" action="/tools/blast/report">' +
+            '<input name="report_file" style="display:none;" value="' + this.results_file + '"></input>'+
+            '</form>'; 
+          
+        resultWindow.document.write(form);
+        resultWindow.document.close();
+        resultWindow.document.forms.blast_report.submit();         
+    }
+    
     YAHOO.Dicty.BLAST.prototype.runNcbiBlast = function() {
         var valid = this.validateParameters('ncbi-blast');
         if (valid) {
