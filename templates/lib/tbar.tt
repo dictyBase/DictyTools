@@ -102,7 +102,7 @@
                                                 <a class="yuimenubaritemlabel" href="/tools/blast">BLAST</a>
                                             </li>
                                             <li class="yuimenubaritem">
-                                                <a class="yuimenubaritemlabel" href="/downloads">Download</a>
+                                                <a class="yuimenubaritemlabel">Download</a>
                                                 <div id="download" class="yuimenu">
                                                     <div class="bd">
                                                         <ul class="first-of-type">
