@@ -6,18 +6,6 @@
     });
     
     loader.addModule({
-        name: 'fonts-min-css',
-        type: 'css',
-        fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
-    });
-    
-    loader.addModule({
-        name: 'menu-css',
-        type: 'css',
-        fullpath: "/static/dictytools/js/yui/build/menu/assets/skins/sam/menu.css"
-    });
-
-    loader.addModule({
         name: 'header-css',
         type: 'css',
         fullpath: "/static/dictytools/css/header.css"
@@ -28,8 +16,7 @@
         type: 'js',
         fullpath: "/static/dictytools/js/menu.js",
         requires: [
-            'yahoo','container','event', 'menu', 'animation', 
-            'fonts-min-css', 'menu-css', 'header-css',
+            'yahoo', 'menu', 'header-css', 'container','event', 'animation', 
         ]
     });
     loader.require('menu-custom');

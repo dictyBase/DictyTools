@@ -22,8 +22,9 @@ loader.addModule({
     type: 'js',
     fullpath: '/static/dictytools/js/' + custom + 'blast.js',
     requires: [
+    'fonts-min-css', 'blast-css', 'body-css', 
     'yahoo',   'logger', 'event', 'button','connection', 'json',
-    'blast-css', 'body-css', 'fonts-min-css', 
+
     ]
 });
 
