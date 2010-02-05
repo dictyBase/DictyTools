@@ -1,0 +1,126 @@
+ 
+ <script type="text/javascript">
+    var loader = new YAHOO.util.YUILoader({
+        base: '/static/dictytools/js/yui/build/',
+        loadOptional: true,
+    });
+    
+    loader.addModule({
+        name: 'header-css',
+        type: 'css',
+        fullpath: "/static/dictytools/css/header.css"
+    });
+
+    loader.addModule({
+        name: 'menu-custom',
+        type: 'js',
+        fullpath: "/static/dictytools/js/menu.js",
+        requires: [
+            'yahoo', 'menu', 'header-css', 'container','event', 'animation', 
+        ]
+    });
+    loader.require('menu-custom');
+    loader.insert();
+    
+</script> 
+
+<html>
+    <body class="yui-skin-sam">
+        <div id="shadow-container">
+            <div class="shadow">
+                <div id="container-top">
+                    <div id="descriptor">
+                        New Universal Dictyostelid BLAST Server
+                    </div>
+                    <table>
+                        <tr>
+                            <td rowspan="2">
+                                <a href="[% logo_link %]"><img src="/static/dictytools/images/logo.gif"></a>
+                            </td>
+                            <td colspan="4">
+                                <div id="container-help">
+                                    <img src="/static/dictytools/images/help-left.gif">
+                                    <div>
+                                        <a href="/discoideum/db/cgi-bin/dictyBase/suggestion">Contact us</a>
+                                    </div>
+                                    <img src="/static/dictytools/images/help-right.gif">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="menu">
+                            <td>
+                                <img src="/static/dictytools/images/menu-top-left.gif">
+                            </td>
+                            <td>
+                                <div id="menu-top" class="yuimenubar yuimenubarnav">
+                                    <div class="bd">
+                                        <ul class="first-of-type">
+                                            <li class="yuimenubaritem first-of-type">
+                                                <a class="yuimenubaritemlabel">Genomes</a>
+                                                <div id="genomes" class="yuimenu">
+                                                    <div class="bd">
+                                                        <ul class="first-of-type">
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/discoideum">Dictyostelium discoideum</a>
+                                                            </li>                                                            
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum">Dictyostelium purpureum</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="yuimenubaritem">
+                                                <a class="yuimenubaritemlabel">Genome Browser</a>
+                                                <div id="gbrowse" class="yuimenu">
+                                                    <div class="bd">
+                                                        <ul class="first-of-type">
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="http://dictybase.org/db/cgi-bin/ggb/gbrowse/?name=1:1..30000">Dictyostelium discoideum</a>
+                                                            </li>                                                            
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_1:1..30000">Dictyostelium purpureum</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="yuimenubaritem">
+                                                <a class="yuimenubaritemlabel" href="/tools/blast">BLAST</a>
+                                            </li>
+                                            <li class="yuimenubaritem">
+                                                <a class="yuimenubaritemlabel">Download</a>
+                                                <div id="download" class="yuimenu">
+                                                    <div class="bd">
+                                                        <ul class="first-of-type">
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/discoideum/Downloads/">Dictyostelium discoideum</a>
+                                                            </li>                                                             
+                                                            <li class="yuimenuitem">
+                                                                <a class="yuimenuitemlabel" href="/purpureum/downloads/">Dictyostelium purpureum</a>
+                                                            </li>                                                                                                                       
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <img src="/static/dictytools/images/menu-top-right.gif">
+                            </td>
+                            <td style="width:100%;">
+<!--
+                                <form action="/db/cgi-bin/search/search.pl">
+                                    <input name="query" type="text" size="30" value="use * as a wildcard character"> <nobr><input type="submit" name="submit" value="Search All"> <input type="submit" name="genes_only" value="Gene Names Only"></nobr>
+                                </form>
+-->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

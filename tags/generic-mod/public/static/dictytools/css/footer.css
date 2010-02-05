@@ -1,0 +1,20 @@
+/* Footer styles */
+#container-bottom {
+	clear:both;
+	float:left;
+    display     : block;
+    background  : #dfe8f6; /*#e4eafe; #d7e8ff;*/
+    width       : 100%;
+    text-align  : center;
+    color       : #394a6f;
+    font-size   : 93%;
+    line-height : 2em;
+    font-weight : normal;
+    padding-top  : 3em;
+    padding-bottom:1em;
+}
+#container-bottom a{
+    text-decoration : none;
+    color       : #394a6f;
+    padding     : 0 15px;
+}
