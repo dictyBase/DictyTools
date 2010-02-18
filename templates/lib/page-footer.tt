@@ -2,7 +2,7 @@
  <script type="text/javascript">
     var loader = new YAHOO.util.YUILoader({
         base: '/static/dictytools/js/yui/build/',
-        loadOptional: true,
+        loadOptional: true
     });
     
     loader.addModule({
@@ -17,7 +17,6 @@
         type: 'css',
         fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
     });
-    
     
     loader.require('footer-css');
     loader.insert();

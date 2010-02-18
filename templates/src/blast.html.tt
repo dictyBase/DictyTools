@@ -4,51 +4,49 @@ title       = 'dictyBase BLAST Server'
 
 <script type="text/javascript">
 
-var custom = ([%id_search%] == 1) ? 'custom/' : '';
-
-var loader = new YAHOO.util.YUILoader({
-    base: '/static/dictytools/js/yui/build/',
-    loadOptional: true,
-		onSuccess: function() {
+    var custom = ([%id_search%] == 1) ? 'custom/': '';
+    var loader = new YAHOO.util.YUILoader({
+        base: '/static/dictytools/js/yui/build/',
+        loadOptional: true,
+        onSuccess: function() {
             YAHOO.util.Event.onDOMReady(init);
-		},
-		onFailure: function(msg, xhrobj) {
-        alert("Loader sucked, everything failed");
-		}
-});
+        },
+        onFailure: function(msg, xhrobj) {
+            alert("Loader sucked, everything failed");
+        }
+    });
 
-loader.addModule({
-    name: 'blast',
-    type: 'js',
-    fullpath: '/static/dictytools/js/' + custom + 'blast.js',
-    requires: [
-    'fonts-min-css', 'blast-css', 'body-css', 
-    'yahoo',   'logger', 'event', 'button','connection', 'json',
+    loader.addModule({
+        name: 'blast',
+        type: 'js',
+        fullpath: '/static/dictytools/js/' + custom + 'blast.js',
+        requires: [
+        'fonts-min-css', 'blast-css', 'body-css',
+        'yahoo', 'logger', 'event', 'button', 'connection', 'json'
+        ]
+    });
 
-    ]
-});
+    loader.addModule({
+        name: 'blast-css',
+        type: 'css',
+        fullpath: '/static/dictytools/css/blast.css'
+    });
 
-loader.addModule({
-    name: 'blast-css',
-    type: 'css',
-    fullpath: '/static/dictytools/css/blast.css'
-});
+    loader.addModule({
+        name: 'body-css',
+        type: 'css',
+        fullpath: '/static/dictytools/css/body.css'
+    });
 
-loader.addModule({
-    name: 'body-css',
-    type: 'css',
-    fullpath: '/static/dictytools/css/body.css'
-});
+    loader.addModule({
+        name: 'fonts-min-css',
+        type: 'css',
+        fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
+    });
 
-loader.addModule({
-    name: 'fonts-min-css',
-    type: 'css',
-    fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
-});
+    loader.require('blast');
+    loader.insert();
 
-
-loader.require('blast');
-loader.insert();
 </script>
 
 
@@ -165,3 +163,5 @@ loader.insert();
         </form>
     </div>
 </div>
+    </body>
+</html>

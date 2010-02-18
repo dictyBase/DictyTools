@@ -2,7 +2,7 @@
  <script type="text/javascript">
     var loader = new YAHOO.util.YUILoader({
         base: '/static/dictytools/js/yui/build/',
-        loadOptional: true,
+        loadOptional: true
     });
     
     loader.addModule({
@@ -16,7 +16,7 @@
         type: 'js',
         fullpath: "/static/dictytools/js/menu.js",
         requires: [
-            'yahoo', 'menu', 'header-css', 'container','event', 'animation', 
+            'yahoo', 'menu', 'header-css', 'container','event', 'animation' 
         ]
     });
     loader.require('menu-custom');
@@ -110,17 +110,9 @@
                             <td>
                                 <img src="/static/dictytools/images/menu-top-right.gif">
                             </td>
-                            <td style="width:100%;">
-<!--
-                                <form action="/db/cgi-bin/search/search.pl">
-                                    <input name="query" type="text" size="30" value="use * as a wildcard character"> <nobr><input type="submit" name="submit" value="Search All"> <input type="submit" name="genes_only" value="Gene Names Only"></nobr>
-                                </form>
--->
-                            </td>
                         </tr>
                     </table>
                 </div>
             </div>
         </div>
-    </body>
-</html>
+
