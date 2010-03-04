@@ -39,11 +39,6 @@
                             </td>
                             <td colspan="4">
                                 <div id="container-help">
-                                    <img src="/static/dictytools/images/help-left.gif">
-                                    <div>
-                                        <a href="/discoideum/db/cgi-bin/dictyBase/suggestion">Contact us</a>
-                                    </div>
-                                    <img src="/static/dictytools/images/help-right.gif">
                                 </div>
                             </td>
                         </tr>
@@ -110,6 +105,9 @@
                             <td>
                                 <img src="/static/dictytools/images/menu-top-right.gif">
                             </td>
+                            <td id="about_help">
+                                <a href="/db/cgi-bin/dictyBase/suggestion">Contact</a> 
+                            </td>                            
                         </tr>
                     </table>
                 </div>
