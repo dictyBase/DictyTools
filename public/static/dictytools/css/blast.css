@@ -414,7 +414,7 @@ img.dicty-gbrowse-image {
     font-size       :14px;
     color           :black;
     margin          :0 auto;
-    width           :934px;
+    width           :1000px;
     /*margin          :0 0 0 2em;*/
 }
 .blast-content label {
@@ -442,11 +442,11 @@ img.dicty-gbrowse-image {
 }
 #fieldset-id-selection, #fieldset-sequence-selection{
     float           :left;
-    width           :410px;
+    width           :450px;
     height          :190px; 
 }
 .blast-content .blast-selection{
-    width           :58%;
+    width           :50%;
 }
 .blast-content .blast-sequence-selection textarea{
     font-size       :11px;
@@ -470,7 +470,7 @@ img.dicty-gbrowse-image {
     margin          :0;
     padding         :0;
     text-align      :left;
-    width           :11em;
+    width           :14em;
 }
 .blast-content #blast-database-option-info.infobox{
     padding         :2px 7px;
