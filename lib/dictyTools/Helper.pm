@@ -35,7 +35,7 @@ sub blast_report {
         -format => 'blast'
     );
     my $result = $parser->next_result;
-
+    
     my $base_url = $c->req->url->host;
     my $link = $self->app->config->{blast}->{blast_link_out};
     $base_url = $base_url ? 'http://' . $base_url . $link : $link;

@@ -112,6 +112,13 @@ sub report {
     my ( $self, $c ) = @_;
     my $app = $self->app;
     
+    if (!$self->req->param('report_file')) {
+        #my $url = $c->url_for('index',controller => 'blast', action => 'index');
+        $c->res->code(301);
+        $c->res->headers->location('/tools/blast');       
+        return;
+    }
+    
     my $html_hash = $app->helper->blast_report($self->req->param('report_file'),  $c);
     my $graph     = $app->helper->blast_graph($self->req->param('report_file'));
     

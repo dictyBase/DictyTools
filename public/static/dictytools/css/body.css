@@ -284,3 +284,14 @@ td.warning, th.warning {
 tr.sc_alternate  {
 	background-color : #C0C0C0;
 }
+.error-warning {
+    color           :#666666;
+    border          :1px solid #cc0000;
+    background-color:#ffccbb;
+    font-weight     :bold;
+    padding         :2px 7px;
+    text-align      :center;
+    margin          :10px auto;
+    padding	        :15px;
+    width           :50%;
+}
