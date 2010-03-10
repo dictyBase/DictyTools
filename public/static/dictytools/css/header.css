@@ -122,13 +122,13 @@ body {
     border          :1px solid #808080;
 }
 #descriptor {
-color:#A7221E;
-font-size:20px;
-font-style:italic;
-left:100px;
-position:absolute;
-top:25px;
-z-index:1;
+    font-style      :italic; 
+    color           :#394a6f;
+    font-size       :14px;
+    position        :absolute; 
+    left            :50px; 
+    top             :20px; 
+    z-index         :1; 
 }
 #about_help a{
     padding-left: 5px;
