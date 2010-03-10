@@ -49,7 +49,6 @@ title       = 'dictyBase BLAST Server'
 
 </script>
 
-
 <div class="dicty-content">
     <div class="blast-content yui-skin-sam">
         <form id="blast-form">

@@ -96,9 +96,9 @@ sub blast_graph {
 
     my $panel = Bio::Graphics::Panel->new(
         -length    => $result->query_length,
-        -width     => 750,
-        -pad_left  => 10,
-        -pad_right => 10,
+        -width     => 720,
+        -pad_left  => 5,
+        -pad_right => 5,
     );
     my $full_length = Bio::SeqFeature::Generic->new(
         -start        => 1,
@@ -119,6 +119,7 @@ sub blast_graph {
         -connector => 'dashed',
         -bgcolor   => 'blue',
         -height    => '5',
+#        -bump_limit => 5,
     );
 
     while ( my $hit = $result->next_hit ) {

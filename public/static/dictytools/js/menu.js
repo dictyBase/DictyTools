@@ -156,7 +156,7 @@ function() {
                     to: 0
                 }
             },
-            .5, YAHOO.util.Easing.easeOut);
+            .0, YAHOO.util.Easing.easeOut);
             oAnim.onStart.subscribe(function() {
                 oShadow.style.height = "100%";
             });
@@ -196,6 +196,7 @@ function() {
     var oMenuBar = new YAHOO.widget.MenuBar("menu-top", {
         autosubmenudisplay: true,
         hidedelay: 750,
+        showdelay:0,
         lazyload: true
     });
 
