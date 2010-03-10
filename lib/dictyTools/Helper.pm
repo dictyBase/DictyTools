@@ -124,7 +124,7 @@ sub blast_graph {
     while ( my $hit = $result->next_hit ) {
         my $feature = Bio::SeqFeature::Generic->new(
             -score        => $hit->raw_score,
-            -display_name => ( ( split( /\|/, $hit->name ) )[0] ),
+            -display_name => ( ( split( /\|/, $hit->name ) )[1] ),
         );
         while ( my $hsp = $hit->next_hsp ) {
             $feature->add_sub_SeqFeature( $hsp, 'EXPAND' );
