@@ -255,7 +255,8 @@ sub add_bioperl {
 
     my @subfeatures = @{ $self->subfeatures($feature) };
     my @exon_feats = grep { $_->type_id->name eq 'exon' } @subfeatures;
-
+    @exon_feats = grep { $_->type_id->name eq 'CDS' } @subfeatures if !@exon_feats; ## just in case
+    
     my @exons;
     foreach my $exon_feat (@exon_feats) {
         my $location = Chado::Featureloc->get_single_row(
@@ -267,7 +268,6 @@ sub add_bioperl {
             -end    => $location->fmax,
             -strand => $location->strand()
         );
-
         push @exons, $exon;
     }
 
@@ -314,6 +314,11 @@ sub calculate_spliced_transcript {
     return $seq;
 }
 
+sub calculate_dna_coding_sequence {
+    my ( $self, $feature ) = @_; 
+    return $self->calculate_spliced_transcript($feature);
+}
+
 sub calculate_genomic {
     my ( $self, $feature ) = @_;
 
@@ -347,7 +352,11 @@ sub calculate_genomic {
         : $feature->{bioperl}
         ->entire_seq->trunc( $genomic_start, $genomic_end )->revcom;
     return $seq->seq;
+}
 
+sub calculate_genomic_dna {
+    my ( $self, $feature ) = @_;
+    return $self->calculate_genomic($feature);
 }
 
 sub calculate_pseudogene {
