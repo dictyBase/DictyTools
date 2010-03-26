@@ -2,7 +2,8 @@
     YAHOO.namespace('Dicty');
     var Dom = YAHOO.util.Dom;
     var Event = YAHOO.util.Event;
-
+    var pasteYourSeq = 'Type or paste a query sequence here ......';
+    
     YAHOO.Dicty.BLAST = function() {
         // var logger = new YAHOO.widget.LogReader();
     };
@@ -262,13 +263,14 @@
             type: 'button',
             onclick: {
                 fn: function() {
-                    this.sequenceInput.value = 'Paste your sequence here ......';
+                    this.sequenceInput.value = pasteYourSeq;
                     this.renderPrograms();
                     this.renderDatabases();
                     this.initParameters();
                     Dom.addClass(this.blastProgramInfo, 'hidden');
                     Dom.addClass(this.blastDatabaseInfo, 'hidden');
                     Dom.addClass(this.warning, 'hidden');
+                    Dom.removeClass(this.sequenceInput, 'warning')
 /*                    
                     this.blastQueryID.value = '';
                     Dom.addClass(Dom.getAncestorByTagName(this.blastFeatureDropDown, 'div'), 'hidden');
@@ -350,7 +352,7 @@
             Dom.addClass(obj.blastIDInputInfo.id, 'hidden');
 
             obj.blastIDInputInfo.innerHTML = '';
-            obj.sequenceInput.value = 'Paste your sequence here ...';
+            obj.sequenceInput.value = pasteYourSeq;
             obj.translate(obj.blastQueryID.value);
         },
         this);
@@ -377,7 +379,7 @@
                 
                 if (type == 'unselected') {
                     // --- clean up all filters//selections done based on sequence type ---
-                    obj.sequenceInput.value = 'Paste your sequence here ......';
+                    obj.sequenceInput.value = pasteYourSeq;
                     obj.renderPrograms();
                     obj.renderDatabases();
                     return;
@@ -553,7 +555,7 @@
 
     YAHOO.Dicty.BLAST.prototype.validateParameters = function(blastType) {
         if (this.sequenceInput.value.match('paste') || this.sequenceInput.value.match('wait') || this.sequenceInput.value === '') {
-            this.sequenceInput.value = 'Type or paste a query sequence here ......';
+            this.sequenceInput.value = pasteYourSeq;
             Dom.addClass(this.sequenceInput.id, 'warning');
             return false;
         }
