@@ -552,8 +552,8 @@
     }
 
     YAHOO.Dicty.BLAST.prototype.validateParameters = function(blastType) {
-        if (this.sequenceInput.value.match('Paste') || this.sequenceInput.value.match('wait') || this.sequenceInput.value === '') {
-            this.sequenceInput.value = 'Please type or paste a query sequence here';
+        if (this.sequenceInput.value.match('paste') || this.sequenceInput.value.match('wait') || this.sequenceInput.value === '') {
+            this.sequenceInput.value = 'Type or paste a query sequence here ......';
             Dom.addClass(this.sequenceInput.id, 'warning');
             return false;
         }

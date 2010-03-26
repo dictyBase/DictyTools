@@ -56,7 +56,7 @@ title       = 'dictyBase BLAST Server'
                 <legend>Query Sequence</legend> 
                 <div class="blast-sequence-selection column">
 		            <label for="blast-sequence"> Enter query sequence in FASTA format</label>
-		            <textarea id="blast-sequence" name="blast-sequence" cols="61" rows="10">Paste your sequence here  ......</textarea>
+		            <textarea id="blast-sequence" name="blast-sequence" cols="61" rows="10">Type or paste a query sequence here ......</textarea>
 		        </div>		
 		    </fieldset>        
             [% IF id_search %]
