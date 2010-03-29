@@ -20,7 +20,7 @@ loader.addModule({
 loader.addModule({
     name: 'blast_css',
     type: 'css',
-    fullpath: '/static/dictytools/css/blast.css'
+    fullpath: '/static/dictytools/css/blast_v1.css'
 });
 
 loader.addModule({

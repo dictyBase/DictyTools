@@ -29,7 +29,7 @@ title       = 'dictyBase BLAST Server'
     loader.addModule({
         name: 'blast-css',
         type: 'css',
-        fullpath: '/static/dictytools/css/blast.css'
+        fullpath: '/static/dictytools/css/blast_v1.css'
     });
 
     loader.addModule({
