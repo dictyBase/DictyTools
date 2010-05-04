@@ -1,4 +1,7 @@
 /* BLAST part */
+body{
+    margin : 0;
+}
 .blast-content{
     /*border-spacing  :0px;*/
     font-size       :14px;
