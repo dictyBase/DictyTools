@@ -66,7 +66,10 @@ sub startup {
     $bridge->route('/run')
         ->to( controller => 'blast', action => 'run', format => 'text' );
 
-    $bridge->route('/report')
+    $bridge->route('/report/')
+        ->to( controller => 'blast', action => 'report', format => 'html' );
+
+    $bridge->route('/report/:id')
         ->to( controller => 'blast', action => 'report', format => 'html' );
 
     ## -- Organism

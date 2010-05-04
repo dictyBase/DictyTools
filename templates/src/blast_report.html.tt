@@ -13,7 +13,7 @@ loader.addModule({
     type: 'js',
     fullpath: '/inc/js/custom/blast.js',
     requires: [
-    'yahoo',  'logger', 'event', 'blast_css', 'body_css', 'button','connection'
+    'yahoo',  'logger', 'event', 'blast_css', 'body_css', 'button','connection', 'fonts-min-css'
     ]
 });
 
@@ -40,6 +40,12 @@ loader.addModule({
     type: 'js',
     fullpath: '/inc/js/yui/plugins/tooltips/tooltips-min.js',
     requires: ['bubbling']
+});
+
+loader.addModule({
+    name: 'fonts-min-css',
+    type: 'css',
+    fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
 });
 
 loader.require('blast');

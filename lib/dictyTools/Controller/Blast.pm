@@ -98,11 +98,16 @@ sub run {
         return;
     }
 
-    my $tmp = File::Temp->new( DIR => $self->app->home->rel_dir('public').'/tmp/dictytools/', UNLINK => 0);
-    my $filename = $tmp->filename;
-
+    my $dir = $self->app->home->rel_dir('public').$self->app->config->{blast}->{tmp_folder};
+    my $tmp = File::Temp->new( 
+        DIR => $dir, 
+        UNLINK => 0);
+    
     $tmp->print($report->result);
     $tmp->close;
+    
+    my $filename = $tmp->filename;
+    $filename =~ s{$dir}{};
     
     $self->res->headers->content_type('text/plain');
     $self->res->body( $filename );
@@ -112,15 +117,17 @@ sub report {
     my ( $self, $c ) = @_;
     my $app = $self->app;
     
-    if (!$self->req->param('report_file')) {
-        #my $url = $c->url_for('index',controller => 'blast', action => 'index');
+    my $file = $self->stash('id') || $self->req->param('report_file');
+    
+    if (!$file) {
         $c->res->code(301);
         $c->res->headers->location('/tools/blast');       
         return;
     }
+    my $dir = $self->app->home->rel_dir('public').$self->app->config->{blast}->{tmp_folder};
     
-    my $html_hash = $app->helper->blast_report($self->req->param('report_file'),  $c);
-    my $graph     = $app->helper->blast_graph($self->req->param('report_file'));
+    my $html_hash = $app->helper->blast_report(catfile($dir, $file),  $c);
+    my $graph     = $app->helper->blast_graph(catfile($dir, $file));
     
     $self->render(
         template   => $self->app->config->{blast}->{report_template},
@@ -131,8 +138,9 @@ sub report {
         parameters => $html_hash->{parameters},
         statistics => $html_hash->{statistics},
         logo_link  => $app->config->{page}->{logo_link} || "/",
+        no_header  => $self->req->param('noheader') || undef
     );
-    unlink $self->req->param('report_file');
+    unlink catfile($dir, $file);
 }
 
 1;

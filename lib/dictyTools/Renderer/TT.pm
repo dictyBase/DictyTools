@@ -37,7 +37,7 @@ sub build {
 
     my $dir    = dir $path;
     my $subdir = [ map { $_->stringify } grep { -d $_ } $dir->children ];
-    my $option = $self->option || '';
+    my $option = $self->option || {};
     $option->{INCLUDE_PATH} = $subdir;
     $option->{CACHE_SIZE}   = 128;
     $option->{COMPILE_EXT}  = '.ttc';
