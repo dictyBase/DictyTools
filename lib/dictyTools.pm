@@ -173,13 +173,13 @@ sub set_connection {
 
     my ( $programs, $databases );
 
-    eval { ( $programs, $databases ) = @{ $blast_server->config->result }; };
+    eval { ( $programs, $databases ) = @{ $blast_server->config->result } };
     if ($@) {
         $self->log->warn(
             "Could not establish connection to BLAST server: $@");
         return;
     }
-
+    @$databases = grep {$_->{private} ne 1 } @$databases;
     $self->server($blast_server);
     $self->programs($programs);
     $self->databases($databases);

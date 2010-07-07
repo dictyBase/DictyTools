@@ -140,7 +140,7 @@ sub report {
         logo_link  => $app->config->{page}->{logo_link} || "/",
         no_header  => $self->req->param('noheader') || undef
     );
-    unlink catfile($dir, $file);
+    #unlink catfile($dir, $file);
 }
 
 1;
