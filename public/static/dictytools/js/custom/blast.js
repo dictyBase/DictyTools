@@ -5,7 +5,7 @@
     var pasteYourSeq = 'Type or paste a query sequence here ......';
     
     YAHOO.Dicty.BLAST = function() {
-        // var logger = new YAHOO.widget.LogReader();
+        //var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -16,6 +16,7 @@
         this.blastProgramInfo = Dom.get('blast-program-option-info');
         this.blastDatabaseDropDown = Dom.get('blast-database-option');
         this.blastDatabaseInfo = Dom.get('blast-database-option-info');
+        this.blastOrganismDropDown = Dom.get('blast-organism-option');
         
         /* --- CUSTOM PART--- */        
         this.blastFeatureDropDown = Dom.get('blast-feature-option');
@@ -64,7 +65,6 @@
                 try {
                     result = YAHOO.lang.JSON.parse(obj.responseText);
                     this.databases = result;
-                    this.renderDatabases();
                 }
                 catch(e) {
                     this.warning.innerHTML = 'Cannot fetch available databases';
@@ -83,7 +83,8 @@
                 try {
                     result = YAHOO.lang.JSON.parse(obj.responseText);
                     this.organisms = result;
-                    
+                    this.renderOrganisms();
+                    this.renderDatabases();
                     // --- if query id is already set, start search ---
                     if (this.blastQueryID.value !== ''){
                         this.translate(this.blastQueryID.value);
@@ -132,22 +133,59 @@
     YAHOO.Dicty.BLAST.prototype.renderDatabases = function(filter) {
         var options = new Array(),
         values = new Array(),
-        databases = this.databases;
+        databases = this.databases,
+        programs = this.programs,
+        type;
 
-        filter = filter || '';
+//        filter = filter || '';
+//        if (filter.match('unselected')){
+//            filter = '';
+//        }
+        var selectedIndex = this.blastProgramDropDown.selectedIndex;
+        for (i in programs) {
+            if (programs[i].name == this.blastProgramDropDown[selectedIndex].value) {
+                type = programs[i].database_type;
+                continue;
+            }
+        }
+        if (!type || type.match('unselected')){
+            type = '';
+        } 
+        
+        var organism = this.blastOrganismDropDown.options[this.blastOrganismDropDown.selectedIndex].value;
+        if (organism.match('unselected')){
+            organism = '';
+        }
 
+//        YAHOO.log(type,'error');
         options.push('-- Please Select a Database --');
         values.push('unselected');
 
         for (i in databases) {
-            if (databases[i].type.match(filter)) {
+            if (databases[i].type.match(type) && databases[i].desc.match(organism)) {
                 options.push(databases[i].desc + ' - ' + databases[i].type);
                 values.push(databases[i].name);
             }
         }
         this.initDropdown(this.blastDatabaseDropDown, options, values);
     }
+    
+    YAHOO.Dicty.BLAST.prototype.renderOrganisms = function() {
+        var options = new Array(),
+        values = new Array(),
+        organisms = this.organisms;
 
+        options.push('-- Please Select an Organism --');
+        values.push('unselected');
+
+        for (i in organisms) {
+            options.push(organisms[i].genus + ' ' + organisms[i].species);
+            values.push(organisms[i].species);
+        }
+        this.initDropdown(this.blastOrganismDropDown, options, values);
+        this.selectDropdownValue(this.blastOrganismDropDown, 'discoideum');
+    }
+    
     /* --- CUSTOM PART--- */  
     YAHOO.Dicty.BLAST.prototype.renderFeatureDropDown = function(data) {
         Dom.addClass(this.blastIDInputInfo.id, 'hidden');
@@ -265,6 +303,7 @@
                 fn: function() {
                     this.sequenceInput.value = pasteYourSeq;
                     this.renderPrograms();
+                    this.renderOrganisms();
                     this.renderDatabases();
                     this.initParameters();
                     Dom.addClass(this.blastProgramInfo, 'hidden');
@@ -306,7 +345,7 @@
 
     YAHOO.Dicty.BLAST.prototype.selectDropdownValue = function(el, value) {
         var selectedIndex = 0;
-        YAHOO.log(el.id + value, 'warn');
+        //YAHOO.log(el.id + value, 'warn');
         for (var i = 0; i < el.options.length; i++) {
             if (el.item(i).value == value) {
                 selectedIndex = i;
@@ -342,6 +381,22 @@
         /* --- On BLAST program change, rest of parameters have to be ajusted --- */
         YAHOO.util.Event.addListener(this.blastProgramDropDown, 'change', this.onProgramChange, this);
         
+        /* --- on organism change filter database list --- */
+        YAHOO.util.Event.addListener(this.blastOrganismDropDown, 'change',
+        function(e, obj) {
+           //var filter = obj.blastOrganismDropDown.options[obj.blastOrganismDropDown.selectedIndex].value;
+           obj.renderDatabases();
+        },
+        this);
+        
+        /* --- Warning hiding --- */
+        YAHOO.util.Event.addListener(this.blastDatabaseDropDown, 'change',
+        function(e, obj) {
+            Dom.addClass(obj.blastDatabaseInfo.id, 'hidden');
+        },
+        this);
+        
+
         /* --- CUSTOM PART--- */          
         /* --- Searching by id --- */
         YAHOO.util.Event.addListener('submit-primary-id', 'click',
@@ -395,20 +450,12 @@
                 
                 var defaultValue = defaultProgram == 'blastn' ? '11': '3';
                 obj.selectDropdownValue(obj.wordSizeDropDown, defaultValue);
-                YAHOO.log('here','error');
+                //YAHOO.log('here','error');
                 obj.requestSequence(id,type);
+                obj.renderDatabases();
         },
         this);
-        /* --- END OF CUSTOM PART--- */ 
-         
-        /* --- Warning hiding --- */
-        YAHOO.util.Event.addListener(this.blastDatabaseDropDown, 'change',
-        function(e, obj) {
-            Dom.addClass(obj.blastDatabaseInfo.id, 'hidden');
-        },
-        this);
-        
-        /* --- CUSTOM PART--- */  
+
         YAHOO.util.Event.addListener(this.blastProgramDropDown, 'change',
         function(e, obj) {
             Dom.addClass(obj.blastProgramInfo.id, 'hidden');
@@ -420,11 +467,15 @@
     YAHOO.Dicty.BLAST.prototype.onProgramChange = function(e, obj) {
         /* --- If "unselected" value selected, render all available databases --- */
         var selectedIndex = obj.blastProgramDropDown.selectedIndex;
+/*
         if (selectedIndex === 0) {
+            obj.renderOrganisms();
             obj.renderDatabases();
             return;
         }
+*/
         /* --- Filter databases based on database type allowed for selected program --- */
+/*
         var programs = obj.programs,
         databaseType;
 
@@ -436,7 +487,8 @@
         }
         obj.renderDatabases(databaseType);
         obj.selectDropdownValue(obj.blastDatabaseDropDown, 'unselected');
-
+*/      
+        obj.renderDatabases();
         /* --- Set program dependent default algorithm parameters --- */
         defaultValue = obj.blastProgramDropDown[selectedIndex].value == 'blastn' ? '11': '3';
         obj.selectDropdownValue(obj.wordSizeDropDown, defaultValue);
@@ -580,10 +632,10 @@
         request;
 
         for (i in this.organisms) {
-            if (queryID.match(this.organisms[i].IDENTIFIER_PREFIX + '_G')) {
-                postData = 'from=' + 'gene' + '&to=' + 'features' + '&ids=' + queryID + '&organism=' + this.organisms[i].SPECIES;
+            if (queryID.match(this.organisms[i].identifier_prefix + '_G')) {
+                postData = 'from=' + 'gene' + '&to=' + 'features' + '&ids=' + queryID + '&organism=' + this.organisms[i].species;
                 
-                YAHOO.log(postData, 'error');
+                //YAHOO.log(postData, 'error');
                 
                 request = YAHOO.util.Connect.asyncRequest('POST', '/converter',
                 {
@@ -604,8 +656,8 @@
                 postData);
                 break;
             }
-            else if (queryID.match(this.organisms[i].IDENTIFIER_PREFIX)) {
-                postData = 'from=' + 'feature' + '&to=' + 'seqtypes' + '&ids=' + queryID + '&organism=' + this.organisms[i].SPECIES;
+            else if (queryID.match(this.organisms[i].identifier_prefix)) {
+                postData = 'from=' + 'feature' + '&to=' + 'seqtypes' + '&ids=' + queryID + '&organism=' + this.organisms[i].species;
                 request = YAHOO.util.Connect.asyncRequest('POST', '/converter',
                 {
                     success: function(obj) {
@@ -634,10 +686,11 @@
 
     YAHOO.Dicty.BLAST.prototype.requestSequence = function(id, type) {
         this.sequenceInput.value = 'Please wait for the sequence to be populated...';
+//        YAHOO.log(this.organisms, 'error');
         //--- contains hardcoded site name ---
         for (i in this.organisms) {
-            if (id.match(this.organisms[i].IDENTIFIER_PREFIX)) {
-                var postData = 'id=' + id + '&type=' + type  + '&organism=' + this.organisms[i].SPECIES;
+            if (id.match(this.organisms[i].identifier_prefix)) {
+                var postData = 'id=' + id + '&type=' + type  + '&organism=' + this.organisms[i].species;
                 var request = YAHOO.util.Connect.asyncRequest('POST', '/fasta', 
                 {
                     success: function(obj) {

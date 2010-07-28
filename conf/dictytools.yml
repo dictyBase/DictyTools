@@ -6,7 +6,7 @@ page:
     footer : page-footer.tt
     error  : error
     logo_link : http://192.168.60.10
-
+    
 ## BLAST relates settings
 ## "template" - base BLAST template
 ## "report_template" - BLAST report template           
@@ -28,7 +28,7 @@ blast:
 organism:
     discoideum:
         taxon_id : 44689
-        genus : dictyostelium
+        genus : Dictyostelium
         species : discoideum
         identifier_prefix : DDB
         site_url : http://192.168.60.10
@@ -38,7 +38,14 @@ organism:
         password : CGM_CHADO
     purpureum:
         taxon_id : 5786
-        genus : dictyostelium
+        genus : Dictyostelium
         species : purpureum
         identifier_prefix : DPU
-        
+    fasciculatum:
+        taxon_id : 261658
+        genus : Dictyostelium
+        species : fasciculatum
+    pallidum:
+        taxon_id : 13642
+        genus : Polysphondylium
+        species : pallidum
