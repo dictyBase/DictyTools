@@ -29,7 +29,7 @@ title       = 'dictyBase BLAST Server'
     loader.addModule({
         name: 'blast-css',
         type: 'css',
-        fullpath: '/static/dictytools/css/blast_v1.css'
+        fullpath: '/static/dictytools/css/blast.css'
     });
 
     loader.addModule({
@@ -88,7 +88,7 @@ title       = 'dictyBase BLAST Server'
                 <legend>BLAST Program</legend> 
                 <div class="blast-input-row">
                     <div class="column">
-                        <label for="blast-program-option">Select Program</label>
+                        <label class="separated-label" for="blast-program-option">Select Program</label>
                         <select id="blast-program-option">
                             <option></option>
 		                </select>
@@ -101,17 +101,23 @@ title       = 'dictyBase BLAST Server'
 	            <div class="info">New: you can now search either <i>D. discoideum</i> or <i>D. purpureum</i></div>
 	            <div class="blast-input-row">
 	                <div class="column">
-	                <label for="blast-database-option">Select Database</label> 
+	                    <label class="separated-label" for="blast-organism-option">Select Organism</label> 
+                        <select id="blast-organism-option">
+                            <option></option>
+	    	            </select><br/>
+	                    <label class="separated-label" for="blast-database-option">Select Database</label> 
                         <select id="blast-database-option">
                             <option></option>
 	    	            </select>
                     </div>
+                    <div class="column">
+		                <div id="blast-database-option-i" class="infobox" style="float:none;">
+		                    [% IF database_download_url %]
+		                        You can <a href="[%database_download_url%]" target="_blank">download</a> all the sequences 
+		                        [% END %]
+		                    </div>
 		            <div id="blast-database-option-info" class="warning hidden">Please select a database</div>
-		            <div id="blast-database-option-i" class="infobox">
-		                [% IF database_download_url %]
-		                    You can <a href="[%database_download_url%]" target="_blank">download</a> all the sequences 
-		                [% END %]
-		            </div>
+                    </div>
 		        </div>
 	        </fieldset>
 		    <fieldset style="clear:both;">
