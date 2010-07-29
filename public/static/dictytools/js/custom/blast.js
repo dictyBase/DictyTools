@@ -5,7 +5,7 @@
     var pasteYourSeq = 'Type or paste a query sequence here ......';
     
     YAHOO.Dicty.BLAST = function() {
-        var logger = new YAHOO.widget.LogReader();
+        //var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
