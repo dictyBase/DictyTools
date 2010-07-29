@@ -5,7 +5,7 @@
     var pasteYourSeq = 'Type or paste a query sequence here ......';
     
     YAHOO.Dicty.BLAST = function() {
-        //var logger = new YAHOO.widget.LogReader();
+        var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -156,16 +156,16 @@
         if (organism.match('unselected')){
             organism = '';
         }
-
-//        YAHOO.log(type,'error');
-        options.push('-- Please Select a Database --');
-        values.push('unselected');
-
+    
         for (i in databases) {
             if (databases[i].type.match(type) && databases[i].desc.match(organism)) {
                 options.push(databases[i].desc + ' - ' + databases[i].type);
                 values.push(databases[i].name);
             }
+        }
+        if (options.length > 1){
+            options.unshift('-- Please Select a Database --');
+            values.unshift('unselected');
         }
         this.initDropdown(this.blastDatabaseDropDown, options, values);
     }
@@ -178,7 +178,15 @@
         options.push('-- Please Select an Organism --');
         values.push('unselected');
 
-        for (i in organisms) {
+        function compareOrganisms(a, b) {
+            var nameA = a.genus + ' ' + a.species;
+            var nameB = b.genus + ' ' + b.species;
+            if (nameA < nameB) {return -1}
+            if (nameA > nameB) {return 1}
+            return 0;
+        }
+
+        for (i in organisms.sort(compareOrganisms)) {
             options.push(organisms[i].genus + ' ' + organisms[i].species);
             values.push(organisms[i].species);
         }
@@ -340,7 +348,9 @@
             }
             el.options[el.options.length] = new Option(options[i], values[i]);
         }
-        el[selectedIndex].selected = true;
+        if (el[selectedIndex] != null){
+            el[selectedIndex].selected = true;
+        }
     }
 
     YAHOO.Dicty.BLAST.prototype.selectDropdownValue = function(el, value) {
