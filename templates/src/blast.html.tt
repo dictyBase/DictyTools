@@ -98,7 +98,7 @@ title       = 'dictyBase BLAST Server'
             </fieldset>
 	        <fieldset>
 	            <legend>BLAST Database </legend> 
-	            <div class="info">New: you can now search either <i>D. discoideum</i> or <i>D. purpureum</i></div>
+	            <div class="info">New: you can now search <i>D. discoideum</i> and three other species</i></div>
 	            <div class="blast-input-row">
 	                <div class="column">
 	                    <label class="separated-label" for="blast-organism-option">Select Organism</label> 

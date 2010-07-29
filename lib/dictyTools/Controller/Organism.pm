@@ -11,7 +11,8 @@ sub index {
     #my $organism = $conf->obj('ORGANISMS')->value('ORGANISM');
     #now rendering
     my $organism = $self->app->config->{organism};
-    $self->render( handler => 'json', data => $organism );
+    my @data = map { $organism->{$_}} keys %$organism;
+    $self->render( handler => 'json', data => \@data );
 }
 
 1;
