@@ -248,7 +248,7 @@
                 
                 var defaultProgram = prefilledSequence.match('Protein') ? 'blastp': 'blastn';
                 this.selectDropdownValue(this.blastProgramDropDown, defaultProgram);
-                
+                this.renderDatabases();
                 //var defaultDatabase =
                 //prefilledSequence.match('Genomic') ? 'dictyBase Genomic Sequences - DNA':
                 //prefilledSequence.match('coding') || prefilledSequence.match('transcript') ? 'dictyBase Coding Sequences - DNA': 'unselected';
