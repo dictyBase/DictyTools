@@ -195,8 +195,8 @@ sub get_header {
     my $location = Chado::Featureloc->get_single_row(
         feature_id => $feature->feature_id );
 
-    my $ref_feat = Chado::Feature->get_single_row(
-        feature_id => $location->srcfeature->feature_id );
+    my $ref_feat = $location ? Chado::Feature->get_single_row(
+        feature_id => $location->srcfeature->feature_id ) : undef;
 
     my ($gene)
         = map { Chado::Feature->get_single_row( feature_id => $_->id ) }
