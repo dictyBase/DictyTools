@@ -179,15 +179,19 @@
         values.push('unselected');
 
         function compareOrganisms(a, b) {
-            var nameA = a.genus + ' ' + a.species;
-            var nameB = b.genus + ' ' + b.species;
+            var genusA = a.genus || '', 
+                genusB = b.genus || '',
+                nameA = genusA + ' ' + a.species,
+                nameB = genusB + ' ' + b.species;
+                
             if (nameA < nameB) {return -1}
             if (nameA > nameB) {return 1}
             return 0;
         }
 
         for (i in organisms.sort(compareOrganisms)) {
-            options.push(organisms[i].genus + ' ' + organisms[i].species);
+            var genus = organisms[i].genus ? organisms[i].genus : '';
+            options.push( genus + ' ' + organisms[i].species);
             values.push(organisms[i].species);
         }
         this.initDropdown(this.blastOrganismDropDown, options, values);

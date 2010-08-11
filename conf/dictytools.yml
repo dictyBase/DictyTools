@@ -49,3 +49,7 @@ organism:
         taxon_id : 13642
         genus : Polysphondylium
         species : pallidum
+    all:
+        species : All
+
+    
