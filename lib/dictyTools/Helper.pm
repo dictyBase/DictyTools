@@ -124,7 +124,11 @@ sub blast_graph {
 
     while ( my $hit = $result->next_hit ) {
         my @display_names = split( /\|/, $hit->name );
-        my $display_name = $display_names[1] || $display_names[0];
+        my $display_name;
+        foreach my $name (@display_names){
+            $display_name = $name if $name =~ m{_};
+        }
+        my $display_name = $display_name || $display_names[0];
         my $feature = Bio::SeqFeature::Generic->new(
             -score        => $hit->raw_score,
             -display_name => ( $display_name )
