@@ -179,7 +179,7 @@ sub set_connection {
             "Could not establish connection to BLAST server: $@");
         return;
     }
-    @$databases = grep {$_->{private} ne 1 } @$databases;
+    #@$databases = grep {$_->{private} && $_->{private} ne 1 } @$databases;
     $self->server($blast_server);
     $self->programs($programs);
     $self->databases($databases);
