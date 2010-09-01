@@ -29,7 +29,7 @@ title       = 'dictyBase BLAST Server'
     loader.addModule({
         name: 'blast-css',
         type: 'css',
-        fullpath: '/static/dictytools/css/blast.css'
+        fullpath: '/static/dictytools/css/blast_1.css'
     });
 
     loader.addModule({
@@ -72,7 +72,7 @@ title       = 'dictyBase BLAST Server'
                                 <input id="submit-primary-id" type="button" value="Search"/>
                             </div>    
                         </div>
-                        <div class="blast-input-row hidden">
+                        <div class="blast-input-row hidden" style="float:none;">
                             <label class="separated-label" for="blast-feature-option">Select Sequence</label>
                             <select id="blast-feature-option" class="blast-selection"><option></option></select>
 		                </div>
