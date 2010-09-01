@@ -19,7 +19,7 @@ title       = 'dictyBase BLAST Server'
     loader.addModule({
         name: 'blast',
         type: 'js',
-        fullpath: '/static/dictytools/js/' + custom + 'blast.js',
+        fullpath: '/static/dictytools/js/' + custom + 'blast_1.js',
         requires: [
         'fonts-min-css', 'blast-css', 'body-css',
         'yahoo', 'logger', 'event', 'button', 'connection', 'json'
@@ -67,7 +67,7 @@ title       = 'dictyBase BLAST Server'
                         <div class="blast-input-row">
                             <label class="separated-label" for="query-primary-id">Enter gene or gene model ID</label>
                             (e.g.: DDB_G0275689, DDB0214814)
-                            <div class="blast-input">
+                            <div class="blast-input" style="float:none;">
                                 <input id="query-primary-id" value="[% primary_id %]"/>
                                 <input id="submit-primary-id" type="button" value="Search"/>
                             </div>    

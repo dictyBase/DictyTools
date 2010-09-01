@@ -5,7 +5,7 @@
     var pasteYourSeq = 'Type or paste a query sequence here ......';
     
     YAHOO.Dicty.BLAST = function() {
-        //var logger = new YAHOO.widget.LogReader();
+        var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -202,6 +202,7 @@
     YAHOO.Dicty.BLAST.prototype.renderFeatureDropDown = function(data) {
         Dom.addClass(this.blastIDInputInfo.id, 'hidden');
         var el = this.blastFeatureDropDown;
+        
         el.options.length = 0;
         if (data.length == 1) {
             el.options[el.options.length] = new Option(data[0].id + ' - ' + data[0].description, data[0].id);
@@ -646,10 +647,10 @@
         request;
 
         for (i in this.organisms) {
-            if (queryID.match(this.organisms[i].identifier_prefix + '_G')) {
+            if (this.organisms[i].identifier_prefix == undefined) { continue; }
+            
+                if (queryID.match(this.organisms[i].identifier_prefix + '_G')) {
                 postData = 'from=' + 'gene' + '&to=' + 'features' + '&ids=' + queryID + '&organism=' + this.organisms[i].species;
-                
-                //YAHOO.log(postData, 'error');
                 
                 request = YAHOO.util.Connect.asyncRequest('POST', '/converter',
                 {
