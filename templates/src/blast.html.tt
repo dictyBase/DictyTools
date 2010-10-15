@@ -51,7 +51,7 @@ title       = 'dictyBase BLAST Server'
 
 <div class="dicty-content">
     <div class="blast-content yui-skin-sam">
-        <form id="blast-form">
+        <form id="blast-form" action="/tools/blast/run" enctype="multipart/form-data" method="post">
             <fieldset id="fieldset-id-selection">
                 <legend>Query Sequence</legend> 
                 <div class="blast-sequence-selection column">
@@ -124,7 +124,8 @@ title       = 'dictyBase BLAST Server'
 		        <div class="column">
                     <span id="run-blast-button"></span> 
                     <span id="reset-blast-button"></span>
-                    <span id="ncbi-blast-button"></span> 
+                    <span id="ncbi-blast-button"></span>
+                    <input type="submit" value="Submit" />
                 </div>
                 <div id = "run-blast-warning" class="warning hidden"></div>
             </fieldset>
@@ -165,6 +166,7 @@ title       = 'dictyBase BLAST Server'
                     </div>
                 </div>
             </fieldset>
+            <input type="file" />
         </form>
     </div>
 </div>

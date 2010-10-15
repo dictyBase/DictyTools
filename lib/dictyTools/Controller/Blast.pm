@@ -49,7 +49,12 @@ sub databases {
 sub run {
     my ( $self, $c ) = @_;
     my $app = $self->app;
-
+    
+    use Data::Dumper;
+    foreach my $part (@{$self->req->content->parts}){
+        $self->app->log->debug(Dumper $part->asset);
+    }
+        
     my $program  = $self->req->param('program');
     my $database = $self->req->param('database');
     my $evalue   = $self->req->param('evalue');

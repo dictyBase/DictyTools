@@ -36,11 +36,13 @@
         /* --- Other elements --- */
         this.sequenceInput = Dom.get('blast-sequence');
         this.toggleParameters = 'show-parameters';
-        this.blastParameters = 'blast-parameters',
+        this.blastParameters = 'blast-parameters';
         this.warning = Dom.get('run-blast-warning');
         this.blastButtonEl = 'run-blast-button';
         this.resetButtonEl = 'reset-blast-button';
         this.ncbiButtonEl = 'ncbi-blast-button';
+        
+        this.mainForm = Dom.get('blast-form');
 
         /* --- Programs and Databases available from server --- */
         YAHOO.util.Connect.asyncRequest('GET', '/tools/blast/programs', {
@@ -54,7 +56,7 @@
                     this.warning.innerHTML = 'Cannot fetch available programs';
                     Dom.removeClass(this.warning, 'hidden');
                     return;
-                };
+                }
             },
             failure: this.onFailure,
             scope: this
@@ -70,7 +72,7 @@
                     this.warning.innerHTML = 'Cannot fetch available databases';
                     Dom.removeClass(this.warning, 'hidden');
                     return;
-                };
+                }
             },
             failure: this.onFailure,
             scope: this
@@ -94,7 +96,7 @@
                     this.warning.innerHTML = 'Cannot fetch available organisms';
                     Dom.removeClass(this.warning, 'hidden');
                     return;
-                };
+                }
             },
             failure: this.onFailure,
             scope: this
@@ -105,11 +107,13 @@
         this.initParameters();
         this.renderButtons();
         this.linkEvent();
-    }
+        
+    };
 
     YAHOO.Dicty.BLAST.prototype.onFailure = function(obj) {
-        this.warning.innerHTML = '<p>' + obj.statusText + '</p>';
-    }
+        //this.warning.innerHTML = '<p>' + obj.statusText + '</p>';
+        alert('OOps..');
+    };
 
     YAHOO.Dicty.BLAST.prototype.renderPrograms = function(filter) {
         var options = new Array(),
@@ -543,17 +547,14 @@
             '&gapped=' + gapped +
             '&filter=' + filter +
             '&sequence=' + fasta);
-
-            //this.warning.innerHTML = '<img id="loader" src="/static/dictytools/images/ajax-loader.gif"/>';
-            //Dom.removeClass(this.warning.id, 'hidden');
-            //Dom.removeClass(this.warning.id, 'warning');
-            
-            
+          
             resultWindow = window.open();
             resultWindow.document.write('Please wait for results to be loaded');
             resultWindow.document.close();
             
-            YAHOO.util.Connect.asyncRequest('POST', '/tools/blast/run',
+            YAHOO.util.Connect.setForm(this.mainForm.id, true);
+            
+            YAHOO.util.Connect.asyncRequest('POST', this.mainForm.action,
             {
                 success: function(obj) {
                     var results_file = obj.responseText;
@@ -561,19 +562,19 @@
                         this.warning.innerHTML = results_file;
                         Dom.addClass(this.warning.id, 'warning');
                         Dom.removeClass(this.warning.id, 'hidden');
-                        
+                        YAHOO.log('YAHOO');
                         resultWindow.document.write(results_file);
                         resultWindow.document.close();
                     }
                     else {
+                        YAHOO.log('YAHOO');
                         this.results_file = results_file;
                         this.renderResultsWindow(resultWindow);
                     }
                 },
                 failure: this.onFailure,
                 scope: this
-            },
-            postData);
+            }, postData);
         }
     }
     

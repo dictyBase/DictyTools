@@ -13,12 +13,12 @@ use base 'Mojolicious';
 
 __PACKAGE__->attr('helper');
 __PACKAGE__->attr('config');
-__PACKAGE__->attr( 'has_config', default => 0 );
+__PACKAGE__->attr('has_config');
 __PACKAGE__->attr('template_path');
 __PACKAGE__->attr('server');
 __PACKAGE__->attr('programs');
 __PACKAGE__->attr('databases');
-__PACKAGE__->attr( 'is_connected', default => 0 );
+__PACKAGE__->attr('is_connected');
 
 # This will run once at startup
 sub startup {
@@ -50,7 +50,7 @@ sub startup {
         action     => 'connection'
     );
 
-    ## -- BLAST 
+    ## -- BLAST
     $bridge->route('/')
         ->to( controller => 'blast', action => 'index', format => 'html' );
 
@@ -75,14 +75,20 @@ sub startup {
     ## -- Organism
     $router->route('/organism/')
         ->to( controller => 'organism', action => 'index', format => 'json' );
-    
+
     ## -- Converter
-    $router->route('/converter/')
-        ->to( controller => 'converter', action => 'convert', format => 'json' );
-    
-    $router->route('/fasta/')
-        ->to( controller => 'fasta', action => 'write_sequence', format => 'text' );
-    
+    $router->route('/converter/')->to(
+        controller => 'converter',
+        action     => 'convert',
+        format     => 'json'
+    );
+
+    $router->route('/fasta/')->to(
+        controller => 'fasta',
+        action     => 'write_sequence',
+        format     => 'text'
+    );
+
 }
 
 sub set_config {
@@ -151,7 +157,7 @@ sub set_renderer {
             POST_PROCESS => $self->config->{page}->{footer} || '',
         },
     );
-    
+
     $self->renderer->add_handler(
         tt   => $tt->build(),
         json => $json->build(),
@@ -179,6 +185,7 @@ sub set_connection {
             "Could not establish connection to BLAST server: $@");
         return;
     }
+
     #@$databases = grep {$_->{private} && $_->{private} ne 1 } @$databases;
     $self->server($blast_server);
     $self->programs($programs);
