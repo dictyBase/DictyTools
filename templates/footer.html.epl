@@ -1,0 +1,25 @@
+    <div id="footer">
+    <div class="container-bottom">
+        <table>
+            <tr>
+                <td>
+                    <a href="/">Home</a>|
+                    <a href="/db/cgi-bin/dictyBase/suggestion">Contact dictyBase</a>|
+                    <a href="/sitemap.html">Site Map</a>
+                </td>
+                <td style="text-align:right;">
+                    &nbsp;Supported by NIH (NIGMS and NHGRI)&nbsp;
+                    <a href="http://www.nih.gov/">
+                        <img src="/static/dictytools/images/nih_sm.gif"/>
+                    </a>
+                    <a href="http://geneontology.org">
+                        <img src="/static/dictytools/images/go_sm.gif"/>
+                    </a>
+                    <a href="http://gmod.org/wiki/Main_Page">
+                        <img src="/static/dictytools/images/gmod.gif"/>
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>

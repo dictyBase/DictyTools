@@ -1,0 +1,7 @@
+% my ($self) = @_;
+% $self->stash(layout => 'default');
+% 
+The page you were requesting
+"<%= $self->req->url->path || '/' %>"
+could not be found.
+
