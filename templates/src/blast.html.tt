@@ -51,7 +51,7 @@ title       = 'dictyBase BLAST Server'
 
 <div class="dicty-content">
     <div class="blast-content yui-skin-sam">
-        <form id="blast-form" action="/tools/blast/run" enctype="multipart/form-data" method="post">
+        <form id="blast-form" action="/tools/blast/run" method="post">
             <fieldset id="fieldset-id-selection">
                 <legend>Query Sequence</legend> 
                 <div class="blast-sequence-selection column">
@@ -125,7 +125,6 @@ title       = 'dictyBase BLAST Server'
                     <span id="run-blast-button"></span> 
                     <span id="reset-blast-button"></span>
                     <span id="ncbi-blast-button"></span>
-                    <input type="submit" value="Submit" />
                 </div>
                 <div id = "run-blast-warning" class="warning hidden"></div>
             </fieldset>

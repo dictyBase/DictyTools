@@ -22,16 +22,16 @@ sub index {
         ? 1
         : 0;
 
-    $self->render(
-        template   => $app->config->{blast}->{template},
-        primary_id => $self->req->param('primary_id') || undef,
-        sequence   => $self->req->param('sequence') || undef,
-        no_header  => $self->req->param('noheader') || undef,
-        logo_link  => $app->config->{page}->{logo_link} || "/",
-        id_search  => $id_search,
-        database_download_url =>
-            $app->config->{blast}->{database_download_url} || undef
-    );
+#    $self->render(
+#        template   => $app->config->{blast}->{template},
+#        primary_id => $self->req->param('primary_id') || undef,
+#        sequence   => $self->req->param('sequence') || undef,
+#        no_header  => $self->req->param('noheader') || undef,
+#        logo_link  => $app->config->{page}->{logo_link} || "/",
+#        id_search  => $id_search,
+#        database_download_url =>
+#            $app->config->{blast}->{database_download_url} || undef
+#    );
 }
 
 sub programs {
@@ -52,7 +52,7 @@ sub run {
     
     use Data::Dumper;
     foreach my $part (@{$self->req->content->parts}){
-        $self->app->log->debug(Dumper $part->asset);
+        $self->app->log->debug(Dumper $part->file);
     }
         
     my $program  = $self->req->param('program');
