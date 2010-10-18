@@ -2,9 +2,6 @@
 #    template_path : templates/src/
  
 page:
-    header : page-header.tt
-    footer : page-footer.tt
-    error  : error
     logo_link : http://192.168.60.10
     
 ## BLAST relates settings
@@ -14,8 +11,6 @@ page:
 ## "namespace" -  BLAST namespace used in proxy connection
 
 blast:
-    template : blast   
-    report_template : blast_report
     namespace : http://dictyBaseDP.org/Blast
     proxy : http://192.168.60.30:80/cgi-bin/blast.pl
     blast_link_out : /id/
@@ -32,8 +27,7 @@ organism:
         species : discoideum
         identifier_prefix : DDB
         site_url : http://192.168.60.10
-        sid : dictybase
-        host : 192.168.60.10
+        dsn : dbi:Oracle:host=192.168.60.10;sid=dictybase
         user : CGM_CHADO
         password : CGM_CHADO
     purpureum:
@@ -41,6 +35,9 @@ organism:
         genus : Dictyostelium
         species : purpureum
         identifier_prefix : DPU
+        user : DPUR_CHADO
+        password : DPUR_CHADO
+        dsn : dbi:Oracle:host=192.168.60.10;sid=dictybase
     fasciculatum:
         taxon_id : 261658
         genus : Dictyostelium

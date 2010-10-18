@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use File::Spec::Functions;
 use dictyTools::Helper;
+use Bio::Chado::Schema;
 use SOAP::Lite;
 use YAML;
 use Carp;
@@ -16,6 +17,7 @@ __PACKAGE__->attr('server');
 __PACKAGE__->attr('programs');
 __PACKAGE__->attr('databases');
 __PACKAGE__->attr('is_connected');
+__PACKAGE__->attr('model');
 
 # This will run once at startup
 sub startup {
@@ -30,6 +32,9 @@ sub startup {
 
     #set up blast server connection
     $self->set_connection();
+
+    #set up database connection
+    $self->set_db_connection();
 
     #set helper
     $self->helper( dictyTools::Helper->new() );
@@ -67,17 +72,18 @@ sub startup {
         ->to( controller => 'blast', action => 'report', format => 'html' );
 
     ## -- Organism
-    $router->route('organism/')
+    $router->route('tools/organism')
         ->to( controller => 'organism', action => 'index', format => 'json' );
 
     ## -- Converter
-    $router->route('converter/')->to(
+    $router->route('tools/converter')->to(
         controller => 'converter',
         action     => 'convert',
         format     => 'json'
     );
 
-    $router->route('fasta/')->to(
+    ## -- Fasta
+    $router->route('tools/fasta')->to(
         controller => 'fasta',
         action     => 'write_sequence',
         format     => 'text'
@@ -143,6 +149,32 @@ sub set_connection {
     $self->databases($databases);
 
     $self->is_connected(1);
+}
+
+sub set_db_connection {
+    my ($self) = @_;
+    my $connection_hash;
+
+    foreach my $organism ( keys %{ $self->config->{organism} } ) {
+        my $organism_conf = $self->config->{organism}->{$organism};
+        next if !$organism_conf->{dsn};
+
+        my $connection = Bio::Chado::Schema->connect(
+            $organism_conf->{dsn}, $organism_conf->{user},
+            $organism_conf->{password}, { LongReadLen => 2**25 }
+        );
+        my $source = $connection->source('Sequence::Feature');
+        $source->add_column(
+            is_deleted => {
+                data_type     => 'boolean',
+                default_value => 'false',
+                is_nullable   => 0,
+                size          => 1
+            }
+        );
+        $connection_hash->{$organism} = $connection;
+    }
+    $self->model($connection_hash) if $connection_hash;
 }
 
 1;

@@ -5,7 +5,7 @@
     var pasteYourSeq = 'Type or paste a query sequence here ......';
     
     YAHOO.Dicty.BLAST = function() {
-        var logger = new YAHOO.widget.LogReader();
+        //var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -36,11 +36,13 @@
         /* --- Other elements --- */
         this.sequenceInput = Dom.get('blast-sequence');
         this.toggleParameters = 'show-parameters';
-        this.blastParameters = 'blast-parameters',
+        this.blastParameters = 'blast-parameters';
         this.warning = Dom.get('run-blast-warning');
         this.blastButtonEl = 'run-blast-button';
         this.resetButtonEl = 'reset-blast-button';
         this.ncbiButtonEl = 'ncbi-blast-button';
+        
+        this.mainForm = Dom.get('blast-form');
 
         /* --- Programs and Databases available from server --- */
         YAHOO.util.Connect.asyncRequest('GET', '/tools/blast/programs', {
@@ -54,7 +56,7 @@
                     this.warning.innerHTML = 'Cannot fetch available programs';
                     Dom.removeClass(this.warning, 'hidden');
                     return;
-                };
+                }
             },
             failure: this.onFailure,
             scope: this
@@ -70,7 +72,7 @@
                     this.warning.innerHTML = 'Cannot fetch available databases';
                     Dom.removeClass(this.warning, 'hidden');
                     return;
-                };
+                }
             },
             failure: this.onFailure,
             scope: this
@@ -78,7 +80,7 @@
 
         /* --- CUSTOM PART--- */  
         /* --- Get list of identifier prefixes from server --- */
-        YAHOO.util.Connect.asyncRequest('GET', '/organism', {
+        YAHOO.util.Connect.asyncRequest('GET', '/tools/organism', {
             success: function(obj) {
                 try {
                     result = YAHOO.lang.JSON.parse(obj.responseText);
@@ -94,7 +96,7 @@
                     this.warning.innerHTML = 'Cannot fetch available organisms';
                     Dom.removeClass(this.warning, 'hidden');
                     return;
-                };
+                }
             },
             failure: this.onFailure,
             scope: this
@@ -105,11 +107,13 @@
         this.initParameters();
         this.renderButtons();
         this.linkEvent();
-    }
+        
+    };
 
     YAHOO.Dicty.BLAST.prototype.onFailure = function(obj) {
-        this.warning.innerHTML = '<p>' + obj.statusText + '</p>';
-    }
+        //this.warning.innerHTML = '<p>' + obj.statusText + '</p>';
+        alert('OOps..');
+    };
 
     YAHOO.Dicty.BLAST.prototype.renderPrograms = function(filter) {
         var options = new Array(),
@@ -323,11 +327,11 @@
                     Dom.addClass(this.blastDatabaseInfo, 'hidden');
                     Dom.addClass(this.warning, 'hidden');
                     Dom.removeClass(this.sequenceInput, 'warning')
-/*                    
+                    
                     this.blastQueryID.value = '';
                     Dom.addClass(Dom.getAncestorByTagName(this.blastFeatureDropDown, 'div'), 'hidden');
                     Dom.addClass(Dom.getAncestorByTagName(this.blastSequenceDropDown, 'div'), 'hidden');
-*/
+
                 },
                 scope: this
             }
@@ -543,17 +547,14 @@
             '&gapped=' + gapped +
             '&filter=' + filter +
             '&sequence=' + fasta);
-
-            //this.warning.innerHTML = '<img id="loader" src="/static/dictytools/images/ajax-loader.gif"/>';
-            //Dom.removeClass(this.warning.id, 'hidden');
-            //Dom.removeClass(this.warning.id, 'warning');
-            
-            
+          
             resultWindow = window.open();
             resultWindow.document.write('Please wait for results to be loaded');
             resultWindow.document.close();
             
-            YAHOO.util.Connect.asyncRequest('POST', '/tools/blast/run',
+            YAHOO.util.Connect.setForm(this.mainForm.id, true);
+            
+            YAHOO.util.Connect.asyncRequest('POST', this.mainForm.action,
             {
                 success: function(obj) {
                     var results_file = obj.responseText;
@@ -561,19 +562,19 @@
                         this.warning.innerHTML = results_file;
                         Dom.addClass(this.warning.id, 'warning');
                         Dom.removeClass(this.warning.id, 'hidden');
-                        
+                        YAHOO.log('YAHOO');
                         resultWindow.document.write(results_file);
                         resultWindow.document.close();
                     }
                     else {
+                        YAHOO.log('YAHOO');
                         this.results_file = results_file;
                         this.renderResultsWindow(resultWindow);
                     }
                 },
                 failure: this.onFailure,
                 scope: this
-            },
-            postData);
+            }, postData);
         }
     }
     
@@ -652,7 +653,7 @@
                 if (queryID.match(this.organisms[i].identifier_prefix + '_G')) {
                 postData = 'from=' + 'gene' + '&to=' + 'features' + '&ids=' + queryID + '&organism=' + this.organisms[i].species;
                 
-                request = YAHOO.util.Connect.asyncRequest('POST', '/converter',
+                request = YAHOO.util.Connect.asyncRequest('POST', '/tools/converter',
                 {
                     success: function(obj) {
                         try {
@@ -673,7 +674,7 @@
             }
             else if (queryID.match(this.organisms[i].identifier_prefix)) {
                 postData = 'from=' + 'feature' + '&to=' + 'seqtypes' + '&ids=' + queryID + '&organism=' + this.organisms[i].species;
-                request = YAHOO.util.Connect.asyncRequest('POST', '/converter',
+                request = YAHOO.util.Connect.asyncRequest('POST', '/tools/converter',
                 {
                     success: function(obj) {
                         try {
@@ -701,12 +702,11 @@
 
     YAHOO.Dicty.BLAST.prototype.requestSequence = function(id, type) {
         this.sequenceInput.value = 'Please wait for the sequence to be populated...';
-//        YAHOO.log(this.organisms, 'error');
         //--- contains hardcoded site name ---
         for (i in this.organisms) {
             if (id.match(this.organisms[i].identifier_prefix)) {
                 var postData = 'id=' + id + '&type=' + type  + '&organism=' + this.organisms[i].species;
-                var request = YAHOO.util.Connect.asyncRequest('POST', '/fasta', 
+                var request = YAHOO.util.Connect.asyncRequest('POST', '/tools/fasta', 
                 {
                     success: function(obj) {
                         this.sequenceInput.value = obj.responseText;
@@ -723,7 +723,7 @@
     
 })();
 
-function init() {
+function initBlast() {
     var blast = new YAHOO.Dicty.BLAST;
     blast.init();
 }

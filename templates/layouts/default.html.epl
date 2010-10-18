@@ -18,6 +18,8 @@
         <link rel="stylesheet" type="text/css" href="/static/dictytools/css/header.css">       
         <link rel="stylesheet" type="text/css" href="/static/dictytools/css/body.css">
         <link rel="stylesheet" type="text/css" href="/static/dictytools/css/footer.css">
+        <link rel="stylesheet" type="text/css" href="/static/dictytools/css/blast.css">
+        
         <script type="text/javascript" src="/static/dictytools/js/yui/build/yahoo/yahoo.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/yuiloader/yuiloader-min.js"></script>
         
@@ -26,12 +28,13 @@
         <script type="text/javascript" src="/static/dictytools/js/yui/build/container/container-min.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/menu/menu-min.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/animation/animation.js"></script>
-        <script type="text/javascript" src="/static/dictytools/js/yui//build/element/element-beta-min.js"></script>
+        <script type="text/javascript" src="/static/dictytools/js/yui//build/element/element-min.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/button/button-min.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/logger/logger-min.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/connection/connection-min.js"></script>
+        <script type="text/javascript" src="/static/dictytools/js/yui/build/json/json-min.js"></script>
 
-        <script type="text/javascript" src="/static/dictytools/js/custom/blast_1.js"></script>   
+        <script type="text/javascript" src="/static/dictytools/js/custom/blast.js"></script>   
 
         <title></title>
     </head>

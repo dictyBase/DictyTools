@@ -18,6 +18,10 @@ my $builder = dictyToolsBuilder->new(
         'IO::String' => '',
         'Bio::Perl' => '',
         'Bio::Graphics' => '', 
+        'DBIx::Class' => '0.08120',
+        'File::Path' => '2.04',
+        'Bio::Chado::Schema' => '0.05801',
+        'SQL::Abstract' => '1.63'
     },
     build_requires => {
     	 'Archive::Extract' => '',

@@ -11,7 +11,6 @@ use Bio::SeqFeature::Gene::Exon;
 use Bio::SeqFeature::Gene::Transcript;
 use Bio::SeqFeature::Generic;
 use Module::Load;
-use dicty::Feature;
 use IO::File;
 use base qw/Mojo::Base/;
 use version; our $VERSION = qv('1.0.0');
@@ -20,27 +19,27 @@ __PACKAGE__->attr('app');
 
 sub blast_report {
     my ( $self, $filename, $c ) = @_;
-    
-    my $report_file = IO::File->new( $filename, 'r');
+
+    my $report_file = IO::File->new( $filename, 'r' );
     my $report = join( "\n", <$report_file> );
-    
+
     undef $report_file;
-    
+
     my $str;
     my $output = IO::String->new( \$str );
-    
+
     my $stringio = IO::String->new($report);
-    my $parser = Bio::SearchIO->new(
+    my $parser   = Bio::SearchIO->new(
         -fh     => $stringio,
         -format => 'blast'
     );
     my $result = $parser->next_result;
-    
+
     my $base_url = $c->req->url->host;
-    my $link = $self->app->config->{blast}->{blast_link_out};
+    my $link     = $self->app->config->{blast}->{blast_link_out};
     $base_url = $base_url ? 'http://' . $base_url . $link : $link;
 
-    my $writer      = Bio::SearchIO::Writer::HTMLResultWriter->new(
+    my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new(
         -nucleotide_url => $base_url . '%s',
         -protein_url    => $base_url . '%s'
     );
@@ -55,10 +54,9 @@ sub blast_report {
     my $parameters;
     my $statistics;
 
-    if ( $str
-        =~ m{(.+?)(<table.+?table>)(.+?)<hr>.+?Parameters.+?(<table.+?table>).+?Statistics(.+?)<hr}s
-        )
-    {
+    if ( $str =~
+        m{(.+?)(<table.+?table>)(.+?)<hr>.+?Parameters.+?(<table.+?table>).+?Statistics(.+?)<hr}s
+        ) {
         $header     = $1;
         $table      = $2;
         $results    = $3;
@@ -80,12 +78,12 @@ sub blast_report {
 
 sub blast_graph {
     my ( $self, $filename ) = @_;
-    
-    my $report_file = IO::File->new( $filename, 'r');
+
+    my $report_file = IO::File->new( $filename, 'r' );
     my $report = join( "\n", <$report_file> );
-    
+
     undef $report_file;
-    
+
     my $stringio = IO::String->new($report);
     my $parser   = Bio::SearchIO->new(
         -fh     => $stringio,
@@ -106,7 +104,7 @@ sub blast_graph {
         -display_name => ( ( split( /\|/, $result->query_name ) )[0] ),
     );
     $panel->add_track(
-         $full_length,
+        $full_length,
         -glyph   => 'arrow',
         -tick    => 2,
         -fgcolor => 'black',
@@ -119,72 +117,64 @@ sub blast_graph {
         -connector => 'dashed',
         -bgcolor   => 'blue',
         -height    => '5',
-#        -bump_limit => 5,
+
+        #        -bump_limit => 5,
     );
 
     while ( my $hit = $result->next_hit ) {
         my @display_names = split( /\|/, $hit->name );
         my $display_name;
-        foreach my $name (@display_names){
+        foreach my $name (@display_names) {
             $display_name = $name if $name =~ m{_};
         }
         my $display_name = $display_name || $display_names[0];
         my $feature = Bio::SeqFeature::Generic->new(
             -score        => $hit->raw_score,
-            -display_name => ( $display_name )
+            -display_name => ($display_name)
         );
         while ( my $hsp = $hit->next_hsp ) {
             $feature->add_sub_SeqFeature( $hsp, 'EXPAND' );
         }
         $track->add_feature($feature);
     }
-    
+
     my ( $url, $map, $mapname ) = $panel->image_and_map(
         -root  => $self->app->home->rel_dir('public'),
         -url   => '/tmp/dictytools',
         -title => '',
         -link  => '#$name'
     );
-    return '<img src="' 
+    return
+          '<img src="' 
         . $url
         . '" usemap="    #'
-        . $mapname . '" border=1/>' . $map;
+        . $mapname
+        . '" border=1/>'
+        . $map;
 }
 
-## -- dicty::Feature stuff
+## -- dictyBase specific stuff
+
+sub subfeatures {
+    my ( $self, $feature ) = @_;
+
+    my $resultset =
+        $feature->search_related('feature_relationship_objects')
+        ->search_related( 'subject', { is_deleted => 0 } );
+
+    return $resultset;
+}
 
 sub get_featureprop {
     my ( $self, $feature, $prop ) = @_;
-    my $type
-        = Chado::Cvterm->get_single_row( cvterm_id => $feature->type )->name;
-
-    my ($prop_term) = Chado::Cvterm->get_single_row(
-        cv_id => Chado::Cv->get_single_row( name => 'autocreated' ),
-        name  => $prop
-    );
-
-    ## -- give it another shot
-    if ( !$prop_term ) {
-        $prop_term = Chado::Cvterm->get_single_row(
-            cv_id => Chado::Cv->get_single_row( name => 'sequence' ),
-            name  => $prop,
-        );
-    }
-
-    return undef if !$prop_term;
-
-    my $prop_row = Chado::Featureprop->get_single_row(
-        type_id    => $prop_term->cvterm_id,
-        feature_id => $feature->feature_id
-    );
-
-    return $prop_row ? $prop_row->value() : undef;
+    return map { $_->value }
+        grep { $_->type->name eq $prop } $feature->featureprops;
 }
 
 sub get_sequence {
     my ( $self, $feature, $type ) = @_;
 
-    my $sequence = $self->get_featureprop( $feature, $type );
+    my ($sequence) = $self->get_featureprop( $feature, $type );
     return $sequence if $sequence;
 
     $self->add_bioperl($feature);
@@ -196,54 +186,45 @@ sub get_sequence {
 sub get_header {
     my ( $self, $feature, $type ) = @_;
 
-    my $location = Chado::Featureloc->get_single_row(
-        feature_id => $feature->feature_id );
+    my $feat_location = $feature->featureloc_features->first;
+    my $ref_feat = $feat_location ? $feat_location->srcfeature : undef;
 
-    my $ref_feat = $location ? Chado::Feature->get_single_row(
-        feature_id => $location->srcfeature->feature_id ) : undef;
-
-    my ($gene)
-        = map { Chado::Feature->get_single_row( feature_id => $_->id ) }
-        map { $_->object_id }
-        Chado::Feature_Relationship->search( subject_id => $feature->id );
+    my ($gene) =
+        $feature->search_related('feature_relationship_subjects')
+        ->search_related('object');
 
     my $header;
-    $header
-        .= "|"
-        . Chado::Dbxref->get_single_row( dbxref_id => $gene->dbxref_id )
-        ->accession
+    $header .= "|" . $gene->dbxref->accession
         if $gene;
     $header .= "|" . $type . "|";
     $header .= " gene: " . $gene->uniquename if $gene;
-    $header
-        .= " on "
-        . Chado::Cvterm->get_single_row( cvterm_id => $ref_feat->type_id )
-        ->name . ": " 
-        . $ref_feat->name
+    $header .= " on " . $ref_feat->type->name . ": " . $ref_feat->name
         if $ref_feat;
-    $header
-        .= " position " . ( $location->fmin + 1 ) . " to " . $location->fmax
+    $header .=
+          " position "
+        . ( $feat_location->fmin + 1 ) . " to "
+        . $feat_location->fmax
         if $ref_feat;
 
     if ( $type =~ m{Genomic}i ) {
         $self->add_bioperl($feature);
-        my $flank_up
-            = $feature->{bioperl}->start > 1000
+        my $flank_up =
+            $feature->{bioperl}->start > 1000
             ? 1000
             : $feature->{bioperl}->start - 1;
-        my $flank_down
-            = ( $feature->{bioperl}->entire_seq->length )
-            - $feature->{bioperl}->end > 1000
+        my $flank_down =
+            ( $feature->{bioperl}->entire_seq->length ) -
+            $feature->{bioperl}->end > 1000
             ? 1000
-            : ( $feature->{bioperl}->entire_seq->length )
-            - $feature->{bioperl}->end;
+            : ( $feature->{bioperl}->entire_seq->length ) -
+            $feature->{bioperl}->end;
 
         $header .= " plus ";
-        $header
-            .= $feature->{bioperl}->strand ne "-1" ? $flank_up : $flank_down;
+        $header .=
+            $feature->{bioperl}->strand ne "-1" ? $flank_up : $flank_down;
         $header .= " upstream and ";
-        $header
-            .= $feature->{bioperl}->strand ne "-1" ? $flank_down : $flank_up;
+        $header .=
+            $feature->{bioperl}->strand ne "-1" ? $flank_down : $flank_up;
         $header .= " downstream basepairs";
         $header .= ", reverse complement"
             if ( $feature->{bioperl}->strand eq '-1' );
@@ -253,24 +234,23 @@ sub get_header {
 
 sub add_bioperl {
     my ( $self, $feature ) = @_;
-    my $feat_location = Chado::Featureloc->get_single_row(
-        feature_id => $feature->feature_id );
-    my $strand = $feat_location->strand;
 
-    my @subfeatures = @{ $self->subfeatures($feature) };
-    my @exon_feats = grep { $_->type_id->name eq 'exon' } @subfeatures;
-    @exon_feats = grep { $_->type_id->name eq 'CDS' } @subfeatures if !@exon_feats; ## just in case
-    
+    my $feat_location = $feature->featureloc_features->first;
+    my $strand        = $feat_location->strand;
+
+    my $exon_rs =
+        $self->subfeatures($feature)
+        ->search( { 'type.name' => 'exon' }, { join => 'type' } );
+
     my @exons;
-    foreach my $exon_feat (@exon_feats) {
-        my $location = Chado::Featureloc->get_single_row(
-            feature_id => $exon_feat->feature_id );
+    foreach my $exon_feat ( $exon_rs->all ) {
+        my $location = $exon_feat->featureloc_features->first;
 
         # chado is interbase coordinates, so add 1 to start of exons
         my $exon = Bio::SeqFeature::Gene::Exon->new(
             -start  => $location->fmin + 1,
             -end    => $location->fmax,
-            -strand => $location->strand()
+            -strand => $location->strand
         );
         push @exons, $exon;
     }
@@ -278,7 +258,7 @@ sub add_bioperl {
     # sort the exons by start ( order is reversed based on strand )
     my @exons = map { $_->[1] }
         sort { $strand * $a->[0] <=> $strand * $b->[0] }
-        map { [ $_->start(), $_ ] } @exons;
+        map { [ $_->start, $_ ] } @exons;
 
     my $bioperl = Bio::SeqFeature::Generic->new(
         -strand => $strand,
@@ -290,17 +270,13 @@ sub add_bioperl {
     map { $bioperl->add_SeqFeature($_) } @exons;
 
     # attach reference feature sequence if exists
-    my $ref_feat = Chado::Feature->get_single_row(
-        feature_id => $feat_location->srcfeature->feature_id );
-    my $ref_seq = Bio::PrimarySeq->new(
+    my $ref_feat = $feat_location->srcfeature;
+    my $ref_seq  = Bio::PrimarySeq->new(
         -primary_id => $ref_feat->feature_id,
         -seq        => $ref_feat->residues,
     );
-    my $ref_bioperl = Bio::Seq->new(
-        -primary_id => Chado::Dbxref->get_single_row(
-            dbxref_id => $ref_feat->dbxref_id
-            )->accession
-    );
+    my $ref_bioperl =
+        Bio::Seq->new( -primary_id => $ref_feat->dbxref->accession );
     $ref_bioperl->primary_seq($ref_seq);
 
     $bioperl->attach_seq($ref_bioperl);
@@ -319,7 +295,7 @@ sub calculate_spliced_transcript {
 }
 
 sub calculate_dna_coding_sequence {
-    my ( $self, $feature ) = @_; 
+    my ( $self, $feature ) = @_;
     return $self->calculate_spliced_transcript($feature);
 }
 
@@ -337,20 +313,20 @@ sub calculate_genomic {
         $flank_up      = $feature->{bioperl}->start() - 1;
     }
 
-    if ( ( $feature->{bioperl}->entire_seq->length )
-        - $feature->{bioperl}->end() > 1000 )
-    {
+    if ( ( $feature->{bioperl}->entire_seq->length ) -
+        $feature->{bioperl}->end() > 1000 ) {
         $genomic_end = $feature->{bioperl}->end() + 1000;
         $flank_down  = 1000;
     }
     else {
         $genomic_end = ( $feature->{bioperl}->entire_seq->length );
-        $flank_down  = ( $feature->{bioperl}->entire_seq->length )
-            - $feature->{bioperl}->end();
+        $flank_down =
+            ( $feature->{bioperl}->entire_seq->length ) -
+            $feature->{bioperl}->end();
     }
 
-    my $seq
-        = $feature->{bioperl}->strand ne "-1"
+    my $seq =
+          $feature->{bioperl}->strand ne "-1"
         ? $feature->{bioperl}
         ->entire_seq->trunc( $genomic_start, $genomic_end )
         : $feature->{bioperl}
@@ -365,33 +341,17 @@ sub calculate_genomic_dna {
 
 sub calculate_pseudogene {
     my ( $self, $feature ) = @_;
-    return $feature->{bioperl}->seq()->seq();
+    return $feature->{bioperl}->seq->seq;
 }
 
 sub calculate_protein {
     my ( $self, $feature ) = @_;
-    my $cvterm = Chado::Cvterm->get_single_row(
-        cv_id => Chado::Cv->get_single_row( name => 'relationship' )->cv_id,
-        name  => 'derived_from'
-    );
 
-    my ($protein_feat)
-        = map { Chado::Feature->get_single_row( feature_id => $_->id ) }
-        map { $_->subject_id } Chado::Feature_Relationship->search(
-        object_id => $feature->id,
-        type_id   => $cvterm->cvterm_id
-        );
-    return $protein_feat->residues;
-}
-
-sub subfeatures {
-    my ( $self, $feature ) = @_;
-
-    my @features = grep { !$_->is_deleted }
-        map { Chado::Feature->get_single_row( feature_id => $_->id ) }
-        map { $_->subject_id }
-        Chado::Feature_Relationship->search( object_id => $feature->id );
-    return \@features;
+    return $feature->search_related(
+        'feature_relationship_objects',
+        { 'type.name' => 'derived_from' },
+        { join        => 'type' }
+    )->search_related('subject')->first->residues;
 }
 
 1;    # Magic true value required at end of module

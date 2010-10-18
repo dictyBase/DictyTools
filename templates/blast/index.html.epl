@@ -12,7 +12,7 @@
 		            <textarea id="blast-sequence" name="blast-sequence">Type or paste a query sequence here ......</textarea>
 		        </div>		
 		    </fieldset>        
-            [% IF id_search %]
+            <% if ($self->stash('id_search')) { %>
 		        <div id="separator">OR</div> 
 		        <fieldset id="fieldset-sequence-selection">
 		            <legend>Gene or Gene Model ID</legend>
@@ -21,7 +21,7 @@
                             <label class="separated-label" for="query-primary-id">Enter gene or gene model ID</label>
                             (e.g.: DDB_G0275689, DDB0214814)
                             <div class="blast-input" style="float:none;">
-                                <input id="query-primary-id" value="[% primary_id %]"/>
+                                <input id="query-primary-id" value="<%= $self->stash('primary_id') %>"/>
                                 <input id="submit-primary-id" type="button" value="Search"/>
                             </div>    
                         </div>
@@ -31,12 +31,12 @@
 		                </div>
 		                <div class="blast-input-row hidden">
                             <label class="separated-label" for="blast-sequence-option">Select Sequence Type</label>
-                            <select id="blast-sequence-option" class="blast-selection"><option>[% sequence %]</option></select>	
+                            <select id="blast-sequence-option" class="blast-selection"><option><%= $self->stash('sequence') %></option></select>	
 		                </div>  
 		                <div id="blast-id-selection-warn" class="warning hidden"></div>
                     </div>	             	        
 	            </fieldset>
-            [% END %]
+            <% } %>
 		    <fieldset style="clear:both;">
                 <legend>BLAST Program</legend> 
                 <div class="blast-input-row">
@@ -65,9 +65,9 @@
                     </div>
                     <div class="column">
 		                <div id="blast-database-option-i" class="infobox" style="float:none;">
-		                    [% IF database_download_url %]
-		                        You can <a href="[%database_download_url%]" target="_blank">download</a> all the sequences 
-		                    [% END %]
+		                    <% if ($self->stash('database_download_url')) { %>
+		                        You can <a href="<%= $self->stash('database_download_url') %>" target="_blank">download</a> all the sequences 
+		                    <% } %>
 		                </div>
 		            <div id="blast-database-option-info" class="warning hidden">Please select a database</div>
                     </div>
@@ -81,7 +81,6 @@
                 </div>
                 <div id = "run-blast-warning" class="warning hidden"></div>
             </fieldset>
-            <a id="show-parameters" class="hidden" href="#i">Algorithm Parameters</a>        
             <fieldset id="blast-parameters">
                 <legend>Options</legend>
                 <div class="blast-input-row">
@@ -118,8 +117,9 @@
                     </div>
                 </div>
             </fieldset>
-            <input type="file" />
         </form>
     </div>
 </div>
-
+<script>
+    YAHOO.util.Event.onDOMReady(function(){ initBlast() });
+</script>

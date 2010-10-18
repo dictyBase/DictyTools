@@ -2,9 +2,8 @@ package dictyTools::Controller::Converter;
 
 use strict;
 use warnings;
-use Chado::AutoDBI;
-use dicty::DBH;
 use IO::String;
+
 use base qw/Mojolicious::Controller/;
 
 sub index { }
@@ -17,59 +16,46 @@ sub convert {
     my $to       = $self->req->param('to');
     my $ids      = $self->req->param('ids');
     my $organism = $self->req->param('organism');
+    return 'organism has to be proivded' if !$organism;
 
+    $self->{connection} = $self->app->model->{$organism};
     my $method = $from . '2' . $to;
-
-    if ( $organism && $organism eq 'discoideum' ) {
-        my $dbh_class     = 'dicty::DBH';
-        my $organism_conf = $app->config->{organism}->{discoideum};
-
-        $dbh_class->sid( $organism_conf->{sid} );
-        $dbh_class->host( $organism_conf->{host} );
-        $dbh_class->user( $organism_conf->{user} );
-        $dbh_class->password( $organism_conf->{password} );
-
-        $self->$method($ids);
-
-        $dbh_class->reconnect(0);
-        $dbh_class->reset_params();
-    }
-    else {
-        $self->$method($ids);
-    }
+    $self->$method($ids);
 }
 
 sub gene2features {
     my ( $self, $id ) = @_;
 
     ## -- get gene by id
-    my ($dbxref) = Chado::Dbxref->search( accession => $id );
-    my ($gene) = Chado::Feature->search( dbxref_id => $dbxref->id );
+    my $gene =
+        $self->{connection}->resultset('Sequence::Feature')
+        ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
     return 'ID not recognized' if !$gene;
-    return 'Gene was deleted'  if $gene->is_deleted;
+    return 'Gene was deleted'  if $gene->get_column('is_deleted');
 
     ## -- get primary and genbank features
-    my @primary = $self->primary_features($gene);
-    my @genbank = $self->genbank_features($gene);
+    my $primary_rs = $self->primary_features($gene);
+    $primary_rs = $self->genbank_features($gene) if !$primary_rs->count;
 
     ## make an array of hashes containing id of the feature and its descriptor
     my @array;
     push @array, map {
-        {   id => Chado::Dbxref->get_single_row( dbxref_id => $_->dbxref_id )
-                ->accession,
+        {   id          => $_->dbxref->accession,
             description => $self->description($_)
         }
-    } ( @primary, @genbank );
+    } ( $primary_rs->all );
 
-    $self->render( handler => 'json', data => \@array );
+    $self->render( json => \@array );
 }
 
 sub description {
-    my ( $self, $feature ) = @_;
-    my $type = Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name;
-    return 'Curated Gene Model'       if $feature->{curated};
-    return 'Predicted Gene Model'     if $type eq 'mRNA';
+    my ( $self, $rs ) = @_;
+    my $type = $rs->type->name;
+
+    return 'Curated Gene Model'
+        if grep { $_->dbxref->accession =~ m{curator}i } $rs->feature_dbxrefs;
+    return 'Predicted Gene Model' if $type eq 'mRNA';
     return 'GenBank Genomic Fragment' if $type =~ m{databank}i;
     return 'GenBank mRNA'             if $type =~ m{cdna}i;
     return $type;
@@ -79,88 +65,76 @@ sub primary_features {
     my ( $self, $gene ) = @_;
 
     ## -- get all gene features
-    my @features = @{ $self->app->helper->subfeatures($gene) };
+    my $sub_rs = $self->app->helper->subfeatures($gene);
 
     ## -- filter out cds, trna, ncrna and pseudogenes
-    my @cdss = grep {
-        Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name eq "mRNA"
-    } @features;
+    my $pseudogene_rs =
+        $sub_rs->search( { 'type.name' => 'pseudogene' },
+        { join => 'type' } );
 
-    my @trna = grep {
-        Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name eq "tRNA"
-    } @features;
+    my $trna_rs =
+        $sub_rs->search( { 'type.name' => 'tRNA' }, { join => 'type' } );
 
-    my @ncrna = grep {
-        Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name =~
-            m{[^mt]RNA}
-    } @features;
+    my $ncrna_rs = $sub_rs->search(
+        {   'type.name' => [
+                -and => { '!=' => 'mRNA' },
+                { '!=' => 'tRNA' }, { 'like', '%RNA' }
+            ]
+        },
+        { join => 'type' }
+    );
 
-    my @pseudogene = grep {
-        Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name eq
-            "pseudogene"
-    } @features;
+    return $pseudogene_rs if $pseudogene_rs->count;
+    return $trna_rs       if $trna_rs->count;
+    return $ncrna_rs      if $ncrna_rs->count;
 
     ## -- get curated and predicted features
-    my @curated;
-    my @predicted;
-    foreach my $feature (@cdss) {
-        my @curated_source =
-            grep { $_->accession =~ m{curator}i }
-            map { Chado::Dbxref->search( dbxref_id => $_->dbxref_id ) }
-            Chado::Feature_Dbxref->search(
-            feature_id => $feature->feature_id );
+    my $cdss_rs =
+        $sub_rs->search( { 'type.name' => 'mRNA' }, { join => 'type' } );
 
-        $feature->{curated} = 1 if @curated_source;
+    my $curated_rs = $cdss_rs->search(
+        { 'dbxref.accession' => { 'like', '%Curator' } },
+        { join => { 'feature_dbxrefs' => 'dbxref' } }
+    );
 
-        push @curated,   $feature if @curated_source;
-        push @predicted, $feature if !@curated_source;
-    }
+    my $predicted_rs = $cdss_rs->search(
+        {   uniquename => {
+                'NOT IN' => $curated_rs->get_column('uniquename')->as_query
+            }
+        }
+    );
 
-    return @pseudogene if @pseudogene;
-    return @ncrna      if @ncrna;
-    return @trna       if @trna;
-    return @curated    if @curated;
-    return @predicted  if @predicted;
+    return $curated_rs   if $curated_rs->count;
+    return $predicted_rs if $predicted_rs->count;
     return;
 }
 
 sub genbank_features {
     my ( $self, $gene ) = @_;
-    my $source_db = Chado::Db->get_single_row( name => 'GFF_source' );
 
-    my @features = @{ $self->app->helper->subfeatures($gene) };
-    my @genbank;
-    foreach my $feature (@features) {
-        push @genbank, $feature
-            if grep { $_->accession =~ m{GenBank}ix }
-                map { Chado::Dbxref->search( dbxref_id => $_->dbxref_id ) }
-                Chado::Feature_Dbxref->search(
-                    feature_id => $feature->feature_id
-                );
-    }
+    ## -- get all gene features
+    my $sub_rs = $self->app->helper->subfeatures($gene);
 
-    my @genbank_cdna = grep {
-        Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name =~
-            m{databank}i
-    } @genbank;
+    my $genbank_rs = $sub_rs->search(
+        { 'dbxref.accession' => { 'like', '%GenBank%' } },
+        { join => [ 'type', { 'feature_dbxrefs' => 'dbxref' } ] },
+    );
 
-    my @genbank_mrna = grep {
-        Chado::Cvterm->get_single_row( cvterm_id => $_->type )->name =~
-            m{cdna}i
-    } @genbank;
-    return ( @genbank_cdna, @genbank_mrna );
+    return $genbank_rs;
 }
 
 sub feature2seqtypes {
     my ( $self, $id ) = @_;
-    my ($dbxref) = Chado::Dbxref->search( accession => $id );
-    my ($feature) = Chado::Feature->search( dbxref_id => $dbxref->id );
 
-    return 'ID not recognized'   if !$feature;
-    return 'Feature was deleted' if $feature->is_deleted;
+    ## -- get feature by id
+    my $feature =
+        $self->{connection}->resultset('Sequence::Feature')
+        ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
-    my $type =
-        Chado::Cvterm->get_single_row( cvterm_id => $feature->type )->name;
+    return 'ID not recognized' if !$feature;
+    return 'Feature was deleted' if $feature->get_column('is_deleted');
+
+    my $type      = $feature->type->name;
     my $sequences = {};
 
     $sequences =
@@ -173,21 +147,18 @@ sub feature2seqtypes {
     if ( $type =~ m{cDNA_clone} ) {
         my @seqtypes = ( 'Protein', 'mRNA Sequence', 'DNA coding sequence' );
         foreach my $seqtype (@seqtypes) {
-            my $seq =
-                $self->app->helper->get_featureprop( $feature, $seqtype );
-            push @$sequences, $seqtype if $seq;
+            push @$sequences, $seqtype
+                if grep { $_->type->name eq $seqtype } $feature->featureprops;
         }
     }
     elsif ( $type =~ m{databank_entry} ) {
         my @seqtypes = ( 'Protein', 'DNA coding sequence', 'Genomic DNA' );
         foreach my $seqtype (@seqtypes) {
-            my $seq =
-                   $self->app->helper->get_featureprop( $feature, $seqtype )
-                || $self->app->helper->get_sequence( $feature, $seqtype );
-            push @$sequences, $seqtype if $seq;
+            push @$sequences, $seqtype
+                if $self->app->helper->get_sequence( $feature, $seqtype );
         }
     }
-    $self->render( handler => 'json', data => $sequences );
+    $self->render( 'json' => $sequences );
 }
 
 1;
