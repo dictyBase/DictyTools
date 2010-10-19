@@ -5,7 +5,7 @@
     var pasteYourSeq = 'Type or paste a query sequence here ......';
     
     YAHOO.Dicty.BLAST = function() {
-        //var logger = new YAHOO.widget.LogReader();
+        var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -141,10 +141,6 @@
         programs = this.programs,
         type;
 
-//        filter = filter || '';
-//        if (filter.match('unselected')){
-//            filter = '';
-//        }
         var selectedIndex = this.blastProgramDropDown.selectedIndex;
         for (i in programs) {
             if (programs[i].name == this.blastProgramDropDown[selectedIndex].value) {
@@ -486,37 +482,16 @@
     YAHOO.Dicty.BLAST.prototype.onProgramChange = function(e, obj) {
         /* --- If "unselected" value selected, render all available databases --- */
         var selectedIndex = obj.blastProgramDropDown.selectedIndex;
-/*
-        if (selectedIndex === 0) {
-            obj.renderOrganisms();
-            obj.renderDatabases();
-            return;
-        }
-*/
-        /* --- Filter databases based on database type allowed for selected program --- */
-/*
-        var programs = obj.programs,
-        databaseType;
-
-        for (i in programs) {
-            if (programs[i].name == obj.blastProgramDropDown[selectedIndex].value) {
-                databaseType = programs[i].database_type;
-                continue;
-            }
-        }
-        obj.renderDatabases(databaseType);
-        obj.selectDropdownValue(obj.blastDatabaseDropDown, 'unselected');
-*/      
         obj.renderDatabases();
+        
         /* --- Set program dependent default algorithm parameters --- */
         defaultValue = obj.blastProgramDropDown[selectedIndex].value == 'blastn' ? '11': '3';
         obj.selectDropdownValue(obj.wordSizeDropDown, defaultValue);
     }
 
-    YAHOO.Dicty.BLAST.prototype.runBlast = function() {
+    YAHOO.Dicty.BLAST.prototype.runBlast = function(e) {
         Dom.addClass(this.warning.id, 'hidden');
         var valid = this.validateParameters('blast');
-
         if (valid) {
             var program = this.blastProgramDropDown.options[this.blastProgramDropDown.selectedIndex].value,
             database = this.blastDatabaseDropDown.options[this.blastDatabaseDropDown.selectedIndex].value,
@@ -551,23 +526,21 @@
             resultWindow = window.open();
             resultWindow.document.write('Please wait for results to be loaded');
             resultWindow.document.close();
-            
-            YAHOO.util.Connect.setForm(this.mainForm.id, true);
-            
+                        
+            YAHOO.util.Connect.setForm(this.mainForm.id, true);            
             YAHOO.util.Connect.asyncRequest('POST', this.mainForm.action,
             {
-                success: function(obj) {
+                upload: function(obj) {
                     var results_file = obj.responseText;
                     if (results_file.match('Sorry')){
                         this.warning.innerHTML = results_file;
                         Dom.addClass(this.warning.id, 'warning');
                         Dom.removeClass(this.warning.id, 'hidden');
-                        YAHOO.log('YAHOO');
+                        
                         resultWindow.document.write(results_file);
                         resultWindow.document.close();
                     }
                     else {
-                        YAHOO.log('YAHOO');
                         this.results_file = results_file;
                         this.renderResultsWindow(resultWindow);
                     }

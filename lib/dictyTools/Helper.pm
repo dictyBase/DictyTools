@@ -18,7 +18,7 @@ use version; our $VERSION = qv('1.0.0');
 __PACKAGE__->attr('app');
 
 sub blast_report {
-    my ( $self, $filename, $c ) = @_;
+    my ( $self, $filename ) = @_;
 
     my $report_file = IO::File->new( $filename, 'r' );
     my $report = join( "\n", <$report_file> );
@@ -34,8 +34,10 @@ sub blast_report {
         -format => 'blast'
     );
     my $result = $parser->next_result;
+    use Data::Dumper;
+    $self->app->log->debug(Dumper $self->app);
 
-    my $base_url = $c->req->url->host;
+    my $base_url = $self->app->req->url->host;
     my $link     = $self->app->config->{blast}->{blast_link_out};
     $base_url = $base_url ? 'http://' . $base_url . $link : $link;
 
