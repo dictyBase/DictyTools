@@ -10,10 +10,13 @@ use Bio::Graphics;
 use Bio::SeqFeature::Generic;
 use File::Spec::Functions;
 
-use base qw/Mojolicious::Controller/;
+use base 'Mojolicious::Controller';
+
+use version; 
+our $VERSION = qv('2.0.0');
 
 sub index {
-    my ( $self, $c ) = @_;
+    my ($self) = @_;
     my $app = $self->app;
 
     my $id_search =
@@ -35,50 +38,49 @@ sub index {
 }
 
 sub programs {
-    my ( $self, $c ) = @_;
+    my ($self) = @_;
     my $app = $self->app;
     $self->render( json => $app->programs );
 }
 
 sub databases {
-    my ( $self, $c ) = @_;
+    my ($self) = @_;
     my $app = $self->app;
     $self->render( json => $app->databases );
 }
 
 sub run {
-    my ( $self, $c ) = @_;
+    my ($self) = @_;
     my $app = $self->app;
+    
+#    $self->stash('mojo.rendered' => 1);
+#    my $body = $self->res->body || '';
+#    $self->res->body("called, $body");
 
-    my $params;
-    foreach my $part ( @{ $self->req->content->parts } ) {
-        $part->headers->content_disposition =~ m{name="(.+?)"};
-        $params->{$1} = $part->asset->slurp;
-    }
-
-    if (!(     $params->{program}
-            && $params->{database}
-            && $params->{sequence}
-            && $params->{matrix}
-        )
-        ) {
-        my $message = 'program, database, sequence, matrix must be defined';
+    my $program = $self->req->param('program');
+    my $database = $self->req->param('database');
+    my $sequence = $self->req->param('sequence');
+    my $matrix = $self->req->param('matrix');
+    
+    if ( !( $program && $database && $sequence && $matrix ) ) {
+        my $message = 'program, database, sequence and matrix must be defined';
         $app->log->error($message);
-        $self->render( text => $message, status => 500 );
+        $self->render( text => $message, 500 );
         return;
     }
+
     my %options = (
-        p => $params->{program},
-        d => $params->{database},
-        M => $params->{matrix},
-        i => $params->{sequence}
+        p => $program,
+        d => $database,
+        M => $matrix,
+        i => $sequence
     );
 
-    $options{e} = $params->{evalue};
-    $options{F} = $params->{filter};
-    $options{g} = $params->{gapped};
-    $options{b} = $params->{limit};
-    $options{v} = $params->{limit};
+    $options{e} = $self->req->param('evalue');
+    $options{F} = $self->req->param('filter');
+    $options{g} = $self->req->param('gapped');
+    $options{b} = $self->req->param('limit');
+    $options{v} = $self->req->param('limit');
 
     my $report = $app->server->blastall(%options);
 
@@ -103,15 +105,15 @@ sub run {
     my $dir =
           $self->app->home->rel_dir('public')
         . $self->app->config->{blast}->{tmp_folder};
-        
+
     my $tmp = File::Temp->new( DIR => $dir, UNLINK => 0 );
     $tmp->print( $report->result );
     $tmp->close;
 
     my $filename = $tmp->filename;
     $filename =~ s{$dir}{};
-
-    $self->render( text => $filename, status=>'404' );
+    
+    $self->render( text => $filename );
 }
 
 sub report {
@@ -128,8 +130,9 @@ sub report {
           $self->app->home->rel_dir('public')
         . $self->app->config->{blast}->{tmp_folder};
 
-    my $html_hash = $app->helper->blast_report( catfile( $dir, $file ), $c );
-    my $graph = $app->helper->blast_graph( catfile( $dir, $file ) );
+    my $html_hash = $app->util->blast_report( catfile( $dir, $file ),
+        $self->url_for->base );
+    my $graph = $app->util->blast_graph( catfile( $dir, $file ) );
 
     $self->render(
         template   => $self->app->config->{blast}->{report_template},
@@ -140,7 +143,8 @@ sub report {
         parameters => $html_hash->{parameters},
         statistics => $html_hash->{statistics},
         logo_link  => $app->config->{page}->{logo_link} || "/",
-        no_header  => $self->req->param('noheader') || undef
+        no_header  => $self->req->param('noheader') || undef,
+        
     );
 
     #unlink catfile($dir, $file);

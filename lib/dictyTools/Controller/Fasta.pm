@@ -4,11 +4,18 @@ use strict;
 use warnings;
 use IO::String;
 use Bio::SeqIO;
-use base qw/Mojolicious::Controller/;
+
+use base 'Mojolicious::Controller';
+
+use version; 
+our $VERSION = qv('2.0.0');
 
 sub write_sequence {
     my ( $self, $c ) = @_;
     my $app = $self->app;
+
+    #set up database connection
+    $self->app->set_db_connection if !$self->app->model;
 
     my $id       = $self->req->param('id');
     my $type     = $self->req->param('type');
@@ -25,8 +32,8 @@ sub get_sequence {
         $self->{connection}->resultset('Sequence::Feature')
         ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
-    my $sequence = $self->app->helper->get_sequence( $feature, $type );
-    my $header = $self->app->helper->get_header( $feature, $type );
+    my $sequence = $self->app->util->get_sequence( $feature, $type );
+    my $header = $self->app->util->get_header( $feature, $type );
 
     if ( !$sequence ) {
         $self->render( text =>

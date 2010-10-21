@@ -2,7 +2,11 @@ package dictyTools::Controller::Organism;
 
 use strict;
 use warnings;
-use base qw/Mojolicious::Controller/;
+
+use base 'Mojolicious::Controller';
+
+use version; 
+our $VERSION = qv('2.0.0');
 
 sub index {
     my ( $self, $c ) = @_;

@@ -1,6 +1,5 @@
 #!/usr/bin/perl -w
 use strict;
-use local::lib '/home/ubuntu/dictyBase/Libs/modern-perl';
 use local::lib '/home/ubuntu/dictyBase/Libs/mojo';
 use FindBin qw/$Bin/;
 use FCGI::Engine::Manager;

@@ -1,24 +1,24 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2008-2009, Sebastian Riedel.
-
 use strict;
 use warnings;
 
-use FindBin;
+use File::Basename 'dirname';
+use File::Spec;
 
-use lib "$FindBin::Bin/lib";
-use lib "$FindBin::Bin/../lib";
-
-$ENV{MOJO_APP} ||= 'dictyTools';
+use lib join '/', File::Spec->splitdir(dirname(__FILE__)), 'lib';
+use lib join '/', File::Spec->splitdir(dirname(__FILE__)), '..', 'lib';
 
 # Check if Mojo is installed
-eval 'use Mojolicious::Scripts';
+eval 'use Mojolicious::Commands';
 die <<EOF if $@;
-It looks like you don't have the Mojo Framework installed.
+It looks like you don't have the Mojolicious Framework installed.
 Please visit http://mojolicious.org for detailed installation instructions.
 
 EOF
 
-# Start the script system
-Mojolicious::Scripts->new->run(@ARGV);
+# Application
+$ENV{MOJO_APP} ||= 'dictyTools';
+
+# Start commands
+Mojolicious::Commands->start;

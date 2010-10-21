@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <td rowspan="2">
-                        <a href="[% logo_link %]"><img src="/static/dictytools/images/logo.gif"></a>
+                        <a href="<%= stash 'logo_link' %>"><img src="/static/dictytools/images/logo.gif"></a>
                     </td>
                     <td colspan="4">
                         <div id="container-help">

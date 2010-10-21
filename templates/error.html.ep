@@ -1,0 +1,4 @@
+% layout 'default';
+<div class="error-warning">
+   <%= $self->stash('message') %>
+</div>

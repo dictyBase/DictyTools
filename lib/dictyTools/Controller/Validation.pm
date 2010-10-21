@@ -3,21 +3,19 @@ package dictyTools::Controller::Validation;
 use warnings;
 use strict;
 
-# Other modules:
-use base qw/Mojolicious::Controller/;
+use base 'Mojolicious::Controller';
 
-# Module implementation
-#
+use version; 
+our $VERSION = qv('2.0.0');
 
 sub connection {
-    my ( $self, $c ) = @_;
+    my ($self) = @_;
     if ( !$self->app->is_connected ) {
-    	$c->res->code(404);
         $self->render(
-            template => $self->app->config->{page}->{error},
+            template => 'error',
             message  => "Could not establish connection to BLAST server",
-            error    => 1,
             header   => 'Error page',
+            status => 404
         );
         return;
     }

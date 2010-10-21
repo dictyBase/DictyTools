@@ -1,10 +1,10 @@
-% my ($self) = @_;
-% $self->stash(layout => 'default');
-% 
+% layout 'default';
 
 <div class="dicty-content">
     <div class="blast-content yui-skin-sam">
-        <form id="blast-form" action="/tools/blast/run" method="post">
+        <form id="blast-form" action="/tools/blast/run" method="post" encode="multipart/form-data">
+        </form>
+        <form>
             <fieldset id="fieldset-id-selection">
                 <legend>Query Sequence</legend> 
                 <div class="blast-sequence-selection column">
@@ -12,7 +12,7 @@
 		            <textarea id="blast-sequence" name="blast-sequence">Type or paste a query sequence here ......</textarea>
 		        </div>		
 		    </fieldset>        
-            <% if ($self->stash('id_search')) { %>
+            <% if ( stash 'id_search' ) { %>
 		        <div id="separator">OR</div> 
 		        <fieldset id="fieldset-sequence-selection">
 		            <legend>Gene or Gene Model ID</legend>
@@ -65,8 +65,8 @@
                     </div>
                     <div class="column">
 		                <div id="blast-database-option-i" class="infobox" style="float:none;">
-		                    <% if ($self->stash('database_download_url')) { %>
-		                        You can <a href="<%= $self->stash('database_download_url') %>" target="_blank">download</a> all the sequences 
+		                    <% if ( stash 'database_download_url' ) { %>
+		                        You can <a href="<%=  stash 'database_download_url' %>" target="_blank">download</a> all the sequences 
 		                    <% } %>
 		                </div>
 		            <div id="blast-database-option-info" class="warning hidden">Please select a database</div>

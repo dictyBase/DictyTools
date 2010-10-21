@@ -1,56 +1,4 @@
-[% META
-title       = 'dictyBase BLAST Server: Report' 
-%]
-<script type="text/javascript">
-
-var loader = new YAHOO.util.YUILoader({
-    base: '/inc/js/yui/build/',
-    loadOptional: true
-});
-
-loader.addModule({
-    name: 'blast',
-    type: 'js',
-    fullpath: '/inc/js/custom/blast.js',
-    requires: [
-    'yahoo',  'logger', 'event', 'blast_css', 'body_css', 'button','connection', 'fonts-min-css'
-    ]
-});
-
-loader.addModule({
-    name: 'blast_css',
-    type: 'css',
-    fullpath: '/static/dictytools/css/blast_v1.css'
-});
-
-loader.addModule({
-    name: 'body_css',
-    type: 'css',
-    fullpath: '/static/dictytools/css/body.css'
-});
-
-loader.addModule({
-    name: 'bubbling',
-    type: 'js',
-    fullpath: '/inc/js/yui/plugins/bubbling/bubbling-min.js'
-});
-
-loader.addModule({
-    name: 'tooltips',
-    type: 'js',
-    fullpath: '/inc/js/yui/plugins/tooltips/tooltips-min.js',
-    requires: ['bubbling']
-});
-
-loader.addModule({
-    name: 'fonts-min-css',
-    type: 'css',
-    fullpath: "/static/dictytools/js/yui/build/fonts/fonts-min.css"
-});
-
-loader.require('blast');
-loader.insert();
-</script>
+% layout 'default';
 
 <div class="dicty-content">
     <div class="wrapper threecol-wide">
@@ -72,37 +20,37 @@ loader.insert();
                                     General Information
                                 </div>
                                 <div id="blast-header" class="block-container">
-                                    [%top%]
+                                    <%== stash 'top' %>
                                 </div>
                                 <div class="block-container-label">
                                     Graphic Summary
                                 </div>
                                 <div id="blast-graph" class="block-container">
-                                    [%graph%]
+                                    <%== stash 'graph' %>
                                 </div>
                                 <div class="block-container-label">
                                     Descriptions
                                 </div>
                                 <div id="blast-table" class="block-container">
-                                    [%table%]
+                                    <%== stash 'table' %>
                                 </div>
                                 <div class="block-container-label">
                                     Alignments
                                 </div>
                                 <div id="blast-result" class="block-container">
-                                    [%results%]
+                                    <%== stash 'results' %>
                                 </div>
                                 <div class="block-container-label">
                                     Parameters
                                 </div>
                                 <div id="blast-parameters" class="block-container">
-                                    [%parameters%]
+                                    <%== stash 'parameters' %>
                                 </div>
                                 <div class="block-container-label">
                                     Statistics
                                 </div>
                                 <div id="blast-statictics" class="block-container">
-                                    [%statistics%]
+                                    <%== stash 'statistics' %>
                                 </div>
                             </div>
                         </div>
@@ -119,4 +67,3 @@ loader.insert();
         </div>
     </div>
 </div>
-

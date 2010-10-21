@@ -14,14 +14,15 @@ my $builder = dictyToolsBuilder->new(
         'Apache2::Mojo' => '0.0047', 
         'File::Spec::Functions' => '',
         'SOAP::Lite' => '',
-        'YAML' => '',
+        'YAML::XS' => '',
         'IO::String' => '',
         'Bio::Perl' => '',
         'Bio::Graphics' => '', 
+        'SQL::Abstract' => '1.63',
         'DBIx::Class' => '0.08120',
         'File::Path' => '2.04',
         'Bio::Chado::Schema' => '0.05801',
-        'SQL::Abstract' => '1.63'
+        
     },
     build_requires => {
     	 'Archive::Extract' => '',

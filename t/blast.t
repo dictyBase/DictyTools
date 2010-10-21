@@ -3,35 +3,32 @@
 use strict;
 use warnings;
 
-use Mojo::Client;
-use Mojo::Transaction;
-use Test::More tests => 5;
+use Test::More;
+plan tests => 8;
 
-use_ok('dictyTools');
+use Test::Mojo;
+use Data::Dumper;
+use Mojo::Asset::File;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
 
-my $blast_url = '/tools/blast';
-my $blast_programs_url = $blast_url . '/programs';
-my $blast_databases_url = $blast_url . '/databases';
-my $blast_run_url = $blast_url . '/run';
-my $blast_report_url = $blast_url . '/report';
+use_ok 'dictyTools';
+my $t = Test::Mojo->new( app => 'dictyTools' );
 
+$t->get_ok('/tools/blast')->status_is(200);
+$t->get_ok('/tools/organism')->status_is(200);
 
-# blast index page
-my $client = Mojo::Client->new;
-my $tx = Mojo::Transaction->new_get($blast_url);
-$client->process_app( 'dictyTools', $tx );
+my $file = Mojo::Asset::File->new->add_chunk('lalala');
 
-SKIP: {
-    #skip 'blast server is down', 4 if $client->app->is_connected;
-
-    is( $tx->res->code, 200, "is a successful response for $blast_url" );
-    is($tx->res->headers->content_type, 'text/html');
-    like( $tx->res->body, qr/BLAST/i,
-        'is the title for gene page' );
-    like(
-        $tx->res->body,
-        qr/Supported by NIH/i,
-        'is the common footer for every gene page'
-    );
-}
-
+$t->post_form_ok(
+    '/tools/blast/run',
+    {   database => 'dicty_primary_protein',
+        evalue   => 0.1,
+        filter   => 'T',
+        gapped   => 'T',
+        limit    => 50,
+        matrix   => 'BLOSUM62',
+        program  => 'blastp',
+        file => {file => $file, filename => 'x'}
+    }
+)->status_is(200);

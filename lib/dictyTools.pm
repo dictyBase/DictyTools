@@ -3,14 +3,17 @@ package dictyTools;
 use strict;
 use warnings;
 use File::Spec::Functions;
-use dictyTools::Helper;
+use dictyTools::Util;
 use Bio::Chado::Schema;
 use SOAP::Lite;
 use YAML;
 use Carp;
 use base 'Mojolicious';
 
-__PACKAGE__->attr('helper');
+use version; 
+our $VERSION = qv('2.0.0');
+
+__PACKAGE__->attr('util');
 __PACKAGE__->attr('config');
 __PACKAGE__->attr('has_config');
 __PACKAGE__->attr('server');
@@ -33,16 +36,31 @@ sub startup {
     #set up blast server connection
     $self->set_connection();
 
-    #set up database connection
-    $self->set_db_connection();
-
     #set helper
-    $self->helper( dictyTools::Helper->new() );
-    $self->helper->app($self);
+    $self->util( dictyTools::Helper->new() );
+    $self->util->app($self);
 
     #routing setup
     my $base = $router->namespace();
     $router->namespace( $base . '::Controller' );
+
+    ## -- Organism
+    $router->route('tools/organism')
+        ->to( controller => 'organism', action => 'index', format => 'json' );
+
+    ## -- Converter
+    $router->route('tools/converter')->to(
+        controller => 'converter',
+        action     => 'convert',
+        format     => 'json'
+    );
+
+    ## -- Fasta
+    $router->route('tools/fasta')->to(
+        controller => 'fasta',
+        action     => 'write_sequence',
+        format     => 'text'
+    );
 
     my $bridge = $router->bridge('tools/blast')->to(
         controller => 'validation',
@@ -71,23 +89,6 @@ sub startup {
     $bridge->route('report/:id')
         ->to( controller => 'blast', action => 'report', format => 'html' );
 
-    ## -- Organism
-    $router->route('tools/organism')
-        ->to( controller => 'organism', action => 'index', format => 'json' );
-
-    ## -- Converter
-    $router->route('tools/converter')->to(
-        controller => 'converter',
-        action     => 'convert',
-        format     => 'json'
-    );
-
-    ## -- Fasta
-    $router->route('tools/fasta')->to(
-        controller => 'fasta',
-        action     => 'write_sequence',
-        format     => 'text'
-    );
 }
 
 sub set_config {

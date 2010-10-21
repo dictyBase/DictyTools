@@ -4,13 +4,19 @@ use strict;
 use warnings;
 use IO::String;
 
-use base qw/Mojolicious::Controller/;
+use base 'Mojolicious::Controller';
+
+use version; 
+our $VERSION = qv('2.0.0');
 
 sub index { }
 
 sub convert {
     my ( $self, $c ) = @_;
     my $app = $self->app;
+
+    #set up database connection
+    $self->app->set_db_connection if !$self->app->model;
 
     my $from     = $self->req->param('from');
     my $to       = $self->req->param('to');
@@ -65,7 +71,7 @@ sub primary_features {
     my ( $self, $gene ) = @_;
 
     ## -- get all gene features
-    my $sub_rs = $self->app->helper->subfeatures($gene);
+    my $sub_rs = $self->app->util->subfeatures($gene);
 
     ## -- filter out cds, trna, ncrna and pseudogenes
     my $pseudogene_rs =
@@ -113,7 +119,7 @@ sub genbank_features {
     my ( $self, $gene ) = @_;
 
     ## -- get all gene features
-    my $sub_rs = $self->app->helper->subfeatures($gene);
+    my $sub_rs = $self->app->util->subfeatures($gene);
 
     my $genbank_rs = $sub_rs->search(
         { 'dbxref.accession' => { 'like', '%GenBank%' } },
@@ -155,7 +161,7 @@ sub feature2seqtypes {
         my @seqtypes = ( 'Protein', 'DNA coding sequence', 'Genomic DNA' );
         foreach my $seqtype (@seqtypes) {
             push @$sequences, $seqtype
-                if $self->app->helper->get_sequence( $feature, $seqtype );
+                if $self->app->util->get_sequence( $feature, $seqtype );
         }
     }
     $self->render( 'json' => $sequences );
