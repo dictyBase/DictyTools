@@ -1,12 +1,17 @@
 #!/usr/bin/perl -w
 use strict;
-use local::lib '/home/ubuntu/dictyBase/Libs/mojo';
-use FindBin qw/$Bin/;
-use FCGI::Engine::Manager;
-use File::Spec::Functions;
 
-my $manager = FCGI::Engine::Manager->new(
-    conf => catfile( $Bin, updir, 'conf', 'fcgi_conf.yaml' ) );
+use File::Basename 'dirname';
+use File::Spec;
+use File::Spec::Functions;
+use FCGI::Engine::Manager;
+
+my $confdir = join '/', File::Spec->splitdir( dirname(__FILE__) ), '..',
+    'conf';
+
+my $manager =
+    FCGI::Engine::Manager->new(
+    conf => catfile( $confdir, 'fcgi_conf.yaml' ) );
 
 my ( $command, $server ) = @ARGV;
 die "no command given\n" if !$command;
