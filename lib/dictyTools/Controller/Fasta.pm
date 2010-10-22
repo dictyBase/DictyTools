@@ -7,11 +7,11 @@ use Bio::SeqIO;
 
 use base 'Mojolicious::Controller';
 
-use version; 
+use version;
 our $VERSION = qv('2.0.0');
 
 sub write_sequence {
-    my ( $self, $c ) = @_;
+    my ($self) = @_;
     my $app = $self->app;
 
     #set up database connection
@@ -21,15 +21,14 @@ sub write_sequence {
     my $type     = $self->req->param('type');
     my $organism = $self->req->param('organism');
 
-    $self->{connection} = $self->app->model->{$organism};
-    $self->get_sequence( $id, $type );
+    $self->get_sequence( $id, $type, $self->app->model->{$organism} );
 }
 
 sub get_sequence {
-    my ( $self, $id, $type ) = @_;
+    my ( $self, $id, $type, $connection ) = @_;
 
     my $feature =
-        $self->{connection}->resultset('Sequence::Feature')
+        $connection->resultset('Sequence::Feature')
         ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
     my $sequence = $self->app->util->get_sequence( $feature, $type );

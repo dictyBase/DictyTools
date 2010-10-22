@@ -12,7 +12,7 @@ our $VERSION = qv('2.0.0');
 sub index { }
 
 sub convert {
-    my ( $self, $c ) = @_;
+    my ( $self ) = @_;
     my $app = $self->app;
 
     #set up database connection
@@ -24,17 +24,16 @@ sub convert {
     my $organism = $self->req->param('organism');
     return 'organism has to be proivded' if !$organism;
 
-    $self->{connection} = $self->app->model->{$organism};
     my $method = $from . '2' . $to;
-    $self->$method($ids);
+    $self->$method($ids, $self->app->model->{$organism} );
 }
 
 sub gene2features {
-    my ( $self, $id ) = @_;
+    my ( $self, $id, $connection ) = @_;
 
     ## -- get gene by id
     my $gene =
-        $self->{connection}->resultset('Sequence::Feature')
+        $connection->resultset('Sequence::Feature')
         ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
     return 'ID not recognized' if !$gene;
@@ -130,11 +129,11 @@ sub genbank_features {
 }
 
 sub feature2seqtypes {
-    my ( $self, $id ) = @_;
+    my ( $self, $id, $connection ) = @_;
 
     ## -- get feature by id
     my $feature =
-        $self->{connection}->resultset('Sequence::Feature')
+        $connection->resultset('Sequence::Feature')
         ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
     return 'ID not recognized' if !$feature;

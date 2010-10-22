@@ -5,7 +5,7 @@
     var pasteYourSeq = 'Type or paste a query sequence here ......';
     
     YAHOO.Dicty.BLAST = function() {
-       // var logger = new YAHOO.widget.LogReader();
+//       var logger = new YAHOO.widget.LogReader();
     };
 
     YAHOO.lang.augmentProto(YAHOO.Dicty.BLAST, YAHOO.util.AttributeProvider);
@@ -112,7 +112,7 @@
 
     YAHOO.Dicty.BLAST.prototype.onFailure = function(obj) {
         //this.warning.innerHTML = '<p>' + obj.statusText + '</p>';
-        alert('OOps..');
+//        alert(obj.statusText);
     };
 
     YAHOO.Dicty.BLAST.prototype.renderPrograms = function(filter) {
@@ -528,11 +528,15 @@
             resultWindow.document.close();
                         
             // send multiform post. 
-            YAHOO.util.Connect.setForm(this.mainForm.id, true);            
+            YAHOO.util.Connect.setForm(this.mainForm.id, true, true);            
             YAHOO.util.Connect.asyncRequest('POST', this.mainForm.action,
             {
                 upload: function(obj) {
-                    var results_file = obj.responseText.replace(/<pre>|<\/pre>/gi,'');
+                    // have to do it twice: for some reason in ie <pre.+?>|<\/pre> gerex wipes out whole string
+                    var results_file = obj.responseText.replace(/<pre>|<\/pre>/ig,'');
+                    if (results_file.match(/pre/i)){
+                        results_file = results_file.replace(/<pre.+?>|<\/pre>/ig,'');
+                    }
                     if (results_file.match('Sorry')){
                         this.warning.innerHTML = results_file;
                         Dom.addClass(this.warning.id, 'warning');
