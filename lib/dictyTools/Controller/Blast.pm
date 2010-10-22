@@ -88,10 +88,10 @@ sub run {
     if (   $report->fault
         || $report->result =~ m{sorry}i
         || $report->result !~ m{BLAST} ) {
-        my $email =
-              '<a href="mailto:'
-            . $app->config->{blast}->{site_admin_email} . '">'
-            . $app->config->{blast}->{site_admin_email} . '</a>';
+        my $email = $app->config->{blast}->{site_admin_email};
+#              '<a href="mailto:'
+#            . $app->config->{blast}->{site_admin_email} . '">'
+#            . $app->config->{blast}->{site_admin_email} . '</a>';
 
         $app->log->info( $report->faultstring ) if $report->fault;
 

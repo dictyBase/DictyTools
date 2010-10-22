@@ -15,7 +15,7 @@ use IO::File;
 
 use base 'Mojo::Base';
 
-use version; 
+use version;
 our $VERSION = qv('2.0.0');
 
 __PACKAGE__->attr('app');
@@ -37,8 +37,8 @@ sub blast_report {
         -format => 'blast'
     );
     my $result = $parser->next_result;
-    
-    my $link     = $self->app->config->{blast}->{blast_link_out};
+
+    my $link = $self->app->config->{blast}->{blast_link_out};
     $base_url = $base_url ? 'http://' . $base_url . $link : $link;
 
     my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new(
@@ -94,16 +94,17 @@ sub blast_graph {
     my $result = $parser->next_result;
     return if !$result;
 
-    my $panel = Bio::Graphics::Panel->new(
-        -length    => $result->query_length,
-        -width     => 720,
-        -pad_left  => 5,
-        -pad_right => 5,
-    );
     my $full_length = Bio::SeqFeature::Generic->new(
         -start        => 1,
         -end          => $result->query_length,
         -display_name => ( ( split( /\|/, $result->query_name ) )[0] ),
+    );
+
+    my $panel = Bio::Graphics::Panel->new(
+        -length    => $result->query_length,
+        -width     => 620,
+        -pad_left  => 50,
+        -pad_right => 50,
     );
     $panel->add_track(
         $full_length,
@@ -114,26 +115,26 @@ sub blast_graph {
         -label   => 1,
     );
     my $track = $panel->add_track(
-        -glyph     => 'generic',
-        -label     => 1,
-        -connector => 'dashed',
-        -bgcolor   => 'blue',
-        -height    => '5',
-
-        #        -bump_limit => 5,
+        -glyph      => 'generic',
+        -label      => 1,
+        -connector  => 'dashed',
+        -bgcolor    => 'blue',
+        -height     => '5',
+        -sort_order => 'high_score'
     );
 
     while ( my $hit = $result->next_hit ) {
         my @display_names = split( /\|/, $hit->name );
-        my $display_name;
-        foreach my $name (@display_names) {
-            $display_name = $name if $name =~ m{_};
-        }
-        my $display_name = $display_name || $display_names[0];
+        my ($display_name) = grep { $_ =~ m{_} } @display_names;
+        $display_name ||= $display_names[0];
+        my $id = $display_names[1] || $display_name;
+
         my $feature = Bio::SeqFeature::Generic->new(
-            -score        => $hit->raw_score,
-            -display_name => ($display_name)
+            -score        => $hit->score,
+            -display_name => ( $display_name . '('.$hit->significance.')'),
         );
+        $feature->primary_id($id);
+        
         while ( my $hsp = $hit->next_hsp ) {
             $feature->add_sub_SeqFeature( $hsp, 'EXPAND' );
         }
@@ -144,7 +145,7 @@ sub blast_graph {
         -root  => $self->app->home->rel_dir('public'),
         -url   => '/tmp/dictytools',
         -title => '',
-        -link  => '#$name'
+        -link  => '#$id'
     );
     return
           '<img src="' 
