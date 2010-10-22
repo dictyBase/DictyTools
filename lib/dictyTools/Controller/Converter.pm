@@ -42,7 +42,7 @@ sub gene2features {
 
     ## -- get primary and genbank features
     my $primary_rs = $self->primary_features($gene);
-    $primary_rs = $self->genbank_features($gene) if !$primary_rs->count;
+    $primary_rs = $self->genbank_features($gene) if !$primary_rs;
 
     ## make an array of hashes containing id of the feature and its descriptor
     my @array;
