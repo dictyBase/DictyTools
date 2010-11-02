@@ -31,7 +31,7 @@
         <script type="text/javascript" src="/static/dictytools/js/yui/build/logger/logger-min.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/connection/connection-min.js"></script>
         <script type="text/javascript" src="/static/dictytools/js/yui/build/json/json-min.js"></script>
-
+        <script type="text/javascript" src="/static/dictytools/js/menu.js"></script>   
         <script type="text/javascript" src="/static/dictytools/js/custom/blast.js"></script>   
 
         <title></title>

@@ -6,11 +6,11 @@ use warnings;
 use Test::More;
 plan tests => 8;
 
-use Test::Mojo;
-use Data::Dumper;
-use Mojo::Asset::File;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
+
+use Test::Mojo;
+use Mojo::Asset::File;
 
 use_ok 'dictyTools';
 my $t = Test::Mojo->new( app => 'dictyTools' );
