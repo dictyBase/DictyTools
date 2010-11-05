@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-use local::lib '/home/ubuntu/dictyBase/Libs/mojo';
+#use local::lib '/home/ubuntu/dictyBase/Libs/mojo';
 use FindBin;
 use Mojo::Server::FastCGI;
 

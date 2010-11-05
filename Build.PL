@@ -7,14 +7,14 @@ use dictyToolsBuilder;
 my $builder = dictyToolsBuilder->new(
     module_name  => 'dictyTools',
     license      => 'perl',
-    dist_author  => 'Yulia Bushmanova <y-bushmenova@northwestern.edu>',
+    dist_author  => 'Yulia Bushmanova <y-bushmanova@northwestern.edu>',
     dist_version => '1.0.0',
     requires     => {
         'Mojo'          => '0.991244',
         'Apache2::Mojo' => '0.0047', 
         'File::Spec::Functions' => '',
         'SOAP::Lite' => '',
-        'YAML::XS' => '',
+        'YAML' => '',
         'IO::String' => '',
         'Bio::Perl' => '',
         'Bio::Graphics' => '', 
