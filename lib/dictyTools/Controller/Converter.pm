@@ -25,7 +25,8 @@ sub convert {
     return 'organism has to be proivded' if !$organism;
 
     my $method = $from . '2' . $to;
-    $self->$method($ids, $self->app->model->{$organism} );
+    my $data = $self->$method($ids, $self->app->model->{$organism} );
+    $self->render( json => $data );
 }
 
 sub gene2features {
@@ -51,7 +52,7 @@ sub gene2features {
         }
     } ( $primary_rs->all );
 
-    $self->render( json => \@array );
+    return \@array;
 }
 
 sub description {
@@ -163,7 +164,7 @@ sub feature2seqtypes {
                 if $self->app->util->get_sequence( $feature, $seqtype );
         }
     }
-    $self->render( 'json' => $sequences );
+    return $sequences;
 }
 
 1;

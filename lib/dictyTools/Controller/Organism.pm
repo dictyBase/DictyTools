@@ -9,7 +9,7 @@ use version;
 our $VERSION = qv('2.0.0');
 
 sub index {
-    my ( $self, $c ) = @_;
+    my ( $self ) = @_;
     my $organism = $self->app->config->{organism};
     my @data = map { $organism->{$_}} keys %$organism;
     $self->render( json => \@data );

@@ -5,7 +5,7 @@ use warnings;
 use File::Spec::Functions;
 use dictyTools::Util;
 use Bio::Chado::Schema;
-use SOAP::Lite +trace => 'all';
+use SOAP::Lite;# +trace => 'all';
 
 use YAML;
 use Carp;
@@ -38,7 +38,7 @@ sub startup {
     $self->set_connection();
 
     #set helper
-    $self->util( dictyTools::Helper->new() );
+    $self->util( dictyTools::Util->new() );
     $self->util->app($self);
 
     #routing setup

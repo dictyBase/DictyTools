@@ -1,4 +1,4 @@
-package dictyTools::Helper;
+package dictyTools::Util;
 
 use strict;
 use IO::String;

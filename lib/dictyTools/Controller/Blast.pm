@@ -53,10 +53,6 @@ sub run {
     my ($self) = @_;
     my $app = $self->app;
     
-#    $self->stash('mojo.rendered' => 1);
-#    my $body = $self->res->body || '';
-#    $self->res->body("called, $body");
-
     my $program = $self->req->param('program');
     my $database = $self->req->param('database');
     my $sequence = $self->req->param('sequence');
@@ -65,7 +61,7 @@ sub run {
     if ( !( $program && $database && $sequence && $matrix ) ) {
         my $message = 'program, database, sequence and matrix must be defined';
         $app->log->error($message);
-        $self->render( text => $message, 500 );
+        $self->render( text => $message, status => 500 );
         return;
     }
 
@@ -89,15 +85,15 @@ sub run {
         || $report->result =~ m{sorry}i
         || $report->result !~ m{BLAST} ) {
         my $email = $app->config->{blast}->{site_admin_email};
-#              '<a href="mailto:'
-#            . $app->config->{blast}->{site_admin_email} . '">'
-#            . $app->config->{blast}->{site_admin_email} . '</a>';
+              '<a href="mailto:'
+            . $app->config->{blast}->{site_admin_email} . '">'
+            . $app->config->{blast}->{site_admin_email} . '</a>';
 
         $app->log->info( $report->faultstring ) if $report->fault;
 
         my $message =
             "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
-        $self->render( text => $message, status => 500 );
+        $self->render( data => $message, status => 500 );
         return;
     }
 
