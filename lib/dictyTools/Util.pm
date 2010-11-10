@@ -259,7 +259,7 @@ sub add_bioperl {
     }
 
     # sort the exons by start ( order is reversed based on strand )
-    my @exons = map { $_->[1] }
+    @exons = map { $_->[1] }
         sort { $strand * $a->[0] <=> $strand * $b->[0] }
         map { [ $_->start, $_ ] } @exons;
 
