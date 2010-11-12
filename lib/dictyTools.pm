@@ -95,29 +95,10 @@ sub startup {
 sub set_config {
     my ( $self, $c ) = @_;
 
-    #set up config file usually look under conf folder
-    #supports similar profile as log file
-
     my $folder = $self->home->rel_dir('conf');
-    if ( !-e $folder ) {
-        return;
-    }
+    return if !-e $folder;
 
-#now the file name,  default which is developmental mode resolves to <name>.conf. For
-#test and production it will be <name>.test.conf and <name>.production.conf respectively.
-
-    my $mode   = $self->mode();
-    my $suffix = '.yml';
-    if ( $mode eq 'production' or $mode eq 'staging' ) {
-        $suffix = '.' . $mode . '.yml';
-    }
-    my $app_name = lc $self->home->app_class;
-
-    #opendir my $conf, $folder or confess "cannot open folder $!:$folder";
-    #my $file = catfile()
-    #closedir $conf;
-
-    my $file = catfile( $folder, $app_name . $suffix );
+    my $file = catfile( $folder, $self->mode . '.yml' );
     $self->log->debug(qq/got config file $file/);
     $self->config( YAML::LoadFile($file) );
     $self->has_config(1);
