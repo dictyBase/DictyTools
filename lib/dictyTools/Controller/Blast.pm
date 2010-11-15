@@ -79,9 +79,6 @@ sub run {
     $options{v} = $self->req->param('limit');
     $options{W} = $self->req->param('wordsize');
 
-        use Data::Dumper;
-        $app->log->info( Dumper \%options );
-     
     my $report = $app->server->blastall(%options);
 
     ## catch fault string
