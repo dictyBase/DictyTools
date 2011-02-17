@@ -8,9 +8,9 @@ my $builder = dictyToolsBuilder->new(
     module_name  => 'dictyTools',
     license      => 'perl',
     dist_author  => 'Yulia Bushmanova <y-bushmanova@northwestern.edu>',
-    dist_version => '1.0.0',
+    dist_version => '1.5.0',
     requires     => {
-        'Mojo'          => '0.991244',
+        'Mojolicious'   => '',
         'Apache2::Mojo' => '0.0047', 
         'File::Spec::Functions' => '',
         'SOAP::Lite' => '',
@@ -21,7 +21,8 @@ my $builder = dictyToolsBuilder->new(
         'SQL::Abstract' => '1.63',
         'DBIx::Class' => '0.08120',
         'File::Path' => '2.04',
-        'Bio::Chado::Schema' => '0.05801',
+        'Bio::Chado::Schema' => '',
+        'Bio::Graphics' => '2.14'
         
     },
     build_requires => {

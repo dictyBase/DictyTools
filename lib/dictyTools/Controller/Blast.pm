@@ -61,7 +61,7 @@ sub run {
     if ( !( $program && $database && $sequence && $matrix ) ) {
         my $message = 'program, database, sequence and matrix must be defined';
         $app->log->error($message);
-        $self->render( text => $message, status => 500 );
+        $self->render_exeption($message);
         return;
     }
 
@@ -94,7 +94,7 @@ sub run {
        
         my $message =
             "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
-        $self->render( data => $message, status => 500 );
+        $self->render_exeption($message);
         return;
     }
 

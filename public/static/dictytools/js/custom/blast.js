@@ -48,8 +48,7 @@
         YAHOO.util.Connect.asyncRequest('GET', '/tools/blast/programs', {
             success: function(obj) {
                 try {
-                    result = YAHOO.lang.JSON.parse(obj.responseText);
-                    this.programs = result;
+                    this.programs = YAHOO.lang.JSON.parse(obj.responseText);
                     this.renderPrograms();
                 }
                 catch(e) {
@@ -65,8 +64,7 @@
         YAHOO.util.Connect.asyncRequest('GET', '/tools/blast/databases', {
             success: function(obj) {
                 try {
-                    result = YAHOO.lang.JSON.parse(obj.responseText);
-                    this.databases = result;
+                    this.databases = YAHOO.lang.JSON.parse(obj.responseText);
                 }
                 catch(e) {
                     this.warning.innerHTML = 'Cannot fetch available databases';
@@ -83,8 +81,7 @@
         YAHOO.util.Connect.asyncRequest('GET', '/tools/organism', {
             success: function(obj) {
                 try {
-                    result = YAHOO.lang.JSON.parse(obj.responseText);
-                    this.organisms = result;
+                    this.organisms = YAHOO.lang.JSON.parse(obj.responseText);
                     this.renderOrganisms();
                     this.renderDatabases();
                     // --- if query id is already set, start search ---
@@ -485,7 +482,7 @@
         obj.renderDatabases();
         
         /* --- Set program dependent default algorithm parameters --- */
-        defaultValue = obj.blastProgramDropDown[selectedIndex].value == 'blastn' ? '11': '3';
+        var defaultValue = obj.blastProgramDropDown[selectedIndex].value == 'blastn' ? '11': '3';
         obj.selectDropdownValue(obj.wordSizeDropDown, defaultValue);
     }
 
@@ -523,7 +520,7 @@
             '&filter=' + filter +
             '&sequence=' + fasta);
           
-            resultWindow = window.open();
+            var resultWindow = window.open();
             resultWindow.document.write('Please wait for results to be loaded');
             resultWindow.document.close();
                         
@@ -537,7 +534,7 @@
                     if (results_file.match(/pre/i)){
                         results_file = results_file.replace(/<pre.+?>|<\/pre>/ig,'');
                     }
-                    if (results_file.match('Sorry')){
+                    if (results_file.match(/sorry|exception|unavailable/i)){
                         this.warning.innerHTML = results_file;
                         Dom.addClass(this.warning.id, 'warning');
                         Dom.removeClass(this.warning.id, 'hidden');

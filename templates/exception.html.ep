@@ -37,7 +37,7 @@
             </div>
             <div class="snippet"><pre><%= dumper $self->stash %></pre></div>
         <% } else { %>
-            <div>Page temporarily unavailable, please come back later.</div>
+            <div><%= $e->message || 'Page temporarily unavailable, please come back later.' %></div>
         <% } %>
     </body>
 </html>
