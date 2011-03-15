@@ -4,28 +4,25 @@ use warnings;
 use lib 'lib';
 use DictyTools::Builder;
 
-my $builder = DictyToolsBuilder->new(
+my $builder = DictyTools::Builder->new(
     module_name  => 'DictyTools',
     license      => 'perl',
     dist_author  => 'Yulia Bushmanova <y-bushmanova@northwestern.edu>',
     dist_version => '2.0.0',
     requires     => {
-        'Mojolicious'   => '0.999938',
-        'File::Spec::Functions' => '',
-        'SOAP::Lite' => '',
-        'YAML' => '',
-        'IO::String' => '',
-        'Bio::Perl' => '',
-        'Bio::Graphics' => '', 
-        'SQL::Abstract' => '1.63',
-        'DBIx::Class' => '0.08120',
-        'File::Path' => '2.04',
-        'Bio::Chado::Schema' => '',
-        'Bio::Graphics' => '2.14'    
+        'Mojolicious'                 => '0.999938',
+        'Plack'                       => '0.9941',
+        'FCGI::Engine'                => '0.16',
+        'Mojolicious::Plugin::Bundle' => '0.001',
+        'File::Spec::Functions'       => '',
+        'SOAP::Lite'                  => '',
+        'IO::String'                  => '',
+        'Bio::Perl'                   => '',
+        'File::Path'                  => '2.04',
+        'Bio::Chado::Schema'          => '',
+        'Bio::Graphics'               => '2.14'
     },
-    build_requires => {
-    	 'Archive::Extract' => '',
-		},
+    build_requires => { 'Archive::Extract' => '', },
     add_to_cleanup => ['DictyTools-*'],
     create_readme  => 1,
 );
