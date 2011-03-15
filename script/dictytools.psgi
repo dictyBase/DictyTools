@@ -13,6 +13,6 @@ BEGIN {
     $ENV{MOJO_MODE} = 'development';
 }
 
-my $psgi = Mojo::Server::PSGI->new( app_class => 'dictyTools' );
+my $psgi = Mojo::Server::PSGI->new( app_class => 'DictyTools' );
 my $app = sub { $psgi->run(@_) };
 $app;

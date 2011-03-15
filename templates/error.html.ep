@@ -1,4 +1,4 @@
-% layout 'default';
+% layout 'blast';
 <div class="error-warning">
    <%= $self->stash('message') %>
 </div>

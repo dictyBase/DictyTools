@@ -27,9 +27,9 @@ eval { ( $programs, $databases ) = @{ $blast_server->config->result } };
 plan skip_all => 'Could not connect to ' . $config->{blast}->{proxy} if $@;
 plan qw/no_plan/;
 
-use_ok 'dictyTools';
+use_ok 'DictyTools';
 
-my $t = Test::Mojo->new( app => 'dictyTools' );
+my $t = Test::Mojo->new( app => 'DictyTools' );
 
 $t->get_ok('/tools/blast/')
     ->status_is( 200, 'successful response for BLAST main form' )

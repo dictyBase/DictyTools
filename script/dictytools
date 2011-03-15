@@ -18,7 +18,7 @@ Please visit http://mojolicious.org for detailed installation instructions.
 EOF
 
 # Application
-$ENV{MOJO_APP} ||= 'dictyTools';
+$ENV{MOJO_APP} ||= 'DictyTools';
 
 # Start commands
 Mojolicious::Commands->start;

@@ -8,9 +8,9 @@ use lib "$FindBin::Bin/../lib";
 use Test::Mojo;
 use dicty::Search::Gene;
 
-use_ok 'dictyTools';
+use_ok 'DictyTools';
 
-my $t = Test::Mojo->new( app => 'dictyTools' );
+my $t = Test::Mojo->new( app => 'DictyTools' );
 
 my $name = 'test_CURATED';
 my ($gene) = dicty::Search::Gene->find(

@@ -1,69 +1,42 @@
-% layout 'default';
+% layout 'blast';
 
-<div class="dicty-content">
-    <div class="wrapper threecol-wide">
-        <div id="subnav">
-            <div class="inner_container">
-                <h3>
-                    BLAST report
-                </h3>
-            </div>
-        </div>
-        <div class="wrapper-left-center">
-            <div class="wrapper-columns">
-                <div class="column-center">
-                    <div id="column-center-content">
-                        <!-- Central Column start -->
-                        <div class="container" id="blast-results">
-                            <div class="content">
-                                <div class="block-container-label">
-                                    General Information
-                                </div>
-                                <div id="blast-header" class="block-container">
-                                    <%== stash 'top' %>
-                                </div>
-                                <div class="block-container-label">
-                                    Graphic Summary
-                                </div>
-                                <div id="blast-graph" class="block-container">
-                                    <%== stash 'graph' %>
-                                </div>
-                                <div class="block-container-label">
-                                    Descriptions
-                                </div>
-                                <div id="blast-table" class="block-container">
-                                    <%== stash 'table' %>
-                                </div>
-                                <div class="block-container-label">
-                                    Alignments
-                                </div>
-                                <div id="blast-result" class="block-container">
-                                    <%== stash 'results' %>
-                                </div>
-                                <div class="block-container-label">
-                                    Parameters
-                                </div>
-                                <div id="blast-parameters" class="block-container">
-                                    <%== stash 'parameters' %>
-                                </div>
-                                <div class="block-container-label">
-                                    Statistics
-                                </div>
-                                <div id="blast-statictics" class="block-container">
-                                    <%== stash 'statistics' %>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="column-left">
-                    <div id="column-left-content"></div>
-                </div>
-                <div class="column-right">
-                    <!-- Right Column start -->
-                    <!-- Right Column end -->
-                </div>
-            </div>
-        </div>
+<div class="container" id="blast-results">
+  <div class="content">
+    <div class="block-container-label">
+        General Information
     </div>
+    <div id="blast-header" class="block-container">
+        <%== stash 'top' %>
+    </div>
+    <div class="block-container-label">
+        Graphic Summary
+    </div>
+    <div id="blast-graph" class="block-container">
+        <%== stash 'graph' %>
+    </div>
+    <div class="block-container-label">
+        Descriptions
+    </div>
+    <div id="blast-table" class="block-container">
+        <%== stash 'table' %>
+    </div>
+    <div class="block-container-label">
+        Alignments
+    </div>
+    <div id="blast-result" class="block-container">
+        <%== stash 'results' %>
+    </div>
+    <div class="block-container-label">
+        Parameters
+    </div>
+    <div id="blast-parameters" class="block-container">
+        <%== stash 'parameters' %>
+    </div>
+    <div class="block-container-label">
+        Statistics
+    </div>
+    <div id="blast-statictics" class="block-container">
+        <%== stash 'statistics' %>
+    </div>
+  </div>
 </div>

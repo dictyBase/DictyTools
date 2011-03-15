@@ -8,9 +8,9 @@ use lib "$FindBin::Bin/../lib";
 use Test::Mojo;
 use dicty::Search::Gene;
 
-use_ok 'dictyTools';
+use_ok 'DictyTools';
 
-my $t = Test::Mojo->new( app => 'dictyTools' );
+my $t = Test::Mojo->new( app => 'DictyTools' );
 
 $t->get_ok('/tools/organism')
     ->status_is( 200, 'successful response for organism' )

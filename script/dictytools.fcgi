@@ -13,6 +13,6 @@ BEGIN {
     $ENV{MOJO_MODE} = 'development';
 }
 
-my $fcgi = Mojo::Server::FastCGI->new( app_class => 'dictyTools' );
+my $fcgi = Mojo::Server::FastCGI->new( app_class => 'DictyTools' );
 $fcgi->run;
 
