@@ -68,7 +68,7 @@ sub primary_features {
     my ( $self, $gene ) = @_;
 
     ## -- get all gene features
-    my $sub_rs = $self->app->util->subfeatures($gene);
+    my $sub_rs = $self->subfeatures($gene);
 
     ## -- filter out cds, trna, ncrna and pseudogenes
     my $pseudogene_rs =
@@ -116,7 +116,7 @@ sub genbank_features {
     my ( $self, $gene ) = @_;
 
     ## -- get all gene features
-    my $sub_rs = $self->app->util->subfeatures($gene);
+    my $sub_rs = $self->subfeatures($gene);
 
     my $genbank_rs = $sub_rs->search(
         { 'dbxref.accession' => { 'like', '%GenBank%' } },
@@ -158,7 +158,7 @@ sub feature2seqtypes {
         my @seqtypes = ( 'Protein', 'DNA coding sequence', 'Genomic DNA' );
         foreach my $seqtype (@seqtypes) {
             push @$sequences, $seqtype
-                if $self->app->util->get_sequence( $feature, $seqtype );
+                if $self->get_sequence( $feature, $seqtype );
         }
     }
     return $sequences;

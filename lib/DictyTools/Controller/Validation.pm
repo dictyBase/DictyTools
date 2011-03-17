@@ -12,6 +12,7 @@ sub connection {
     my ($self) = @_;
     if ( !$self->stash('is_connected') ) {
         $self->render(
+            no_header  => $self->req->param('noheader') || undef,
             template => 'error',
             message  => "Could not establish connection to BLAST server",
             header   => 'Error page',
