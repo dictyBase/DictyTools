@@ -36,30 +36,36 @@ my @app_js = ('menu','custom/blast');
     <title><%= stash 'title' %></title>
   </head>
   <body class="yui-skin-sam">
-    <%= $self->render_partial(template => $path.'/toolbar') %>
-    <div id="container">
-      <div class="wrapper <%= (stash 'wrapper') || 'threecol-wide' %>">
-        <div id="subnav">
-          <div class="inner_container"><%= stash 'subtitle' %></div>
-        </div>
-        <div class="wrapper-left-center">
-          <div class="wrapper-columns">
-            <div class="column-center">
-              <div id="column-center-content">
+    <% if (! stash('no_header')) { %>
+      <%= $self->render_partial(template => $path.'/toolbar') %>
+      <div id="container">
+        <div class="wrapper <%= (stash 'wrapper') || 'threecol-wide' %>">
+          <div id="subnav">
+            <div class="inner_container"><%= stash 'subtitle' %></div>
+          </div>
+          <div class="wrapper-left-center">
+            <div class="wrapper-columns">
+              <div class="column-center">
+                <div id="column-center-content">
+    <% } %>
+    
                 <%= $self->render_inner %>
-              </div>
-    				</div>
-    				<div class="column-left">
-    				  <div id="column-left-content"><%= stash 'left_column' %></div>
-    				</div>
-    				<div class="column-right"><%= stash 'left_column' %></div>
-    		  </div>
+                
+    <% if (! stash('no_header')) { %>
+                </div>
+      				</div>
+      				<div class="column-left">
+      				  <div id="column-left-content"><%= stash 'left_column' %></div>
+      				</div>
+      				<div class="column-right"><%= stash 'left_column' %></div>
+      		  </div>
+          </div>
         </div>
       </div>
-    </div>
-    <%= $self->render_partial(template => 'footer') %>
-  	% if ($self->app->mode eq 'production') {
-  		 %= include 'google'
-  	% }
+      <%= $self->render_partial(template => 'footer') %>
+    	% if ($self->app->mode eq 'production') {
+    		 %= include 'google'
+    	% }
+  	<% } %>
   </body>
 </html>
