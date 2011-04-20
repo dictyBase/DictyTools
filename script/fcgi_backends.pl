@@ -1,13 +1,14 @@
 #!/usr/bin/perl -w
 use strict;
 
-use File::Basename 'dirname';
+use FindBin;
+#use local::lib "$FindBin::Bin/../extlib";
+
 use File::Spec;
 use File::Spec::Functions;
 use FCGI::Engine::Manager;
 
-my $confdir = join '/', File::Spec->splitdir( dirname(__FILE__) ), '..',
-    'conf';
+my $confdir = "$FindBin::Bin/../conf";
 
 my $manager =
     FCGI::Engine::Manager->new(

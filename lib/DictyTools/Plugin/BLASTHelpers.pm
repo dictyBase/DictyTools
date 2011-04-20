@@ -25,11 +25,10 @@ sub register {
 
     eval { ( $programs, $databases ) = @{ $blast_server->config->result } };
     if ($@) {
-        $app->log->warn(
-            "Could not establish connection to BLAST server: $@");
+        $app->log->warn("Could not establish connection to BLAST server: $@");
         return;
     }
-    
+
     $app->defaults( 'server'       => $blast_server );
     $app->defaults( 'programs'     => $programs );
     $app->defaults( 'databases'    => $databases );
@@ -107,18 +106,17 @@ sub register {
             my $result = $parser->next_result;
             return if !$result;
 
+            my $panel = Bio::Graphics::Panel->new(
+                -length    => $result->query_length,
+                -width     => 720,
+                -pad_left  => 5,
+                -pad_right => 5,
+            );
             my $full_length = Bio::SeqFeature::Generic->new(
                 -start => 1,
                 -end   => $result->query_length,
                 -display_name =>
                     ( ( split( /\|/, $result->query_name ) )[0] ),
-            );
-
-            my $panel = Bio::Graphics::Panel->new(
-                -length    => $result->query_length,
-                -width     => 620,
-                -pad_left  => 50,
-                -pad_right => 50,
             );
             $panel->add_track(
                 $full_length,
@@ -129,27 +127,26 @@ sub register {
                 -label   => 1,
             );
             my $track = $panel->add_track(
-                -glyph      => 'generic',
-                -label      => 1,
-                -connector  => 'dashed',
-                -bgcolor    => 'blue',
-                -height     => '5',
-                -sort_order => 'high_score'
+                -glyph     => 'generic',
+                -label     => 1,
+                -connector => 'dashed',
+                -bgcolor   => 'blue',
+                -height    => '5',
+
+                #        -bump_limit => 5,
             );
 
             while ( my $hit = $result->next_hit ) {
                 my @display_names = split( /\|/, $hit->name );
-                my ($display_name) = grep { $_ =~ m{_} } @display_names;
-                $display_name ||= $display_names[0];
-                my $id = $display_names[1] || $display_name;
-
+                my $display_name;
+                foreach my $name (@display_names) {
+                    $display_name = $name if $name =~ m{_};
+                }
+                my $display_name = $display_name || $display_names[0];
                 my $feature = Bio::SeqFeature::Generic->new(
-                    -score => $hit->score,
-                    -display_name =>
-                        ( $display_name . '(' . $hit->significance . ')' ),
+                    -score        => $hit->raw_score,
+                    -display_name => ($display_name)
                 );
-                $feature->primary_id($id);
-
                 while ( my $hsp = $hit->next_hsp ) {
                     $feature->add_sub_SeqFeature( $hsp, 'EXPAND' );
                 }
@@ -160,7 +157,7 @@ sub register {
                 -root  => $c->app->home->rel_dir('public'),
                 -url   => '/tmp/dictytools',
                 -title => '',
-                -link  => '#$id'
+                -link  => '#$name'
             );
             return
                   '<img src="' 

@@ -27,6 +27,7 @@ sub index {
 
     $self->render(
         template   => 'blast/index',
+        title      => 'dictyBase BLAST Server',
         primary_id => $self->req->param('primary_id') || undef,
         sequence   => $self->req->param('sequence') || undef,
         no_header  => $self->req->param('noheader') || undef,
@@ -129,6 +130,9 @@ sub report {
     my $html_hash =
         $self->blast_report( catfile( $dir, $file ), $self->url_for->base );
     my $graph = $self->blast_graph( catfile( $dir, $file ) );
+    
+#    use Data::Dumper;
+#    $self->app->log->debug(Dumper $html_hash->{top});
 
     $self->render(
         template   => $self->app->config->{blast}->{report_template},
@@ -140,7 +144,7 @@ sub report {
         statistics => $html_hash->{statistics},
         logo_link  => $app->config->{page}->{logo_link} || "/",
         no_header  => $self->req->param('noheader') || undef,
-
+        title      => 'dictyBase BLAST Server: Report'
     );
     #unlink catfile($dir, $file);
 }
