@@ -10,18 +10,6 @@
                     <td rowspan="2">
                         <a href = "/discoideum"><%= image_tag "$path/logo.gif" %></a>
                     </td>
-                    <!--
-                    <td colspan="4">
-                        <div id="container-help">
-                            <img src="/static/images/<%= $path %>/help-left.gif">
-                            <div>
-                                <form action="/db/cgi-bin/search/search.pl">
-                                    <input id="search-input" name="query" type="text" size="30" value="use * as a wildcard character"> <nobr><input type="submit" name="submit" value="Search All"> <input type="submit" name="genes_only" value="Gene Names Only"></nobr>
-                                </form>
-                            </div>
-                        </div>
-                    </td>
-                    -->
                 </tr>
                 <tr class="menu">
                     <td><%= image_tag "$path/menu-top-left.gif" %></td>
@@ -83,7 +71,7 @@
                     </td>
                     <td><%= image_tag "$path/menu-top-right.gif" %></td>
                     <td id="about_help">
-                        <a href="/db/cgi-bin/dictyBase/suggestion">Contact</a> 
+                        <a href="/discoideum/db/cgi-bin/dictyBase/suggestion">Contact</a> 
                     </td>                            
                 </tr>
             </table>
