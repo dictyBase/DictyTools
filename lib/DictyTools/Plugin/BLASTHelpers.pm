@@ -53,7 +53,7 @@ sub register {
             my $result = $parser->next_result;
 
             my $link = $c->app->config->{blast}->{blast_link_out};
-            $base_url = $base_url ? 'http://' . $base_url . $link : $link;
+            $base_url = $base_url ? $base_url . $link : $link;
 
             my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new(
                 -nucleotide_url => $base_url . '%s',
