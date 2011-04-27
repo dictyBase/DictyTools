@@ -10,7 +10,7 @@ use dicty::Search::Gene;
 use SOAP::Lite;
 use YAML;
 
-my $conf_file = "$FindBin::Bin/../conf/" . $ENV{MODE} . ".yml";
+my $conf_file = "$FindBin::Bin/../conf/" . $ENV{MODE} . ".yaml";
 plan skip_all =>
     "could not find config file ($conf_file) with blast server settings"
     if !-e $conf_file;

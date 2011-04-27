@@ -112,7 +112,8 @@ sub run {
     my $filename = $tmp->filename;
     $filename =~ s{$dir}{};
 
-    $self->render( text => $filename );
+    $self->app->log->debug($filename);
+    $self->render( data => $filename );
 }
 
 sub report {
