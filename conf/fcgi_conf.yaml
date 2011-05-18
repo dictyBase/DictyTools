@@ -1,0 +1,24 @@
+---
+- name:            "development.server"
+  server_class:    "FCGI::Engine::Manager::Server::Plackup"
+  scriptname:      "script/dictytools.psgi"
+  nproc:            2
+  pidfile:         "/tmp/dictytools.pid"
+  socket:          "/tmp/dictytools.socket"
+  additional_args: ['-e',  'development']
+- name:            "staging.server"
+  server_class:    "FCGI::Engine::Manager::Server::Plackup"
+  scriptname:      "script/dictytools.psgi"
+  nproc:            2
+  pidfile:         "/tmp/dictytools.pid"
+  socket:          "/tmp/dictytools.socket"
+  additional_args: ['-e',  'staging']
+- name:            "production.server"
+  server_class:    "FCGI::Engine::Manager::Server::Plackup"
+  scriptname:      "script/dictytools.psgi"
+  nproc:            3
+  pidfile:         "/tmp/dictytools.pid"
+  socket:          "/tmp/dictytools.socket"
+  additional_args: ['-e',  'production']
+
+

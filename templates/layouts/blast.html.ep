@@ -1,0 +1,71 @@
+<% 
+my $path       = stash('species') || 'default';
+my $yui_root   = '/javascripts/yui/build';
+my @yui_assets = ( 'container', 'menu', 'button' );
+my @app_assets = (
+    'header', 'body', 'footer', 'blast',
+    $path . '/header-skin',
+    $path . '/body-skin',
+    $path . '/footer-skin'
+);
+my @yui_js_min = (
+    'yahoo',     'yuiloader', 'container',  'menu', 
+    'animation', 'element',   'connection', 'json', 'button'
+);
+my @yui_js = ('yahoo-dom-event');
+my @app_js = ('menu','custom/blast');
+%>
+
+<!doctype html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link type="text/css" rel="stylesheet" href="<%= stylesheet_path $yui_root.'/fonts/fonts-min' %>"/>
+      
+    <% foreach my $asset (@yui_assets) { %>
+       <link type="text/css" rel="stylesheet" href="<%= stylesheet_path $yui_root.'/'.$asset.'/assets/skins/sam/'.$asset %>"/>
+    <% } %>
+
+    <%= stylesheet_link_tag $_ foreach @app_assets %>
+    <%= javascript_include_tag "yui/build/$_/$_" foreach @yui_js %>
+    <%= javascript_include_tag "yui/build/$_/$_\-min" foreach @yui_js_min %>
+    <%= javascript_include_tag $_ foreach @app_js  %>
+    
+    <title><%= stash 'title' %></title>
+  </head>
+  <body class="yui-skin-sam">
+    <% if (! stash('no_header')) { %>
+      <%= $self->render_partial(template => $path.'/toolbar') %>
+      <div id="container">
+        <div class="wrapper <%= (stash 'wrapper') || 'threecol-wide' %>">
+          <div id="subnav">
+            <div class="inner_container"><%= stash 'subtitle' %></div>
+          </div>
+          <div class="wrapper-left-center">
+            <div class="wrapper-columns">
+              <div class="column-center">
+                <div id="column-center-content">
+    <% } %>
+    
+                <%= $self->render_inner %>
+                
+    <% if (! stash('no_header')) { %>
+                </div>
+      				</div>
+      				<div class="column-left">
+      				  <div id="column-left-content"><%= stash 'left_column' %></div>
+      				</div>
+      				<div class="column-right"><%= stash 'left_column' %></div>
+      		  </div>
+          </div>
+        </div>
+      </div>
+      <%= $self->render_partial(template => 'footer') %>
+    	% if ($self->app->mode eq 'production') {
+    		 %= include 'google'
+    	% }
+  	<% } %>
+  </body>
+</html>

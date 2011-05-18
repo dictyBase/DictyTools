@@ -1,28 +1,29 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
-use lib '.';
-use dictyToolsBuilder;
+use lib 'lib';
+use DictyTools::Builder;
 
-my $builder = dictyToolsBuilder->new(
-    module_name  => 'dictyTools',
+my $builder = DictyTools::Builder->new(
+    module_name  => 'DictyTools',
     license      => 'perl',
-    dist_author  => 'Yulia Bushmanova <y-bushmenova@northwestern.edu>',
-    dist_version => '1.0.0',
+    dist_author  => 'Yulia Bushmanova <y-bushmanova@northwestern.edu>',
+    dist_version => '2.0.0',
     requires     => {
-        'Mojo'          => '0.991244',
-        'Apache2::Mojo' => '0.0047', 
-        'File::Spec::Functions' => '',
-        'SOAP::Lite' => '',
-        'YAML' => '',
-        'IO::String' => '',
-        'Bio::Perl' => '',
-        'Bio::Graphics' => '', 
+        'Mojolicious'                 => '0.999938',
+        'Plack'                       => '0.9941',
+        'FCGI::Engine'                => '0.16',
+        'Mojolicious::Plugin::Bundle' => '0.001',
+        'File::Spec::Functions'       => '',
+        'SOAP::Lite'                  => '',
+        'IO::String'                  => '',
+        'Bio::Perl'                   => '',
+        'File::Path'                  => '2.04',
+        'Bio::Chado::Schema'          => '',
+        'Bio::Graphics'               => ''
     },
-    build_requires => {
-    	 'Archive::Extract' => '',
-		},
-    add_to_cleanup => ['dictyTools-*'],
+    build_requires => { 'Archive::Extract' => '', },
+    add_to_cleanup => ['DictyTools-*'],
     create_readme  => 1,
 );
 

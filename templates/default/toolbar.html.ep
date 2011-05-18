@@ -1,0 +1,80 @@
+<% my $path = stash('species') || 'default'; %>
+<div id="shadow-container">
+    <div class="shadow">
+        <div id="container-top">
+            <div id="descriptor">
+               <%= stash 'descriptor' %>
+            </div>
+            <table>
+                <tr>
+                    <td rowspan="2">
+                        <a href = "/discoideum"><%= image_tag "$path/logo.gif" %></a>
+                    </td>
+                </tr>
+                <tr class="menu">
+                    <td><%= image_tag "$path/menu-top-left.gif" %></td>
+                    <td>
+                      <div id="menu-top" class="yuimenubar yuimenubarnav">
+                          <div class="bd">
+                              <ul class="first-of-type">
+                                  <li class="yuimenubaritem first-of-type">
+                                      <a class="yuimenubaritemlabel">Genomes</a>
+                                      <div id="genomes" class="yuimenu">
+                                          <div class="bd">
+                                              <ul class="first-of-type">
+                                                  <li class="yuimenuitem">
+                                                      <a class="yuimenuitemlabel" href="/discoideum">Dictyostelium discoideum</a>
+                                                  </li>                                                            
+                                                  <li class="yuimenuitem">
+                                                      <a class="yuimenuitemlabel" href="/purpureum">Dictyostelium purpureum</a>
+                                                  </li>
+                                              </ul>
+                                          </div>
+                                      </div>
+                                  </li>
+                                  <li class="yuimenubaritem">
+                                      <a class="yuimenubaritemlabel">Genome Browser</a>
+                                      <div id="gbrowse" class="yuimenu">
+                                          <div class="bd">
+                                              <ul class="first-of-type">
+                                                  <li class="yuimenuitem">
+                                                      <a class="yuimenuitemlabel" href="http://dictybase.org/db/cgi-bin/ggb/gbrowse/?name=1:1..30000">Dictyostelium discoideum</a>
+                                                  </li>                                                            
+                                                  <li class="yuimenuitem">
+                                                      <a class="yuimenuitemlabel" href="/purpureum/gbrowse/?name=scaffold_1:1..30000">Dictyostelium purpureum</a>
+                                                  </li>
+                                              </ul>
+                                          </div>
+                                      </div>
+                                  </li>
+                                  <li class="yuimenubaritem ">
+                                      <a class="yuimenubaritemlabel" href="/tools/blast">BLAST</a>
+                                  </li>
+                                  <li class="yuimenubaritem">
+                                      <a class="yuimenubaritemlabel">Download</a>
+                                      <div id="download" class="yuimenu">
+                                          <div class="bd">
+                                              <ul class="first-of-type">
+                                                  <li class="yuimenuitem">
+                                                      <a class="yuimenuitemlabel" href="/discoideum/Downloads/">Dictyostelium discoideum</a>
+                                                  </li>                                                             
+                                                  <li class="yuimenuitem">
+                                                      <a class="yuimenuitemlabel" href="/purpureum/downloads/">Dictyostelium purpureum</a>
+                                                  </li>                                                                                                                       
+                                              </ul>
+                                          </div>
+                                      </div>
+                                  </li>
+                              </ul>
+                          </div>
+                      </div>
+                    </td>
+                    <td><%= image_tag "$path/menu-top-right.gif" %></td>
+                    <td id="about_help">
+                        <a href="/discoideum/db/cgi-bin/dictyBase/suggestion">Contact</a> 
+                    </td>                            
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
