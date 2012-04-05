@@ -1,4 +1,28 @@
-public/tmp/
+#Ignore conf files
+*.conf
 *.yaml
-!*.sample.*
 
+#Ignore yaml
+*.yaml
+
+#however exclude the sample conf
+!*.sample*
+!fcgi_conf.yaml
+!apache.conf
+
+
+#exclude various folder
+log
+cache
+
+#Perl's build specific stuff
+Build
+_blib
+blib
+_build
+MANIFEST
+MYMETA*
+META
+
+#exclude Build.PL
+!Build.PL
