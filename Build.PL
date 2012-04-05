@@ -20,7 +20,7 @@ my $builder = DictyTools::Builder->new(
         'Bio::Perl'                   => '',
         'File::Path'                  => '2.04',
         'Bio::Chado::Schema'          => '',
-        'Bio::Graphics'               => '2.14'
+        'Bio::Graphics'               => ''
     },
     build_requires => { 'Archive::Extract' => '', },
     add_to_cleanup => ['DictyTools-*'],
