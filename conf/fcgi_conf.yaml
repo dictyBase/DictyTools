@@ -15,7 +15,7 @@
   additional_args: ['-e',  'staging']
 - name:            "production.server"
   server_class:    "FCGI::Engine::Manager::Server::Plackup"
-  scriptname:      "script/dictytools_prod.psgi"
+  scriptname:      "script/dictytools.psgi"
   nproc:            3
   pidfile:         "/tmp/dictytools.pid"
   socket:          "/tmp/dictytools.socket"
