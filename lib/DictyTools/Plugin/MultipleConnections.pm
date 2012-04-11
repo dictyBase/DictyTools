@@ -2,7 +2,11 @@ package DictyTools::Plugin::MultipleConnections;
 
 use strict;
 use Bio::Chado::Schema;
+use Mojo::Base -base;
 use base 'Mojolicious::Plugin';
+
+has model;
+has connection_hash;
 
 sub register {
     my ( $self, $app ) = @_;
@@ -11,67 +15,82 @@ sub register {
         "config must contain organism definitions with database connection parameters\n"
         if !$app->config->{organism};
 
+    my $dbhash = $app->config->{database};
+    my $model  = Bio::Chado::Schema->connect(
+        $dbhash->{dsn}, $dbhash->{user},
+        $dbhash->{password}, { LongReadLen => 2**25 }
+    );
+    $self->transform_model($model);
+    $self->model ($model);
+
     my $connection_hash;
     foreach my $organism ( keys %{ $app->config->{organism} } ) {
         my $organism_conf = $app->config->{organism}->{$organism};
-        next if !$organism_conf->{dsn};
-
-        my $connection = Bio::Chado::Schema->connect(
-            $organism_conf->{dsn}, $organism_conf->{user},
-            $organism_conf->{password}, { LongReadLen => 2**25 }
+        next if !$organism_conf->{database};
+        my $org_dbhash = $organism_conf->{database};
+        my $org_model  = Bio::Chado::Schema->connect(
+            $org_dbhash->{dsn}, $org_dbhash->{user},
+            $org_dbhash->{password}, { LongReadLen => 2**25 }
         );
-
-        my $cv_source     = $connection->source('Cv::Cvtermsynonym');
-        my $class_name = 'Bio::Chado::Schema::' . $cv_source->source_name;
-        $cv_source->remove_column('synonym');
-        $cv_source->add_column(
-            'synonym_' => {
-                data_type   => 'varchar',
-                is_nullable => 0,
-                size        => 1024
-            }
-        );
-        $class_name->add_column(
-            'synonym_' => {
-                data_type   => 'varchar',
-                is_nullable => 0,
-                size        => 1024
-            }
-        );
-        $class_name->register_column(
-            'synonym_' => {
-                data_type   => 'varchar',
-                is_nullable => 0,
-                size        => 1024
-            }
-        );
-
-        my $f_source = $connection->source('Sequence::Feature');
-        $f_source->add_column(
-            is_deleted => {
-                data_type     => 'boolean',
-                default_value => 'false',
-                is_nullable   => 0,
-                size          => 1
-            }
-        );
-
-        my $f_class_name = 'Bio::Chado::Schema::' . $f_source->source_name;
-        $f_source->add_column('is_deleted');
-        $f_class_name->add_column('is_deleted');
-        $f_class_name->register_column('is_deleted');
-
-        $connection->source('Organism::Organism')->remove_column('comment');
-
-        $connection_hash->{$organism} = $connection;
+        $self->transform_model($org_model);
+        $connection_hash->{$organism} = $org_model;
+        $self->connection_hash($connection_hash);
     }
-    $app->defaults( 'model' => $connection_hash );
-    
+
     $app->helper(
         get_model => sub {
-            my ($c, $organism) = @_;
-            return $c->app->defaults->{model}->{$organism};
+            my ( $c, $organism ) = @_;
+            return $self->model if !$organism;
+            my $hash = $self->connection_hash;
+            return $hash->{$organism} if defined $hash->{$organism};
         }
     );
 }
+
+sub transform_model {
+    my ( $self, $connection ) = @_;
+
+    my $cv_source  = $connection->source('Cv::Cvtermsynonym');
+    my $class_name = 'Bio::Chado::Schema::' . $cv_source->source_name;
+    $cv_source->remove_column('synonym');
+    $cv_source->add_column(
+        'synonym_' => {
+            data_type   => 'varchar',
+            is_nullable => 0,
+            size        => 1024
+        }
+    );
+    $class_name->add_column(
+        'synonym_' => {
+            data_type   => 'varchar',
+            is_nullable => 0,
+            size        => 1024
+        }
+    );
+    $class_name->register_column(
+        'synonym_' => {
+            data_type   => 'varchar',
+            is_nullable => 0,
+            size        => 1024
+        }
+    );
+
+    my $f_source = $connection->source('Sequence::Feature');
+    $f_source->add_column(
+        is_deleted => {
+            data_type     => 'boolean',
+            default_value => 'false',
+            is_nullable   => 0,
+            size          => 1
+        }
+    );
+
+    my $f_class_name = 'Bio::Chado::Schema::' . $f_source->source_name;
+    $f_source->add_column('is_deleted');
+    $f_class_name->add_column('is_deleted');
+    $f_class_name->register_column('is_deleted');
+
+    $connection->source('Organism::Organism')->remove_column('comment');
+}
+
 1;
