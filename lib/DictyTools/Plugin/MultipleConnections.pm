@@ -42,7 +42,7 @@ sub register {
             my ( $c, $organism ) = @_;
             return $self->model if !$organism;
             my $hash = $self->connection_hash;
-            return $hash->{$organism} if defined $hash->{$organism};
+            return $hash->{$organism} ? $hash->{$organism} : $self->model;
         }
     );
 }
