@@ -5,8 +5,8 @@ use Bio::Chado::Schema;
 use Mojo::Base -base;
 use base 'Mojolicious::Plugin';
 
-has model;
-has connection_hash;
+has 'model';
+has 'connection_hash';
 
 sub register {
     my ( $self, $app ) = @_;
