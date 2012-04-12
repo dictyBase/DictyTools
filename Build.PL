@@ -14,7 +14,6 @@ my $builder = DictyTools::Builder->new(
         'Plack'                       => '0.9941',
         'FCGI::Engine'                => '0.16',
         'Mojolicious::Plugin::Bundle' => '0.001',
-        'File::Spec::Functions'       => '',
         'SOAP::Lite'                  => '',
         'IO::String'                  => '',
         'Bio::Perl'                   => '',
