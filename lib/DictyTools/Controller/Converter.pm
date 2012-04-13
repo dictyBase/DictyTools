@@ -6,13 +6,13 @@ use IO::String;
 
 use base 'Mojolicious::Controller';
 
-use version; 
+use version;
 our $VERSION = qv('2.0.0');
 
 sub index { }
 
 sub convert {
-    my ( $self ) = @_;
+    my ($self) = @_;
     my $app = $self->app;
 
     my $from     = $self->req->param('from');
@@ -21,17 +21,19 @@ sub convert {
     my $organism = $self->req->param('organism');
     return 'organism has to be proivded' if !$organism;
 
-    my $method = $from . '2' . $to;
-    my $data = $self->$method($ids, $self->get_model($organism) );
+    my $method
+        = $organism eq 'discoideum'
+        ? 'discoideum_' . $from . '2' . $to
+        : $from . '2' . $to;
+    my $data = $self->$method( $ids, $self->get_model($organism) );
     $self->render( json => $data );
 }
 
-sub gene2features {
+sub discoideum_gene2features {
     my ( $self, $id, $connection ) = @_;
 
     ## -- get gene by id
-    my $gene =
-        $connection->resultset('Sequence::Feature')
+    my $gene = $connection->resultset('Sequence::Feature')
         ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
     return 'ID not recognized' if !$gene;
@@ -45,14 +47,14 @@ sub gene2features {
     my @array;
     push @array, map {
         {   id          => $_->dbxref->accession,
-            description => $self->description($_)
+            description => $self->discoideum_description($_)
         }
     } ( $primary_rs->all );
 
     return \@array;
 }
 
-sub description {
+sub discoideum_description {
     my ( $self, $rs ) = @_;
     my $type = $rs->type->name;
 
@@ -64,6 +66,48 @@ sub description {
     return $type;
 }
 
+sub gene2features {
+    my ( $self, $id, $connection ) = @_;
+
+    ## -- get gene by id
+    my $gene = $connection->resultset('Sequence::Feature')
+        ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
+
+    return 'ID not recognized' if !$gene;
+
+    ## -- get primary and genbank features
+    my $transcript_rs = $gene->search_related(
+        'feature_relationship_objects',
+        { 'type.name' => 'part_of' },
+        { join        => 'type' }
+        )->search_related(
+        'subject',
+        { 'type_2.name' => { -like => '%RNA' } },
+        { join          => 'type' }
+        );
+
+    ## make an array of hashes containing id of the feature and its descriptor
+    my $array = [
+        map {
+            {   id          => $_->dbxref->accession,
+                description => $self->description($_)
+            }
+            } $transcript_rs->all
+    ];
+    return $array if @$array;
+}
+
+sub description {
+    my ( $self, $row ) = @_;
+    my $source
+        = $row->search_related( 'feature_dbxrefs', {} )->search_related(
+        'dbxref',
+        { 'db.name' => 'GFF_source' },
+        { join      => 'db' }
+        )->first->accession;
+    return $source . ' Gene Model';
+}
+
 sub primary_features {
     my ( $self, $gene ) = @_;
 
@@ -71,12 +115,11 @@ sub primary_features {
     my $sub_rs = $self->subfeatures($gene);
 
     ## -- filter out cds, trna, ncrna and pseudogenes
-    my $pseudogene_rs =
-        $sub_rs->search( { 'type.name' => 'pseudogene' },
+    my $pseudogene_rs = $sub_rs->search( { 'type.name' => 'pseudogene' },
         { join => 'type' } );
 
-    my $trna_rs =
-        $sub_rs->search( { 'type.name' => 'tRNA' }, { join => 'type' } );
+    my $trna_rs
+        = $sub_rs->search( { 'type.name' => 'tRNA' }, { join => 'type' } );
 
     my $ncrna_rs = $sub_rs->search(
         {   'type.name' => [
@@ -92,12 +135,12 @@ sub primary_features {
     return $ncrna_rs      if $ncrna_rs->count;
 
     ## -- get curated and predicted features
-    my $cdss_rs =
-        $sub_rs->search( { 'type.name' => 'mRNA' }, { join => 'type' } );
+    my $cdss_rs
+        = $sub_rs->search( { 'type.name' => 'mRNA' }, { join => 'type' } );
 
     my $curated_rs = $cdss_rs->search(
-        { 'dbxref.accession' => { 'like', '%Curator' } },
-        { join => { 'feature_dbxrefs' => 'dbxref' } }
+        { 'dbxref.accession' => { 'like',           '%Curator' } },
+        { join               => { 'feature_dbxrefs' => 'dbxref' } }
     );
 
     my $predicted_rs = $cdss_rs->search(
@@ -126,22 +169,21 @@ sub genbank_features {
     return $genbank_rs;
 }
 
-sub feature2seqtypes {
+sub discoideum_feature2seqtypes {
     my ( $self, $id, $connection ) = @_;
 
     ## -- get feature by id
-    my $feature =
-        $connection->resultset('Sequence::Feature')
+    my $feature = $connection->resultset('Sequence::Feature')
         ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
 
-    return 'ID not recognized' if !$feature;
+    return 'ID not recognized'   if !$feature;
     return 'Feature was deleted' if $feature->get_column('is_deleted');
 
     my $type      = $feature->type->name;
     my $sequences = {};
 
-    $sequences =
-        $type =~ m{mRNA}i
+    $sequences
+        = $type =~ m{mRNA}i
         ? [ 'Protein', 'DNA coding sequence', 'Genomic DNA' ]
         : $type =~ m{Pseudo}i ? [ 'Pseudogene',         'Genomic' ]
         : $type =~ m{RNA}i    ? [ 'Spliced transcript', 'Genomic' ]
@@ -161,6 +203,25 @@ sub feature2seqtypes {
                 if $self->get_sequence( $feature, $seqtype );
         }
     }
+    return $sequences;
+}
+
+sub feature2seqtypes {
+    my ( $self, $id, $connection ) = @_;
+
+    ## -- get feature by id
+    my $feature = $connection->resultset('Sequence::Feature')
+        ->find( { 'dbxref.accession' => $id }, { join => 'dbxref' } );
+
+    return 'ID not recognized' if !$feature;
+
+    my $type = $feature->type->name;
+    my $sequences
+        = $type =~ m{mRNA}i
+        ? [ 'Protein', 'DNA coding sequence', 'Genomic DNA' ]
+        : $type =~ m{RNA}i ? [ 'Spliced transcript', 'Genomic' ]
+        : $type =~ m{EST}i ? ['EST Sequence']
+        :                    undef;
     return $sequences;
 }
 
