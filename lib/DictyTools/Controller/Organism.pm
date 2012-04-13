@@ -5,14 +5,37 @@ use warnings;
 
 use base 'Mojolicious::Controller';
 
-use version; 
+use version;
 our $VERSION = qv('2.0.0');
 
 sub index {
-    my ( $self ) = @_;
+    my ($self)   = @_;
     my $organism = $self->app->config->{organism};
-    my @data = map { $organism->{$_}} keys %$organism;
-    $self->render( json => \@data );
+    my $model    = $self->get_model($organism);
+
+    my $array;
+    for my $name ( keys %$organism ) {
+        my $hash;
+        my $common_name
+            = $organism->{$name}->{common_name}
+            ? $organism->{$name}->{common_name}
+            : $name;
+        my $org = $model->resultset('Organism::Organism')
+            ->search( { 'common_name' => $common_name } )->first;
+
+        if ( defined $organism->{$name}->{process} ) {
+            my ($species) = ( ( split /\s+/, $org->species ) )[0];
+            $hash->{display} = $org->genus . ' ' . $species;
+        }
+        else {
+            $hash->{display} = $org->genus . ' ' . $org->species;
+        }
+        for my $val(qw/taxon_id identifier_prefix site_url/) {
+        	$hash->{$val} = $organism->{$name}->{$val};
+        }
+        push @$data, $hash;
+    }
+    $self->render( json => $data );
 }
 
 1;
