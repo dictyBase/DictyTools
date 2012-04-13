@@ -22,7 +22,10 @@ sub index {
         my $org = $self->get_model($organism)->resultset('Organism::Organism')
             ->search( { 'common_name' => $common_name } )->first;
 
-        if ( defined $organism->{$name}->{process} ) {
+		if (defined $organism->{name}->{display}) {
+			$hash->{display} = $organism->{name}->{display};
+		}
+        elsif ( defined $organism->{$name}->{process} ) {
             my ($species) = ( ( split /\s+/, $org->species ) )[0];
             $hash->{display} = $org->genus . ' ' . $species;
         }
