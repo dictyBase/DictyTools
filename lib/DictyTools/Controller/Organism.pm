@@ -11,7 +11,6 @@ our $VERSION = qv('2.0.0');
 sub index {
     my ($self)   = @_;
     my $organism = $self->app->config->{organism};
-    my $model    = $self->get_model($organism);
 
     my $array;
     for my $name ( keys %$organism ) {
@@ -20,7 +19,7 @@ sub index {
             = $organism->{$name}->{common_name}
             ? $organism->{$name}->{common_name}
             : $name;
-        my $org = $model->resultset('Organism::Organism')
+        my $org = $self->get_model($organism)->resultset('Organism::Organism')
             ->search( { 'common_name' => $common_name } )->first;
 
         if ( defined $organism->{$name}->{process} ) {
