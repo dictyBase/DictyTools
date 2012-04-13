@@ -81,7 +81,7 @@ sub sequence_info_from_chado {
                 }
             )->first->get_column('fseq');
         }
-        if ( $dbrow->featureloc_features->first->strand == -1 ) {
+        if ( $feature->featureloc_features->first->strand == -1 ) {
             $seq = join( '', reverse( split '', $seq ) );
             $seq =~ tr/ATGC/TACG/;
         }
