@@ -21,8 +21,8 @@ sub index {
             : $name;
 
         # have to get rid of repitition somehow
-        if ( defined $organism->{name}->{display} ) {
-            $hash->{display} = $organism->{name}->{display};
+        if ( defined $organism->{$name}->{display} ) {
+            $hash->{display} = $organism->{$name}->{display};
         }
         elsif ( defined $organism->{$name}->{process} ) {
             my $org
@@ -38,7 +38,8 @@ sub index {
             $hash->{display} = $org->genus . ' ' . $org->species;
         }
         for my $val (qw/taxon_id identifier_prefix site_url/) {
-            $hash->{$val} = $organism->{$name}->{$val};
+            $hash->{$val} = $organism->{$name}->{$val}
+                if defined $organism->{$name}->{$val};
         }
         push @$array, $hash;
     }
