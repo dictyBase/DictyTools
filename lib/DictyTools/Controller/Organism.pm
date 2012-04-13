@@ -33,9 +33,9 @@ sub index {
         for my $val(qw/taxon_id identifier_prefix site_url/) {
         	$hash->{$val} = $organism->{$name}->{$val};
         }
-        push @$data, $hash;
+        push @$array, $hash;
     }
-    $self->render( json => $data );
+    $self->render( json => $array );
 }
 
 1;
