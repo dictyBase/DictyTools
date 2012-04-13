@@ -90,7 +90,7 @@ sub sequence_info_from_chado {
     else {
         my $poly_rs = $feature->search_related(
             'feature_relationship_objects',
-            { 'type.name' => 'part_of' },
+            { 'type.name' => 'derives_from' },
             { join        => 'type' }
             )->search_related(
             'subject',
