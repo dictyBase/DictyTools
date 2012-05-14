@@ -5,9 +5,6 @@ use Bio::Chado::Schema;
 use Mojo::Base -base;
 use base 'Mojolicious::Plugin';
 
-has 'model';
-has 'connection_hash';
-
 sub register {
     my ( $self, $app ) = @_;
     die "need to load the yml_config\n" if not defined !$app->can('config');
@@ -21,7 +18,7 @@ sub register {
         $dbhash->{password}, { LongReadLen => 2**25 }
     );
     $self->transform_model($model);
-    $self->model ($model);
+    $app->attr('model' => $model);
 
     my $connection_hash;
     foreach my $organism ( keys %{ $app->config->{organism} } ) {
@@ -34,15 +31,15 @@ sub register {
         );
         $self->transform_model($org_model);
         $connection_hash->{$organism} = $org_model;
-        $self->connection_hash($connection_hash);
+        $app->attr('connection_hash' => $connection_hash);
     }
 
     $app->helper(
         get_model => sub {
             my ( $c, $organism ) = @_;
-            return $self->model if !$organism;
-            my $hash = $self->connection_hash;
-            return $hash->{$organism} ? $hash->{$organism} : $self->model;
+            return $c->app->model if !$organism;
+            my $hash = $c->app->connection_hash;
+            return $hash->{$organism} ? $hash->{$organism} : $c->app->model;
         }
     );
 }
