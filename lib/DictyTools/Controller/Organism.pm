@@ -9,7 +9,7 @@ sub index {
     my $array;
     for my $organism ( $self->organisms_in_db ) {
     	# skip if given in the config
-    	next if exist $config->{$organism->common_name}->{skip};
+    	next if exists $config->{$organism->common_name}->{skip};
 
         my $prefix = $organism->identifier_prefix;
         if (defined $config->{ $organism->common_name }->{identifier_prefix} )
@@ -19,7 +19,7 @@ sub index {
         }
         push @$array,
             {
-            display           => $organism->display_name,
+            display           => $organism->name_for_display,
             identifier_prefix => $prefix
             };
     }

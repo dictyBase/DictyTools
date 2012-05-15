@@ -18,7 +18,7 @@ sub register {
         $dbhash->{password}, { LongReadLen => 2**25 }
     );
     $self->transform_model($model);
-    $app->attr('model' => $model);
+    $app->attr('model' => sub { return $model });
 
     my $connection_hash;
     foreach my $organism ( keys %{ $app->config->{organism} } ) {
@@ -31,7 +31,7 @@ sub register {
         );
         $self->transform_model($org_model);
         $connection_hash->{$organism} = $org_model;
-        $app->attr('connection_hash' => $connection_hash);
+        $app->attr('connection_hash' => sub {return $connection_hash});
     }
 
     $app->helper(

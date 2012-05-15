@@ -10,21 +10,21 @@ has '_organisms';
 sub register {
     my ( $self, $app ) = @_;
     if ( $app->can('model') ) {
-        $self->_organims( $self->_organisms_from_db( $app->model, $app ) );
+        $self->_organisms( $self->_organisms_from_db( $app->model, $app ) );
     }
     $app->helper(
         'organisms_in_db' => sub {
             my ($c) = @_;
             if ( !$self->_organisms ) {
                 $self->_organisms(
-                    $self->_load_organisms( $c->app->model, $app ) );
+                    $self->_organisms_from_db( $c->app->model, $c->app ) );
             }
             return @{ $self->_organisms };
         }
     );
 }
 
-sub _load_organisms {
+sub _organisms_from_db {
     my ( $self, $model, $app ) = @_;
     my $common_name2org;
     my $rs = $model->resultset('Organism::Organism')->search(
@@ -40,7 +40,7 @@ sub _load_organisms {
             my $display_name = sprintf "%s %s", $row->genus,
                 $self->normalize_for_display( $row->species );
             my $prefix
-                = substr( $row->genus, 0, 1 ) . substr( $display_name, 0, 2 );
+                = substr( $row->genus, 0, 1 ) . substr( $row->species, 0, 2 );
 
             $common_name2org->{ $row->common_name }
                 = DictyTools::Organism->new(
@@ -48,7 +48,7 @@ sub _load_organisms {
                 species           => $row->species,
                 genus             => $row->genus,
                 name_for_display  => $display_name,
-                identifier_prefix => $prefix
+                identifier_prefix => uc $prefix
                 );
         }
     }
@@ -58,7 +58,6 @@ sub _load_organisms {
         genus            => 'Dictyostelium',
         name_for_display => 'Dictyostelium discoideum'
     ) if not exists $common_name2org->{discoideum};
-    $self->common_name2org_map($common_name2org);
 
     return [
         sort {
