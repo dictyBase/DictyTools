@@ -8,6 +8,9 @@ sub index {
     my $config = $self->app->config->{organism};
     my $array;
     for my $organism ( $self->organisms_in_db ) {
+    	# skip if given in the config
+    	next if exist $config->{$organism->common_name}->{skip};
+
         my $prefix = $organism->identifier_prefix;
         if (defined $config->{ $organism->common_name }->{identifier_prefix} )
         {
