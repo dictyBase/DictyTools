@@ -13,7 +13,7 @@ sub register {
         $self->_genomes( $self->_genomes_from_db( $app->model, $app ) );
     }
     $app->helper(
-        loaded_genomes => sub {
+        'organims_in_db' => sub {
             my ($c) = @_;
             if ( !$self->_genomes ) {
                 $self->_genomes(
