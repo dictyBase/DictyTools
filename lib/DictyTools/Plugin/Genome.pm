@@ -19,7 +19,7 @@ sub register {
                 $self->_organisms(
                     $self->_load_organisms( $c->app->model, $app ) );
             }
-            return @{$self->_organims};
+            return @{ $self->_organisms };
         }
     );
 }
@@ -36,14 +36,19 @@ sub _load_organisms {
 
     while ( my $row = $rs->next ) {
         if ( not exists $common_name2org->{ $row->common_name } ) {
+
+            my $display_name = sprintf "%s %s", $row->genus,
+                $self->normalize_for_display( $row->species );
+            my $prefix
+                = substr( $row->genus, 0, 1 ) . substr( $display_name, 0, 2 );
+
             $common_name2org->{ $row->common_name }
                 = DictyTools::Organism->new(
-                common_name          => $row->common_name,
-                species              => $row->species,
-                genus                => $row->genus
-                    name_for_display => sprintf "%s %s",
-                $row->genus,
-                $self->normalize_for_display( $self->species )
+                common_name       => $row->common_name,
+                species           => $row->species,
+                genus             => $row->genus,
+                name_for_display  => $display_name,
+                identifier_prefix => $prefix
                 );
         }
     }
@@ -64,11 +69,11 @@ sub _load_organisms {
 }
 
 sub normalize_for_display {
-	my ($self, $name) = @_;
-	if ($name =~ /^(\w+)\s+\w+/) {
-		return $1;
-	}
-	return $name;
+    my ( $self, $name ) = @_;
+    if ( $name =~ /^(\w+)\s+\w+/ ) {
+        return $1;
+    }
+    return $name;
 }
 
 1;
