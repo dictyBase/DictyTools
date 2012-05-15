@@ -5,27 +5,26 @@ use Mojo::Base -base;
 use Mojo::Base 'Mojolicious::Plugin';
 use DictyTools::Organism;
 
-has '_genomes';
+has '_organisms';
 
 sub register {
     my ( $self, $app ) = @_;
     if ( $app->can('model') ) {
-        $self->_genomes( $self->_genomes_from_db( $app->model, $app ) );
+        $self->_organims( $self->_organisms_from_db( $app->model, $app ) );
     }
     $app->helper(
-        'organims_in_db' => sub {
+        'organisms_in_db' => sub {
             my ($c) = @_;
-            if ( !$self->_genomes ) {
-                $self->_genomes(
-                    $self->_genomes_from_db( $c->app->model, $app ) );
+            if ( !$self->_organisms ) {
+                $self->_organisms(
+                    $self->_load_organisms( $c->app->model, $app ) );
             }
-            my $genomes = $self->_genomes;
-            return @$genomes;
+            return @{$self->_organims};
         }
     );
 }
 
-sub _genomes_from_db {
+sub _load_organisms {
     my ( $self, $model, $app ) = @_;
     my $common_name2org;
     my $rs = $model->resultset('Organism::Organism')->search(
