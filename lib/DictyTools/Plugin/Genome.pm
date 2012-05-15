@@ -39,16 +39,20 @@ sub _genomes_from_db {
         if ( not exists $common_name2org->{ $row->common_name } ) {
             $common_name2org->{ $row->common_name }
                 = DictyTools::Organism->new(
-                common_name => $row->common_name,
-                species     => $row->species,
-                genus       => $row->genus
+                common_name          => $row->common_name,
+                species              => $row->species,
+                genus                => $row->genus
+                    name_for_display => sprintf "%s %s",
+                $row->genus,
+                $self->normalize_for_display( $self->species )
                 );
         }
     }
     $common_name2org->{discoideum} = DictyTools::Organism->new(
-        common_name => 'discoideum',
-        species     => 'discoideum',
-        genus       => 'Dictyostelium'
+        common_name      => 'discoideum',
+        species          => 'discoideum',
+        genus            => 'Dictyostelium',
+        name_for_display => 'Dictyostelium discoideum'
     ) if not exists $common_name2org->{discoideum};
     $self->common_name2org_map($common_name2org);
 
@@ -58,6 +62,14 @@ sub _genomes_from_db {
                 || $a->common_name cmp $b->common_name
             } values %$common_name2org
     ];
+}
+
+sub normalize_for_display {
+	my ($self, $name) = @_;
+	if ($name =~ /^(\w+)\s+\w+/) {
+		return $1;
+	}
+	return $name;
 }
 
 1;
