@@ -14,6 +14,7 @@ sub startup {
     $self->plugin('DictyTools::Plugin::BLASTHelpers');
     $self->plugin('DictyTools::Plugin::DefaultHelpers');
     $self->plugin('DictyTools::Plugin::MultipleConnections');
+    $self->plugin('DictyTools::Plugin::Genome');
     
     $self->defaults( "descriptor" => "New Universal Dictyostelid BLAST Server");
 
