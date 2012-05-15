@@ -20,34 +20,25 @@ blast:
     id_search : enabled    ## ID search is a custom part, it can be disabled by taking this setting off. It excludes  
                             ## corresponding parts from blast form template and switches to blast.js from custom/blast.js
 
+
+# organism config section specification
+# organism:
+#   common_name: mandatory,  for example discoideum, mouse , rat,  hamster
+#     identifier_prefix: optional,  takes preference over values present in database
+#     database: optional,  dsn, user,  password are allowed parameters identical to
+#               database section on top
+#     skip: optional,  true or false,  default is to display all organisms that are loaded
+#           in the database.
+#           
 organism:
     discoideum:
-        taxon_id : 44689
-        genus : Dictyostelium
-        species : discoideum
         identifier_prefix : DDB
-        site_url : <url>
-        dsn : <dsn>
-        user : <user>
-        password : <password>
+        database:
+          dsn : <dsn>
+          user : <user>
+          password : <password>
     purpureum:
-        taxon_id : 5786
-        genus : Dictyostelium
-        species : purpureum
         identifier_prefix : DPU
-        dsn : <dsn>
-        user : <user>
-        password : <password>
-    fasciculatum:
-        taxon_id : 261658
-        genus : Dictyostelium
-        species : fasciculatum
-    pallidum:
-        taxon_id : 13642
-        genus : Polysphondylium
-        species : pallidum
-    all:
-        species : All
     
 
 relative_url_root: '/assets'
