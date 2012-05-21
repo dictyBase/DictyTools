@@ -85,16 +85,9 @@ sub register {
 
     $app->helper(
         blast_graph => sub {
-            my ( $c, $filename ) = @_;
-
-            my $report_file = IO::File->new( $filename, 'r' );
-            my $report = join( "\n", <$report_file> );
-
-            undef $report_file;
-
-            my $stringio = IO::String->new($report);
+            my ( $c, $image_dir, $result_file ) = @_;
             my $parser   = Bio::SearchIO->new(
-                -fh     => $stringio,
+                -file     => $result_file,
                 -format => 'blast'
             );
             my $result = $parser->next_result;
@@ -148,8 +141,8 @@ sub register {
             }
 
             my ( $url, $map, $mapname ) = $panel->image_and_map(
-                -root  => $c->app->home->rel_dir('public'),
-                -url   => '/tmp/dictytools',
+                -root  => $image_dir,
+                -url   => $c->app->config->{image_url}, 
                 -title => '',
                 -link  => '#$name'
             );
