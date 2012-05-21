@@ -10,6 +10,7 @@ use Bio::SeqFeature::Generic;
 use IO::File;
 use IO::String;
 use SOAP::Lite;
+use File::Basename;
 
 use base 'Mojolicious::Plugin';
 
@@ -85,7 +86,7 @@ sub register {
 
     $app->helper(
         blast_graph => sub {
-            my ( $c, $image_dir, $result_file ) = @_;
+            my ( $c, $base_dir, $relative_image_dir,  $result_file ) = @_;
             my $parser   = Bio::SearchIO->new(
                 -file     => $result_file,
                 -format => 'blast'
@@ -141,11 +142,15 @@ sub register {
             }
 
             my ( $url, $map, $mapname ) = $panel->image_and_map(
-                -root  => $image_dir,
-                -url   => $c->app->config->{image_url}, 
+                -root  => $base_dir,
+                -url   => $relative_image_dir, 
                 -title => '',
                 -link  => '#$name'
             );
+
+            # rewrite the url path
+            $url = $c->app->config->{blast}->{image_url}.'/'.basename($url);
+            $c->app->log->debug(sprintf ("%s\n%s", $url, $map));
             return
                   '<img src="' 
                 . $url
