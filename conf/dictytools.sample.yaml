@@ -4,19 +4,18 @@
 page:
     logo_link : http://localhost:3000
     
-## BLAST relates settings
-## "template" - base BLAST template
-## "report_template" - BLAST report template           
-## "blast_link_out" - Link out used in blast report
-## "namespace" -  BLAST namespace used in proxy connection
 
+# tmp_foler: Base folder where all blast search results and images will be kept
+#            result will be kept under <tmp_foler>/results
+#            images will be kept under <tmp_foler>/images
+#      Make sure they are writable
 blast:
     namespace : http://dictyBaseDP.org/Blast
     proxy : <proxy>
     blast_link_out : /id/
     database_download_url : /downloads/fasta
     site_admin_email : <youremail>
-    tmp_folder : /tmp/
+    tmp_folder : /tmp
     id_search : enabled    ## ID search is a custom part, it can be disabled by taking this setting off. It excludes  
                             ## corresponding parts from blast form template and switches to blast.js from custom/blast.js
 
