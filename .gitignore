@@ -2,6 +2,9 @@
 *.conf
 *.yaml
 
+# blast output folder
+blast_output
+
 #Ignore yaml
 *.yaml
 
