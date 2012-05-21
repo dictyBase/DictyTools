@@ -38,16 +38,10 @@ sub register {
         blast_report => sub {
             my ( $c, $filename, $base_url ) = @_;
 
-            my $report_file = IO::File->new( $filename, 'r' );
-            my $report = join( "\n", <$report_file> );
-
-            undef $report_file;
-
             my $str;
             my $output   = IO::String->new( \$str );
-            my $stringio = IO::String->new($report);
             my $parser   = Bio::SearchIO->new(
-                -fh     => $stringio,
+                -file     => $filename,
                 -format => 'blast'
             );
             my $result = $parser->next_result;
