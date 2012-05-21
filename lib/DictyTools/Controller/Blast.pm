@@ -133,8 +133,7 @@ sub report {
     }
 
     my $html_hash = $self->blast_report( $result_file, $self->url_for->base );
-    my $image_dir = catdir( $tmp_dir, 'images' );
-    my $graph = $self->blast_graph( $image_dir, $result_file );
+    my $graph = $self->blast_graph( $tmp_dir, 'images', $result_file );
 
     #    use Data::Dumper;
     #    $self->app->log->debug(Dumper $html_hash->{top});
