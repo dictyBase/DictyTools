@@ -5,20 +5,25 @@ page:
     logo_link : http://localhost:3000
     
 
-# tmp_foler: Base folder where all blast search results and images will be kept
+# tmp_folder: Base folder where all blast search results and images will be kept
 #            result will be kept under <tmp_foler>/results
 #            images will be kept under <tmp_foler>/images
 #      Make sure they are writable
+#
+# Id search: It is a custom part, it can be disabled by taking this setting off. It excludes  
+#           corresponding parts from blast form template and switches to blast.js from custom/blast.js
+#
+# image_url: url for serving blast alignment graphics
+#            Make sure you also setup the apache config in deploy/apache.conf accordingly
 blast:
     namespace : http://dictyBaseDP.org/Blast
     proxy : <proxy>
-    blast_link_out : /id/
+    blast_link_out : /id
     database_download_url : /downloads/fasta
     site_admin_email : <youremail>
     tmp_folder : /tmp
-    id_search : enabled    ## ID search is a custom part, it can be disabled by taking this setting off. It excludes  
-                            ## corresponding parts from blast form template and switches to blast.js from custom/blast.js
-
+    id_search : enabled    
+    image_url: /blast/graphics
 
 # organism config section specification
 # organism:
