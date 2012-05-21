@@ -9,6 +9,7 @@ use Bio::SearchIO::Writer::HTMLResultWriter;
 use Bio::Graphics;
 use Bio::SeqFeature::Generic;
 use File::Spec::Functions;
+use File::Basename;
 
 use base 'Mojolicious::Controller';
 
@@ -19,9 +20,8 @@ sub index {
     my ($self) = @_;
     my $app = $self->app;
 
-    my $id_search =
-        $app->config->{blast}->{id_search}
-        && ( $app->config->{blast}->{id_search} ne 'enabled' )
+    my $id_search
+        = $app->config->{blast}->{id_search}
         ? 1
         : 0;
 
@@ -60,8 +60,8 @@ sub run {
     my $matrix   = $self->req->param('matrix');
 
     if ( !( $program && $database && $sequence && $matrix ) ) {
-        my $message =
-            'program, database, sequence and matrix must be defined';
+        my $message
+            = 'program, database, sequence and matrix must be defined';
         $app->log->error($message);
         $self->render_exception($message);
         return;
@@ -86,7 +86,8 @@ sub run {
     ## catch fault string
     if (   $report->fault
         || $report->result =~ m{sorry}i
-        || $report->result !~ m{BLAST} ) {
+        || $report->result !~ m{BLAST} )
+    {
         my $email = $app->config->{blast}->{site_admin_email};
         '<a href="mailto:'
             . $app->config->{blast}->{site_admin_email} . '">'
@@ -94,49 +95,52 @@ sub run {
 
         $app->log->info( $report->faultstring ) if $report->fault;
 
-        my $message =
-            "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
+        my $message
+            = "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
         $self->render_exception($message);
         return;
     }
 
-    ## write report to teporary file, return tmp file name
-    my $dir =
-          $self->app->home->rel_dir('public')
-        . $self->app->config->{blast}->{tmp_folder};
+    ## write report to temporary file, return tmp file name
+    my $tmp_dir = catdir(
+        $self->app->config->{blast}->{tmp_folder}
+            || $self->app->home->rel_dir('blast_output'),
+        'results'
+    );
 
-    my $tmp = File::Temp->new( DIR => $dir, UNLINK => 0 );
+    my $tmp = File::Temp->new( DIR => $tmp_dir, UNLINK => 0 );
     $tmp->print( $report->result );
     $tmp->close;
 
-    my $filename = $tmp->filename;
-    $filename =~ s{$dir}{};
-
+    my $filename = basename $tmp->filename;
     $self->app->log->debug($filename);
-    $self->render( data => $filename );
+    $self->render( json => { file => $filename } );
 }
 
 sub report {
     my ( $self, $c ) = @_;
     my $app = $self->app;
-    my $file = $self->stash('id') || $self->req->param('report_file');
 
-    if ( !$file ) {
+    # -- figure out the temp dir
+    my $tmp_dir = $self->app->config->{blast}->{tmp_folder}
+        || $self->app->home->rel_dir('blast_output');
+    my $result_file = catfile( $tmp_dir, 'results',
+        $self->stash('id') || $self->req->param('report_file') );
+
+    if ( !$result_file ) {
         $self->redirect_to('/tools/blast');
         return;
     }
-    my $dir =
-        $app->home->rel_dir('public') . $app->config->{blast}->{tmp_folder};
 
-    my $html_hash =
-        $self->blast_report( catfile( $dir, $file ), $self->url_for->base );
-    my $graph = $self->blast_graph( catfile( $dir, $file ) );
-    
-#    use Data::Dumper;
-#    $self->app->log->debug(Dumper $html_hash->{top});
+    my $html_hash = $self->blast_report( $result_file, $self->url_for->base );
+    my $image_dir = catdir( $tmp_dir, 'images' );
+    my $graph = $self->blast_graph( $image_dir, $result_file );
+
+    #    use Data::Dumper;
+    #    $self->app->log->debug(Dumper $html_hash->{top});
 
     $self->render(
-        template   => $self->app->config->{blast}->{report_template},
+        template   => 'blast/report',
         graph      => $graph,
         top        => $html_hash->{top},
         table      => $html_hash->{table},
@@ -147,6 +151,7 @@ sub report {
         no_header  => $self->req->param('noheader') || undef,
         title      => 'dictyBase BLAST Server: Report'
     );
+
     #unlink catfile($dir, $file);
 }
 
