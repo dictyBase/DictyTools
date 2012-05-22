@@ -37,12 +37,12 @@ sub register {
 
     $app->helper(
         blast_report => sub {
-            my ( $c, $filename, $base_url ) = @_;
+            my ( $c, $fh, $base_url ) = @_;
 
             my $str;
             my $output   = IO::String->new( \$str );
             my $parser   = Bio::SearchIO->new(
-                -file     => $filename,
+                -fh     => $fh,
                 -format => 'blast'
             );
             my $result = $parser->next_result;
@@ -86,9 +86,9 @@ sub register {
 
     $app->helper(
         blast_graph => sub {
-            my ( $c, $base_dir, $relative_image_dir,  $result_file ) = @_;
+            my ( $c, $base_dir, $relative_image_dir,  $fh ) = @_;
             my $parser   = Bio::SearchIO->new(
-                -file     => $result_file,
+                -fh     => $fh,
                 -format => 'blast'
             );
             my $result = $parser->next_result;
@@ -150,7 +150,6 @@ sub register {
 
             # rewrite the url path
             $url = $c->app->config->{blast}->{image_url}.'/'.basename($url);
-            $c->app->log->debug(sprintf ("%s\n%s", $url, $map));
             return
                   '<img src="' 
                 . $url
