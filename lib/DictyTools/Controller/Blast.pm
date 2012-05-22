@@ -10,6 +10,7 @@ use Bio::Graphics;
 use Bio::SeqFeature::Generic;
 use File::Spec::Functions;
 use File::Basename;
+use IO::File;
 
 use base 'Mojolicious::Controller';
 
@@ -83,13 +84,15 @@ sub run {
 
     my $report = $self->stash('server')->blastall(%options);
 
-    if ( $report->fault ) {
+    if ( $report->fault ) {    # protocol error(SOAP)
         $self->report_error( $report->faultstring );
     }
     elsif ( $report->result =~ /sorry/i || $report->result !~ /BLAST/ ) {
+
+        # blast run error
         $self->report_error( $report->result );
     }
-    else { # success
+    else {                     # success
         ## write report to temporary file, return tmp file name
         my $tmp_dir = catdir(
             $self->app->config->{blast}->{tmp_folder}
@@ -103,7 +106,9 @@ sub run {
 
         my $filename = basename $tmp->filename;
         $self->app->log->debug($filename);
-        $self->render( json => { file => $filename } );
+        $self->render(
+            json => { file => $filename }
+        );
     }
 }
 
@@ -122,8 +127,9 @@ sub report {
         return;
     }
 
-    my $html_hash = $self->blast_report( $result_file, $self->url_for->base );
-    my $graph = $self->blast_graph( $tmp_dir, 'images', $result_file );
+	my $result_fh = IO::File->new($result_file,  'r');
+    my $html_hash = $self->blast_report( $result_fh, $self->url_for->base );
+    my $graph = $self->blast_graph( $tmp_dir, 'images', $result_fh );
 
     #    use Data::Dumper;
     #    $self->app->log->debug(Dumper $html_hash->{top});
@@ -141,6 +147,8 @@ sub report {
         title      => 'dictyBase BLAST Server: Report'
     );
 
+    $result_fh->close;
+
     #unlink catfile($dir, $file);
 }
 
@@ -152,7 +160,7 @@ sub report_error {
         . $app->config->{blast}->{site_admin_email} . '">'
         . $app->config->{blast}->{site_admin_email} . '</a>';
     $app->log->error($error_msg);
-    my $display_msg =
+    my $display_msg
         = "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
     $self->render_exception($display_msg);
 }
