@@ -42,7 +42,7 @@ sub register {
             my $str;
             my $output   = IO::String->new( \$str );
             my $parser   = Bio::SearchIO->new(
-                -fh     => $fh,
+                -file     => $fh,
                 -format => 'blast'
             );
             my $result = $parser->next_result;
@@ -89,11 +89,13 @@ sub register {
         blast_graph => sub {
             my ( $c, $base_dir, $relative_image_dir,  $fh ) = @_;
             my $parser   = Bio::SearchIO->new(
-                -fh     => $fh,
+                -file     => $fh,
                 -format => 'blast'
             );
+            $c->app->log->debug("going to parse result");
             my $result = $parser->next_result;
             return if !$result;
+            $c->app->log->debug("parsed result");
 
             my $panel = Bio::Graphics::Panel->new(
                 -length    => $result->query_length,
@@ -151,6 +153,7 @@ sub register {
 
             # rewrite the url path
             $url = $c->app->config->{blast}->{image_url}.'/'.basename($url);
+            $c->app->log->debug("got url $url");
             return
                   '<img src="' 
                 . $url

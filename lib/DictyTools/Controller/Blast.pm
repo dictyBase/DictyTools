@@ -122,14 +122,13 @@ sub report {
     my $result_file = catfile( $tmp_dir, 'results',
         $self->stash('id') || $self->req->param('report_file') );
 
-    if ( !$result_file ) {
+    if ( !-e $result_file ) {
         $self->redirect_to('/tools/blast');
         return;
     }
 
-	my $result_fh = IO::File->new($result_file,  'r');
-    my $html_hash = $self->blast_report( $result_fh, $self->url_for->base );
-    my $graph = $self->blast_graph( $tmp_dir, 'images', $result_fh );
+    my $html_hash = $self->blast_report( $result_file, $self->url_for->base );
+    my $graph = $self->blast_graph( $tmp_dir, 'images', $result_file );
 
     #    use Data::Dumper;
     #    $self->app->log->debug(Dumper $html_hash->{top});
@@ -146,9 +145,6 @@ sub report {
         no_header  => $self->req->param('noheader') || undef,
         title      => 'dictyBase BLAST Server: Report'
     );
-
-    $result_fh->close;
-
     #unlink catfile($dir, $file);
 }
 
