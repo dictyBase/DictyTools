@@ -83,38 +83,28 @@ sub run {
 
     my $report = $self->stash('server')->blastall(%options);
 
-    ## catch fault string
-    if (   $report->fault
-        || $report->result =~ m{sorry}i
-        || $report->result !~ m{BLAST} )
-    {
-        my $email = $app->config->{blast}->{site_admin_email};
-        '<a href="mailto:'
-            . $app->config->{blast}->{site_admin_email} . '">'
-            . $app->config->{blast}->{site_admin_email} . '</a>';
-
-        $app->log->info( $report->faultstring ) if $report->fault;
-
-        my $message
-            = "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
-        $self->render_exception($message);
-        return;
+    if ( $report->fault ) {
+        $self->report_error( $report->faultstring );
     }
+    elsif ( $report->result =~ /sorry/i || $report->result !~ /BLAST/ ) {
+        $self->report_error( $report->result );
+    }
+    else { # success
+        ## write report to temporary file, return tmp file name
+        my $tmp_dir = catdir(
+            $self->app->config->{blast}->{tmp_folder}
+                || $self->app->home->rel_dir('blast_output'),
+            'results'
+        );
 
-    ## write report to temporary file, return tmp file name
-    my $tmp_dir = catdir(
-        $self->app->config->{blast}->{tmp_folder}
-            || $self->app->home->rel_dir('blast_output'),
-        'results'
-    );
+        my $tmp = File::Temp->new( DIR => $tmp_dir, UNLINK => 0 );
+        $tmp->print( $report->result );
+        $tmp->close;
 
-    my $tmp = File::Temp->new( DIR => $tmp_dir, UNLINK => 0 );
-    $tmp->print( $report->result );
-    $tmp->close;
-
-    my $filename = basename $tmp->filename;
-    $self->app->log->debug($filename);
-    $self->render( json => { file => $filename } );
+        my $filename = basename $tmp->filename;
+        $self->app->log->debug($filename);
+        $self->render( json => { file => $filename } );
+    }
 }
 
 sub report {
@@ -152,6 +142,19 @@ sub report {
     );
 
     #unlink catfile($dir, $file);
+}
+
+sub report_error {
+    my ( $self, $error_msg ) = @_;
+    my $app = $self->app;
+    my $email
+        = '<a href="mailto:'
+        . $app->config->{blast}->{site_admin_email} . '">'
+        . $app->config->{blast}->{site_admin_email} . '</a>';
+    $app->log->error($error_msg);
+    my $display_msg =
+        = "Sorry, an error occurred on our server. This is usually due to the BLAST report being too large. You can try reducing the number of alignments to show, increasing the E value and/or leaving the gapped alignment to 'True' and filtering 'On'. If you still get an error, please email $email with the sequence you were using for the BLAST and the alignment parameters.";
+    $self->render_exception($display_msg);
 }
 
 1;
