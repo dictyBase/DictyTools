@@ -19,7 +19,6 @@ blast:
     namespace : http://dictyBaseDP.org/Blast
     proxy : <proxy>
     blast_link_out : /id
-    database_download_url : /downloads/fasta
     site_admin_email : <youremail>
     tmp_folder : /tmp
     id_search : enabled    
