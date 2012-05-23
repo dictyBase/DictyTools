@@ -1,10 +1,20 @@
 #!/usr/bin/perl -w
 use strict;
-use warnings;
+use Module::Build;
 use lib 'lib';
-use DictyTools::Builder;
 
-my $builder = DictyTools::Builder->new(
+my $class = Module::Build->subclass(
+    class => 'DictyToolsBuilder',
+    code  => q{
+       sub ACTION_create_temp_folders {
+          use File::Path qw/make_path/;
+          my ($self) = @_;
+          make_path ('blast_output/results',  'blast_output/images',  {verbose => 1});
+       }
+    },
+);
+
+my $builder = $class->new(
     module_name  => 'DictyTools',
     license      => 'perl',
     dist_author  => 'Yulia Bushmanova <y-bushmanova@northwestern.edu>',
