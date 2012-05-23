@@ -1,0 +1,16 @@
+<div id="download" class="yuimenu">
+           <div class="bd">
+                   <ul class="first-of-type">
+             		          % for my $org(organisms_in_db) {
+             		             % my $cname = $org->common_name;
+                   			           <li class="yuimenuitem">
+                       				            <a class="yuimenuitemlabel" 
+                           				             href="<%= url_for("/$cname/current") %>">
+                               				             <%= sprintf('%s %s', $org->genus, $org->common_name) %>
+															            </a>
+													            </li>
+              		          %}
+                    </ul>
+             </div>
+</div>
+

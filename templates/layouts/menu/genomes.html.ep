@@ -1,0 +1,15 @@
+<div id="genomes" class="yuimenu">
+           <div class="bd">
+                   <ul class="first-of-type">
+             		          % for my $org(organisms_in_db) {
+                   			           <li class="yuimenuitem">
+                       				            <a class="yuimenuitemlabel" 
+                           				             href="/<%= $org->common_name %>">
+                               				             <%= sprintf('%s %s', $org->genus, $org->common_name) %>
+															            </a>
+													            </li>
+              		          %}
+                    </ul>
+             </div>
+</div>
+

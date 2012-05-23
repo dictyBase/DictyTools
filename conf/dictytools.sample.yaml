@@ -46,3 +46,4 @@ organism:
     
 
 relative_url_root: '/assets'
+gbrowse_url: 'http://gbrowse2'

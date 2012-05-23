@@ -22,6 +22,34 @@ sub register {
             return @{ $self->_organisms };
         }
     );
+    $app->helper(
+        genome2browser_url => sub {
+            my ( $c, $org ) = @_;
+            my $common_name  = $org->common_name;
+            my $gbrowse_base = $c->app->config->{gbrowse_url} . '/gbrowse';
+
+            if ( $common_name eq 'discoideum' ) {
+                return $gbrowse_base . '/discoideum?name=6:1..50000';
+            }
+
+            # -- get a random reference feature
+            my $rs
+                = $c->app->model->resultset('Organism::Organism')
+                ->search( { 'common_name' => $common_name } )->search_related(
+                'features',
+                { 'type.name' => 'gene' },
+                { join        => 'type' }
+                )->search_related( 'featureloc_features', {} )
+                ->search_related( 'srcfeature',           {},
+                { order_by => \'dbms_random.value' } );
+
+            my $row     = $rs->first;
+            my $end     = $row->seqlen > 50000 ? 50000 : $row->seqlen;
+            my $qstring = 'name=' . $self->_chado_name($row) . ':1..' . $end;
+            my $str     = "$gbrowse_base/$common_name?$qstring";
+            return $str;
+        }
+    );
 }
 
 sub _organisms_from_db {
@@ -73,6 +101,11 @@ sub normalize_for_display {
         return $1;
     }
     return $name;
+}
+
+sub _chado_name {
+    my ( $self, $row ) = @_;
+    return $row->name ? $row->name : $row->uniquename;
 }
 
 1;

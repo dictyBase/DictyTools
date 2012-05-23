@@ -1,0 +1,15 @@
+<div id="gbrowse" class="yuimenu">
+    <div class="bd">
+        <ul class="first-of-type">
+ 	          % for my $org(organisms_in_db) {
+ 		           <li class="yuimenuitem">
+ 			            <a class="yuimenuitemlabel" 
+  				             href="<%= genome2browser_url($org) %>">
+   				             <%= sprintf('%s %s', $org->genus, $org->common_name) %>
+			            </a>
+	            </li>
+ 	          %}
+         </ul>
+    </div>
+</div>
+

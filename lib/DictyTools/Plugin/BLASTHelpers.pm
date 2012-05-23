@@ -92,10 +92,8 @@ sub register {
                 -file     => $fh,
                 -format => 'blast'
             );
-            $c->app->log->debug("going to parse result");
             my $result = $parser->next_result;
             return if !$result;
-            $c->app->log->debug("parsed result");
 
             my $panel = Bio::Graphics::Panel->new(
                 -length    => $result->query_length,
@@ -153,7 +151,6 @@ sub register {
 
             # rewrite the url path
             $url = $c->app->config->{blast}->{image_url}.'/'.basename($url);
-            $c->app->log->debug("got url $url");
             return
                   '<img src="' 
                 . $url
