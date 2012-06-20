@@ -5203,7 +5203,7 @@ die "missing command line option(s)\n"     if !$result;
 die "application directory is not given\n" if !$ARGV[0];
 
 my $config_hash = LoadFile($actual_config);
-my $outfile = catfile( $ARGV[0], 'conf', $mojo_mode . '.yml' );
+my $outfile = catfile( $ARGV[0], 'conf', $mojo_mode . '.yaml' );
 
 if ($sample_config) {
     my $sample_hash = LoadFile($sample_config);
