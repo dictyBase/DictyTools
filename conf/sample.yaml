@@ -20,8 +20,8 @@ blast:
     proxy : <proxy>
     blast_link_out : /id
     site_admin_email : <youremail>
-    tmp_folder : /tmp
     id_search : enabled    
+    #tmp: '/tmp'
     image_url: /blast/graphics
 
 # organism config section specification
