@@ -12,7 +12,11 @@ install_dependencies() {
 after_install_dependencies() {
    echo "------> Installing plack and dependencies for fcgi deployment"
    cd $1
+
    carton install Plack FCGI FCGI::ProcManager FCGI::Engine
+
+	 local perl=`which perl`
+   carton exec -Ilib -- $perl Build.PL && carton exec -Ilib -- ./Build create_temp_folders
 }
 
 before_install_dependencies() {
