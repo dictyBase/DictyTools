@@ -17,7 +17,32 @@ after_install_dependencies() {
 }
 
 before_install_dependencies() {
-  return
+  carton install Devel::Loaded
+	
+	local dbic=0.08127
+	local mojolicious=1.21
+	local bundle=0.005
+
+	local dbic_version=`__check_perl_module_version DBIx::Class`
+	if [ `echo "$dbic_version < $dbic" | bc` -eq 1 ];then
+     echo "------> Installing DBIx::Class 0.08127"
+     carton install http://cpan.metacpan.org/authors/id/A/AB/ABRAXXA/DBIx-Class-0.08127.tar.gz
+  fi
+
+	local mojo_version=`__check_perl_module_version Mojolicious`
+	if [ `echo "$mojo_version < $mojolicious" | bc` -eq 1 ];then
+     echo " ----> Installing mojolicious 1.21"
+     curl -o mojolicious.tar.gz -s -k -L https://github.com/kraih/mojo/tarball/v1.21 \
+                        && carton install mojolicious.tar.gz && rm mojolicious.tar.gz
+  fi
+
+	local bundle_version=`__check_perl_module_version Mojolicious::Plugin::Bundle`
+	if [ `echo "$bundle_version < $bundle" | bc` -eq 1 ];then
+     echo "------> Installing Mojolicious::Plugin::Bundle 0.005"
+     local url=https://github.com/downloads/dictyBase/Mojolicious-PluginBundle/Mojolicious-Plugin-Bundle-0.005.tar.gz
+     curl -o mojolicious-plugin-bundle.tar.gz -s -k -L $url \
+          && carton install mojolicious-plugin-bundle.tar.gz && rm mojolicious-plugin-bundle.tar.gz
+  fi
 }
 
 create_daemontools_runfile(){
@@ -67,4 +92,19 @@ after_create_daemontools_runfile() {
 		chmod 755 $RUN_FILE
 		ln -s $APP_SERVICE /service/${PROJECT}
 	fi
+}
+
+
+__check_perl_module_version() {
+	local module=$1
+	local perl=`which perl`
+	local value=0.0
+
+	$perl -Ilocal/lib/perl5 -M$module -e '' > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		local version=`carton exec pmvers $module`
+		echo $version
+  else
+     echo $value
+  fi
 }
