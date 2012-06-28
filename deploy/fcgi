@@ -63,6 +63,7 @@ create_daemontools_runfile(){
   echo "perlbrew use $LOCAL_LIB" >> $RUN_FILE
   echo  "export MOJO_MODE=$MOJO_MODE" >> $RUN_FILE
   echo  "exec setuidgid $USER carton exec -Ilib  -- plackup -E production  -R $APP_DIR/templates,$APP_DIR/lib -s FCGI --nproc 4 -l /tmp/${PROJECT}.socket script/$PROJECT" >> $RUN_FILE
+    chmod 755 $RUN_FILE
   fi
 }
 
