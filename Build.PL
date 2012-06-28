@@ -23,7 +23,6 @@ my $builder = $class->new(
         'Mojolicious'                 => '1.21',
         'Mojolicious::Plugin::Bundle' => '0.005',
         'SOAP::Lite'                  => '0.714',
-        'Bio::Perl'                   => '1.0050021',
         'File::Path'                  => '2.04',
         'DBIx::Class'                 => '0.08127',
         'Math::BigInt'                => '1.99',
