@@ -30,6 +30,6 @@ META
 !Build.PL
 
 
-Rexfile
+Rexfile*
 .carton/
 local/
