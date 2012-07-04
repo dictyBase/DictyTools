@@ -40,8 +40,6 @@ organism:
           dsn : <dsn>
           user : <user>
           password : <password>
-    purpureum:
-        identifier_prefix : DPU
     
 
 relative_url_root: '/assets'
