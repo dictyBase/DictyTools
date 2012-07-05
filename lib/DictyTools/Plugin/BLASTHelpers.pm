@@ -10,6 +10,7 @@ use Bio::SeqFeature::Generic;
 use IO::File;
 use IO::String;
 use SOAP::Lite +trace => 'all';
+use SOAP::Transport::HTTP;
 use File::Basename;
 
 use base 'Mojolicious::Plugin';
@@ -18,9 +19,8 @@ sub register {
     my ( $self, $app ) = @_;
     die "need to load the yml_config\n" if not defined !$app->can('config');
 
-    my $blast_server =
-        SOAP::Lite->new(proxy => $app->config->{blast}->{proxy});
-        $blast_server->default_ns($app->config->{blast}->{namespace});
+    my $blast_server = SOAP::Lite->proxy( $app->config->{blast}->{proxy},  keep_alive => 1 )
+        ->uri( $app->config->{blast}->{namespace} );
 
     my ( $programs, $databases );
 
@@ -40,9 +40,9 @@ sub register {
             my ( $c, $fh, $base_url ) = @_;
 
             my $str;
-            my $output   = IO::String->new( \$str );
-            my $parser   = Bio::SearchIO->new(
-                -file     => $fh,
+            my $output = IO::String->new( \$str );
+            my $parser = Bio::SearchIO->new(
+                -file   => $fh,
                 -format => 'blast'
             );
             my $result = $parser->next_result;
@@ -57,14 +57,15 @@ sub register {
             );
 
             $writer->title( sub { } );
-            my $out =
-                Bio::SearchIO->new( -writer => $writer, -fh => $output );
+            my $out
+                = Bio::SearchIO->new( -writer => $writer, -fh => $output );
             $out->write_result( $result, 1 );
 
             my ( $header, $table, $results, $parameters, $statistics );
-            if ( $str =~
-                m{(.+?)(<table.+?table>)(.+?)<hr>.+?Parameters.+?(<table.+?table>).+?Statistics(.+?)<hr}s
-                ) {
+            if ( $str
+                =~ m{(.+?)(<table.+?table>)(.+?)<hr>.+?Parameters.+?(<table.+?table>).+?Statistics(.+?)<hr}s
+                )
+            {
                 $header     = $1;
                 $table      = $2;
                 $results    = $3;
@@ -87,9 +88,9 @@ sub register {
 
     $app->helper(
         blast_graph => sub {
-            my ( $c, $base_dir, $relative_image_dir,  $fh ) = @_;
-            my $parser   = Bio::SearchIO->new(
-                -file     => $fh,
+            my ( $c, $base_dir, $relative_image_dir, $fh ) = @_;
+            my $parser = Bio::SearchIO->new(
+                -file   => $fh,
                 -format => 'blast'
             );
             my $result = $parser->next_result;
@@ -144,13 +145,14 @@ sub register {
 
             my ( $url, $map, $mapname ) = $panel->image_and_map(
                 -root  => $base_dir,
-                -url   => $relative_image_dir, 
+                -url   => $relative_image_dir,
                 -title => '',
                 -link  => '#$name'
             );
 
             # rewrite the url path
-            $url = $c->app->config->{blast}->{image_url}.'/'.basename($url);
+            $url = $c->app->config->{blast}->{image_url} . '/'
+                . basename($url);
             return
                   '<img src="' 
                 . $url
