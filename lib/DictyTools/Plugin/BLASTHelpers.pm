@@ -9,7 +9,7 @@ use Bio::SeqFeature::Gene::Exon;
 use Bio::SeqFeature::Generic;
 use IO::File;
 use IO::String;
-use SOAP::Lite +trace;
+use SOAP::Lite +trace => 'all';
 use File::Basename;
 
 use base 'Mojolicious::Plugin';
