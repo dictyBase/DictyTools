@@ -19,8 +19,8 @@ sub register {
     die "need to load the yml_config\n" if not defined !$app->can('config');
 
     my $blast_server =
-        SOAP::Lite->ns( $app->config->{blast}->{namespace} )
-        ->proxy( $app->config->{blast}->{proxy} );
+        SOAP::Lite->new(proxy => $app->config->{blast}->{proxy});
+        $blast_server->default_ns($app->config->{blast}->{namespace});
 
     my ( $programs, $databases );
 
